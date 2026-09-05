@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>현대차 의왕IDC 공조/전기설비 장애 점검 Guide</title>
     
-    <!-- [신규] 브라우저 탭 아이콘 (Favicon - IDC 서버 랙 모양) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><rect x=%222%22 y=%222%22 width=%2220%22 height=%228%22 rx=%222%22 ry=%222%22></rect><rect x=%222%22 y=%2214%22 width=%2220%22 height=%228%22 rx=%222%22 ry=%222%22></rect><line x1=%226%22 y1=%226%22 x2=%226.01%22 y2=%226%22></line><line x1=%226%22 y1=%2218%22 x2=%226.01%22 y2=%2218%22></line></svg>">
+    <!-- [수정] 브라우저 탭 아이콘 (Favicon - 현대자동차 H 로고) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><ellipse cx=%2212%22 cy=%2212%22 rx=%2211%22 ry=%227%22/><path d=%22M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9%22/></svg>">
 
     <!-- Firebase App (v8 호환 SDK) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -453,7 +453,7 @@
         <div id="memoList"></div>
     </div>
 
-    <!-- TBM 안전교육 화면 -->
+    <!-- TBM 안전교육 (화면 폭 맞춤 탭 방식 적용) 화면 -->
     <div id="viewTBM" class="container view">
         <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 16px;">수행하실 작업을 탭에서 선택하여 위험요인과 보호구를 확인하세요.</p>
         
@@ -617,7 +617,7 @@
             { task: "외부작업", detail: "외벽·옥외설비 점검", hazard: "추락, 차량충돌, 낙하물", method: "안전대·작업발판 확인", ppe: "안전모, 안전화, 안전대, 반사조끼", control: "작업구역 및 차량 통제", emergency: "추락·충돌 시 119 신고" },
             { task: "예초작업", detail: "잡초 제거", hazard: "비산물, 베임, 소음", method: "작업 전 주변 확인, 보호덮개 확인", ppe: "보안면/보안경, 장갑, 안전화, 귀마개", control: "작업반경 출입금지", emergency: "장비 정지 후 부상 응급조치" },
             { task: "벌목전지", detail: "나뭇가지 절단", hazard: "낙하, 베임, 추락", method: "작업반경 통제, 절단방향 확인", ppe: "안전모, 보안면, 안전화, 장갑", control: "낙하범위 출입금지", emergency: "작업중지 후 119 신고" },
-            { task: "굴착작업", detail: "지반 굴착", hazard: "붕괴, 매몰, 매설물 파손", method: "지하매설물 확인, 굴착면 안전조치", ppe: "안전모, 안전화, 반사조끼", control: "굴착구역 출입통제", emergency: "붕괴 시 무리한 구조 금지·119" },
+            { task: "굴착작업", detail: "지반 굴착", hazard: "붕괴, 매몰, 매설물 파 파손", method: "지하매설물 확인, 굴착면 안전조치", ppe: "안전모, 안전화, 반사조끼", control: "굴착구역 출입통제", emergency: "붕괴 시 무리한 구조 금지·119" },
             { task: "천장점검", detail: "천장 내부 설비 점검", hazard: "추락, 낙하물, 감전", method: "작업발판 확인, 전기설비 차단", ppe: "안전모, 안전화, 안전대, 보안경", control: "하부 통제", emergency: "낙하·추락 시 작업중지" },
             { task: "냉동/공조", detail: "냉동기·AHU 정비", hazard: "감전, 회전체, 냉매 누출", method: "전원 차단, 압력·냉매 상태 확인", ppe: "안전모, 안전화, 장갑, 보안경", control: "장비 주변 통제", emergency: "냉매 누출 시 환기 및 대피" },
             { task: "보일러", detail: "보일러 점검·정비", hazard: "화상, 가스누출, 폭발", method: "연료 차단, 압력·온도 확인", ppe: "안전모, 안전화, 보안경, 내열장갑", control: "기계실 출입통제", emergency: "가스누출 시 밸브 차단·대피" },
@@ -739,7 +739,7 @@
                 name: 'ACB (기중차단기)',
                 systemFaults: [
                     { category: '투입/개방 불량', cause: '• UVT(부족전압트립) 소손 또는 전원 차단<br>• 축적 모터 고장<br>• 기계적 걸림 (윤활 부족)', action: '• UVT 모듈 교체 및 전원 복구<br>• 기어드 모터 교체<br>• 기구부 청소 및 건식 윤활제 도포<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① UVT 조작전원 확인 → ② 스프링 Charge 소음 확인 → ③ 모터 전압 측정 → ④ 기구부 수동 조작 테스트</div>' },
-                    { category: '단자부 과열', cause: '• 접속 단자 조임 불량<br>• 장기 진동에 의한 볼트 풀림<br>• 상 불평형 및 과부하', action: '• 정전 후 단자 볼트 규정 토크 재조임<br>• 상별 부하 분산 조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 열화상 카메라 발열 촬영 → ② 열화산 표시재 변색 확인 → ③ 상별 전류 측정 → ④ 볼트 재조임</div>' },
+                    { category: '단자부 과열', cause: '• 접속 단자 조임 불량<br>• 장기 진동에 의한 볼트 풀림<br>• 상 불평형 및 과부하', action: '• 정전 후 단자 볼트 재조임<br>• 상별 부하 분산 조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 열화상 카메라 발열 촬영 → ② 열화산 표시재 변색 확인 → ③ 상별 전류 측정 → ④ 볼트 재조임</div>' },
                     { category: '트립 동작 (OCR)', cause: '• 과전류(Over Current)<br>• 단락(Short Circuit) 및 지락(Ground Fault)', action: '• 하위 부하 분전반 누전/단락 점검<br>• 원인 제거 후 OCR 리셋 및 재투입<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① OCR 트립 표시기(Fault indicator) 확인 → ② 하위 선로 절연 측정 → ③ 사고 구간 분리 → ④ 리셋 후 투입</div>' }
                 ],
                 steps: ['부하 전류, 전압 및 계측기 지시치 정상 확인', 'UVT(부족전압트립) 조작 전원 상태 점검', '접속 단자부 열화산 표시재 변색 및 발열 확인', '기구부 스프링 축적(Charged) 상태 점검'],

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>현대차 의왕IDC 공조/전기설비 장애 점검 Guide</title>
     
+    <!-- [신규] 브라우저 탭 아이콘 (Favicon - IDC 서버 랙 모양) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><rect x=%222%22 y=%222%22 width=%2220%22 height=%228%22 rx=%222%22 ry=%222%22></rect><rect x=%222%22 y=%2214%22 width=%2220%22 height=%228%22 rx=%222%22 ry=%222%22></rect><line x1=%226%22 y1=%226%22 x2=%226.01%22 y2=%226%22></line><line x1=%226%22 y1=%2218%22 x2=%226.01%22 y2=%2218%22></line></svg>">
+
     <!-- Firebase App (v8 호환 SDK) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <!-- Firebase Firestore -->
@@ -116,7 +119,7 @@
         }
         .category-header:first-of-type { margin-top: 0; }
 
-        /* 메인 그리드 메뉴 (SVG 적용) */
+        /* 메인 그리드 메뉴 */
         .grid-menu {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -263,10 +266,10 @@
         .memo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); }
         .memo-body { font-size: 0.95rem; line-height: 1.5; white-space: pre-line; }
 
-        /* 수정된 TBM 탭 UI: 화면 너비에 맞춰 칩(Chip) 형태로 자동 정렬 */
+        /* TBM 탭 UI: 화면 너비에 맞춰 칩(Chip) 형태로 자동 정렬 */
         .tbm-tabs {
             display: flex;
-            flex-wrap: wrap; /* 가로 공간이 부족하면 다음 줄로 자동 넘김 */
+            flex-wrap: wrap; 
             gap: 8px;
             margin-bottom: 16px;
             justify-content: flex-start;
@@ -281,7 +284,7 @@
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
-            white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+            white-space: nowrap; 
             -webkit-appearance: none;
             touch-action: manipulation;
         }
@@ -450,7 +453,7 @@
         <div id="memoList"></div>
     </div>
 
-    <!-- 신규: TBM 안전교육 (화면 폭 맞춤 탭 방식 적용) 화면 -->
+    <!-- TBM 안전교육 화면 -->
     <div id="viewTBM" class="container view">
         <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 16px;">수행하실 작업을 탭에서 선택하여 위험요인과 보호구를 확인하세요.</p>
         
@@ -471,7 +474,7 @@
         <div class="contact-list" id="contactArea"></div>
     </div>
 
-    <!-- 재해보고양식 화면 (복사 기능 추가) -->
+    <!-- 재해보고양식 화면 -->
     <div id="viewReportForm" class="container view">
         <h2 class="view-title">📝 재해발생 시 최초 문자보고 기준</h2>
         
@@ -570,7 +573,7 @@
 
     <script>
         // ==========================================
-        // 1. Firebase 연동 설정 영역 (Firestore)
+        // 1. Firebase 연동 설정
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyCzsU9bB3ZBKsZ8p_hlS24ZHdxGZKuxXtY",
@@ -582,7 +585,6 @@
             measurementId: "G-J3JCKQ3VKF"
         };
 
-        // Firebase 초기화 및 Firestore 인스턴스 생성
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 

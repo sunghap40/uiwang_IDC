@@ -38,7 +38,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 공통 UI (헤더 수정) */
+        /* 공통 UI (헤더 수정 - 좌측정렬 및 폰트크기 확대) */
         header {
             background-color: var(--surface-color);
             padding: 12px 16px;
@@ -49,36 +49,40 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
         }
-        .header-left, .header-right {
-            width: 105px; /* 타이틀 중앙 정렬을 위해 좌우 너비 고정 */
+        .header-left {
             display: flex;
             align-items: center;
+            flex: 1;
+            overflow: hidden;
+            gap: 8px;
         }
         .header-right {
-            justify-content: flex-end;
+            flex-shrink: 0;
         }
         .header-title {
-            flex: 1;
-            text-align: center;
-            font-size: 1rem;
+            font-size: 1.3rem; /* 글씨를 더 크게 */
             font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left; /* 좌측 정렬 */
+            color: var(--text-color);
         }
         .back-btn {
             background: none;
             border: none;
             color: var(--primary-color);
-            font-size: 1rem;
+            font-size: 1.1rem;
             cursor: pointer;
             display: none;
             padding: 8px 0;
             font-weight: bold;
+            flex-shrink: 0;
         }
         
-        /* 🚨 시인성 좋은 빨간색 비상연락망 탭 버튼 */
+        /* 🚨 시인성 좋은 빨간색 비상연락망 탭 버튼 (1열 고정) */
         .header-call-btn {
             background-color: #f44336; 
             color: #ffffff;
@@ -93,6 +97,7 @@
             gap: 4px;
             box-shadow: 0 2px 6px rgba(244, 67, 54, 0.5); /* 붉은색 글로우 효과 */
             transition: transform 0.1s, background-color 0.2s;
+            white-space: nowrap; /* 글씨가 2줄로 넘어가지 않고 1열로 고정됨 */
         }
         .header-call-btn:active {
             transform: scale(0.95);
@@ -173,8 +178,9 @@
 
         .view-title {
             color: white;
-            font-size: 1.2rem;
-            text-align: center;
+            font-size: 1.3rem; /* 뷰 타이틀 폰트 크기 확대 */
+            font-weight: bold;
+            text-align: left;
             margin-bottom: 20px;
             border-bottom: none;
         }
@@ -312,14 +318,14 @@
 </head>
 <body>
 
-    <!-- 헤더 영역 (비상연락망 우측 고정) -->
+    <!-- 헤더 영역 (타이틀 좌측, 비상연락망 우측 고정) -->
     <header>
         <div class="header-left">
             <button type="button" class="back-btn" id="backBtn" onclick="goHome()">◀ 뒤로</button>
+            <div class="header-title" id="headerTitle">의왕IDC 설비 점검/업무 수첩</div>
         </div>
-        <div class="header-title" id="headerTitle">의왕IDC 설비 장애 점검 / 업무 수첩</div>
         <div class="header-right">
-            <button type="button" class="header-call-btn" onclick="openView('viewContact', '비상연락망')">🚨 비상연락망</button>
+            <button type="button" class="header-call-btn" onclick="openView('viewContact', '🚨 비상연락망')">🚨 비상연락망</button>
         </div>
     </header>
 
@@ -329,25 +335,32 @@
         <!-- 공통 업무 섹션 (순서 변경 및 재해 관련 아이콘 카드화) -->
         <div class="category-header">📌 공통 업무</div>
         <div class="grid-menu">
+            <!-- 1. 의왕 스케줄/인수인계 -->
             <button type="button" class="menu-card" onclick="openMemoView()">
                 <span class="menu-icon">
                     <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                 </span>
-                <span>스케줄/인수인계</span>
+                <span>의왕 스케줄/인수인계</span>
             </button>
+            
+            <!-- 2. TBM 안전교육 -->
             <button type="button" class="menu-card" onclick="openTBMView()">
                 <span class="menu-icon">
                     <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                 </span>
                 <span>TBM 안전교육</span>
             </button>
-            <button type="button" class="menu-card" onclick="openView('viewProcess', '재해대응프로세스')">
+            
+            <!-- 3. 재해대응프로세스 -->
+            <button type="button" class="menu-card" onclick="openView('viewProcess', '🔄 재해대응프로세스')">
                 <span class="menu-icon">
                     <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
                 </span>
                 <span>재해대응프로세스</span>
             </button>
-            <button type="button" class="menu-card" onclick="openView('viewReportForm', '재해보고양식')">
+            
+            <!-- 4. 재해보고양식 -->
+            <button type="button" class="menu-card" onclick="openView('viewReportForm', '📝 재해보고양식')">
                 <span class="menu-icon">
                     <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 </span>
@@ -465,7 +478,7 @@
         <div id="memoList"></div>
     </div>
 
-    <!-- TBM 안전교육 화면 -->
+    <!-- TBM 안전교육 (화면 폭 맞춤 탭 방식 적용) 화면 -->
     <div id="viewTBM" class="container view">
         <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 16px;">수행하실 작업을 탭에서 선택하여 위험요인과 보호구를 확인하세요.</p>
         <div class="tbm-tabs" id="tbmTabs"></div>
@@ -573,7 +586,7 @@
 
     <script>
         // ==========================================
-        // 1. Firebase 연동 설정 영역 (Firestore)
+        // 1. Firebase 연동 설정
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyCzsU9bB3ZBKsZ8p_hlS24ZHdxGZKuxXtY",
@@ -806,14 +819,14 @@
         }
 
         // ==========================================
-        // 3. 스케줄/인수인계 (Firebase 연동)
+        // 3. 스케줄/인수인계 (수정 및 삭제 기능 포함)
         // ==========================================
         let unsubscribeMemoListener = null;
         let editingMemoId = null;
         let currentMemosArray = []; 
 
         function openMemoView() {
-            document.getElementById('headerTitle').innerText = "스케줄/인수인계";
+            document.getElementById('headerTitle').innerText = "의왕 스케줄/인수인계";
             document.getElementById('backBtn').style.display = 'inline-block';
             showView('viewMemo');
             initRealtimeMemos();
@@ -1060,7 +1073,7 @@
 
         function goHome() {
             showView('viewHome');
-            document.getElementById('headerTitle').innerText = '의왕IDC 설비 장애 점검 / 업무 수첩';
+            document.getElementById('headerTitle').innerText = '의왕IDC 설비 점검/업무 수첩';
             document.getElementById('backBtn').style.display = 'none';
             window.scrollTo(0, 0);
         }

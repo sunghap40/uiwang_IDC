@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>현대차 의왕IDC 공조/전기설비 장애 점검 Guide</title>
     
-    <!-- [수정] 브라우저 탭 아이콘 (Favicon - 현대자동차 H 로고) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><ellipse cx=%2212%22 cy=%2212%22 rx=%2211%22 ry=%227%22/><path d=%22M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9%22/></svg>">
-
     <!-- Firebase App (v8 호환 SDK) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <!-- Firebase Firestore -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <!-- 브라우저 탭 아이콘 (Favicon - 현대자동차 H 로고) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><ellipse cx=%2212%22 cy=%2212%22 rx=%2211%22 ry=%227%22/><path d=%22M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9%22/></svg>">
 
     <style>
         /* 기본 테마 (다크 모드) */
@@ -239,7 +239,7 @@
         .contact-name { font-size: 1.1rem; font-weight: bold; }
         .call-btn { background-color: var(--success-color); color: white; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
         
-        /* 복사 기능 추가된 보고 양식 */
+        /* 보고 양식 (복사 기능) */
         .report-box { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
         .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 12px; }
         .report-header h3 { margin: 0; color: var(--info-color); font-size: 1.05rem;}
@@ -258,15 +258,23 @@
         .memo-form { background-color: var(--surface-color); padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--border-color); }
         .memo-input { width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-family: inherit; }
         .memo-textarea { width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-family: inherit; resize: vertical; min-height: 80px;}
-        .memo-submit { background-color: var(--primary-color); color: #000; width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        
+        .memo-btn-group { display: flex; gap: 8px; }
+        .memo-submit { flex: 1; background-color: var(--primary-color); color: #000; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .memo-cancel { flex: 1; background-color: #444; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; display: none; }
         
         .memo-card { background-color: var(--surface-color); border-left: 4px solid var(--primary-color); padding: 16px; border-radius: 4px; margin-bottom: 12px; }
         .memo-card.important { border-left: 4px solid var(--danger-color); background-color: rgba(244, 67, 54, 0.12); }
         .important-badge { color: var(--danger-color); font-weight: bold; font-size: 0.8rem; border: 1px solid var(--danger-color); padding: 2px 6px; border-radius: 4px; margin-right: 8px; display: inline-block; }
+        
         .memo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); }
+        .memo-actions { display: flex; gap: 4px; align-items: center;}
+        .action-btn { background: none; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 4px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
+        .action-btn:hover { color: white; border-color: var(--primary-color); }
+        
         .memo-body { font-size: 0.95rem; line-height: 1.5; white-space: pre-line; }
 
-        /* TBM 탭 UI: 화면 너비에 맞춰 칩(Chip) 형태로 자동 정렬 */
+        /* TBM 탭 UI */
         .tbm-tabs {
             display: flex;
             flex-wrap: wrap; 
@@ -447,25 +455,21 @@
                 <label for="memoImportant" style="margin-left: 8px; color: var(--danger-color); font-weight: bold; cursor: pointer;">⭐ 중요 (목록 최상단 고정)</label>
             </div>
             
-            <button class="memo-submit" id="saveMemoBtn" onclick="saveMemo()">저장하기</button>
+            <!-- 수정 모드를 위한 버튼 그룹 -->
+            <div class="memo-btn-group">
+                <button class="memo-submit" id="saveMemoBtn" onclick="saveMemo()">저장하기</button>
+                <button class="memo-cancel" id="cancelEditBtn" onclick="cancelEdit()">취소</button>
+            </div>
         </div>
         <h2 style="margin-top:0;">실시간 메모 기록</h2>
         <div id="memoList"></div>
     </div>
 
-    <!-- TBM 안전교육 (화면 폭 맞춤 탭 방식 적용) 화면 -->
+    <!-- TBM 안전교육 화면 -->
     <div id="viewTBM" class="container view">
         <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 16px;">수행하실 작업을 탭에서 선택하여 위험요인과 보호구를 확인하세요.</p>
-        
-        <!-- 자동 줄바꿈(Wrap) 탭 영역 -->
-        <div class="tbm-tabs" id="tbmTabs">
-            <!-- JS 렌더링 -->
-        </div>
-
-        <!-- 탭 상세 내용 영역 -->
-        <div id="tbmDetailBox">
-            <!-- JS 렌더링 -->
-        </div>
+        <div class="tbm-tabs" id="tbmTabs"></div>
+        <div id="tbmDetailBox"></div>
     </div>
 
     <!-- 비상연락망 화면 -->
@@ -573,7 +577,7 @@
 
     <script>
         // ==========================================
-        // 1. Firebase 연동 설정
+        // 1. Firebase 연동 설정 영역 (Firestore)
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyCzsU9bB3ZBKsZ8p_hlS24ZHdxGZKuxXtY",
@@ -617,7 +621,7 @@
             { task: "외부작업", detail: "외벽·옥외설비 점검", hazard: "추락, 차량충돌, 낙하물", method: "안전대·작업발판 확인", ppe: "안전모, 안전화, 안전대, 반사조끼", control: "작업구역 및 차량 통제", emergency: "추락·충돌 시 119 신고" },
             { task: "예초작업", detail: "잡초 제거", hazard: "비산물, 베임, 소음", method: "작업 전 주변 확인, 보호덮개 확인", ppe: "보안면/보안경, 장갑, 안전화, 귀마개", control: "작업반경 출입금지", emergency: "장비 정지 후 부상 응급조치" },
             { task: "벌목전지", detail: "나뭇가지 절단", hazard: "낙하, 베임, 추락", method: "작업반경 통제, 절단방향 확인", ppe: "안전모, 보안면, 안전화, 장갑", control: "낙하범위 출입금지", emergency: "작업중지 후 119 신고" },
-            { task: "굴착작업", detail: "지반 굴착", hazard: "붕괴, 매몰, 매설물 파 파손", method: "지하매설물 확인, 굴착면 안전조치", ppe: "안전모, 안전화, 반사조끼", control: "굴착구역 출입통제", emergency: "붕괴 시 무리한 구조 금지·119" },
+            { task: "굴착작업", detail: "지반 굴착", hazard: "붕괴, 매몰, 매설물 파손", method: "지하매설물 확인, 굴착면 안전조치", ppe: "안전모, 안전화, 반사조끼", control: "굴착구역 출입통제", emergency: "붕괴 시 무리한 구조 금지·119" },
             { task: "천장점검", detail: "천장 내부 설비 점검", hazard: "추락, 낙하물, 감전", method: "작업발판 확인, 전기설비 차단", ppe: "안전모, 안전화, 안전대, 보안경", control: "하부 통제", emergency: "낙하·추락 시 작업중지" },
             { task: "냉동/공조", detail: "냉동기·AHU 정비", hazard: "감전, 회전체, 냉매 누출", method: "전원 차단, 압력·냉매 상태 확인", ppe: "안전모, 안전화, 장갑, 보안경", control: "장비 주변 통제", emergency: "냉매 누출 시 환기 및 대피" },
             { task: "보일러", detail: "보일러 점검·정비", hazard: "화상, 가스누출, 폭발", method: "연료 차단, 압력·온도 확인", ppe: "안전모, 안전화, 보안경, 내열장갑", control: "기계실 출입통제", emergency: "가스누출 시 밸브 차단·대피" },
@@ -806,9 +810,11 @@
         }
 
         // ==========================================
-        // 3. 스케줄/인수인계 (Firebase 연동)
+        // 3. 스케줄/인수인계 (수정 및 삭제 기능 포함)
         // ==========================================
         let unsubscribeMemoListener = null;
+        let editingMemoId = null;
+        let currentMemosArray = []; // 현재 로드된 메모 목록 저장
 
         function openMemoView() {
             document.getElementById('headerTitle').innerText = "스케줄/인수인계";
@@ -828,9 +834,13 @@
                 .orderBy("timestamp", "desc")
                 .limit(50)
                 .onSnapshot((querySnapshot) => {
-                    let fetchedMemos = [];
-                    querySnapshot.forEach((doc) => fetchedMemos.push(doc.data()));
-                    renderMemoHTML(listDiv, fetchedMemos);
+                    currentMemosArray = [];
+                    querySnapshot.forEach((doc) => {
+                        let data = doc.data();
+                        data.id = doc.id; // 파이어베이스 Document ID 저장
+                        currentMemosArray.push(data);
+                    });
+                    renderMemoHTML(listDiv, currentMemosArray);
                 }, (error) => {
                     console.error("Firestore 실시간 리스너 오류:", error);
                     listDiv.innerHTML = `<p style="color:var(--danger-color); font-size:0.9rem;">데이터베이스 연결 오류가 발생했습니다.</p>`;
@@ -849,29 +859,86 @@
             }
 
             btn.disabled = true;
-            btn.innerText = "저장 중...";
+            btn.innerText = "처리 중...";
 
-            const newMemo = {
-                author: author,
-                content: content,
-                important: isImportant,
-                timestamp: new Date().toISOString(),
-                displayTime: new Date().toLocaleString('ko-KR')
-            };
+            if (editingMemoId) {
+                // [수정 모드]
+                db.collection("memos").doc(editingMemoId).update({
+                    author: author,
+                    content: content,
+                    important: isImportant
+                }).then(() => {
+                    resetMemoForm();
+                    btn.disabled = false;
+                    btn.innerText = "저장하기";
+                }).catch((error) => {
+                    console.error("수정 오류:", error);
+                    alert("메모 수정에 실패했습니다.");
+                    btn.disabled = false;
+                    btn.innerText = "수정하기";
+                });
+            } else {
+                // [신규 생성 모드]
+                const newMemo = {
+                    author: author,
+                    content: content,
+                    important: isImportant,
+                    timestamp: new Date().toISOString(),
+                    displayTime: new Date().toLocaleString('ko-KR')
+                };
 
-            db.collection("memos").add(newMemo)
-            .then(() => {
-                document.getElementById('memoContent').value = '';
-                document.getElementById('memoImportant').checked = false;
-                btn.disabled = false;
-                btn.innerText = "저장하기";
-            })
-            .catch((error) => {
-                console.error("저장 오류:", error);
-                alert("클라우드 저장에 실패했습니다. 규칙 설정을 확인해주세요.");
-                btn.disabled = false;
-                btn.innerText = "저장하기";
-            });
+                db.collection("memos").add(newMemo)
+                .then(() => {
+                    resetMemoForm();
+                    btn.disabled = false;
+                    btn.innerText = "저장하기";
+                }).catch((error) => {
+                    console.error("저장 오류:", error);
+                    alert("메모 저장에 실패했습니다. 규칙 설정을 확인해주세요.");
+                    btn.disabled = false;
+                    btn.innerText = "저장하기";
+                });
+            }
+        }
+
+        function editMemo(id) {
+            const memo = currentMemosArray.find(m => m.id === id);
+            if (!memo) return;
+
+            document.getElementById('memoAuthor').value = memo.author;
+            document.getElementById('memoContent').value = memo.content;
+            document.getElementById('memoImportant').checked = memo.important;
+            
+            editingMemoId = id;
+            document.getElementById('saveMemoBtn').innerText = "수정하기";
+            document.getElementById('cancelEditBtn').style.display = "inline-block";
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteMemo(id) {
+            if (confirm("정말로 이 메모를 삭제하시겠습니까?")) {
+                db.collection("memos").doc(id).delete().then(() => {
+                    // 삭제 완료 시 실시간 리스너가 화면을 자동 갱신함
+                }).catch((error) => {
+                    console.error("삭제 오류:", error);
+                    alert("메모 삭제에 실패했습니다.");
+                });
+            }
+        }
+
+        function cancelEdit() {
+            resetMemoForm();
+        }
+
+        function resetMemoForm() {
+            document.getElementById('memoAuthor').value = '';
+            document.getElementById('memoContent').value = '';
+            document.getElementById('memoImportant').checked = false;
+            
+            editingMemoId = null;
+            document.getElementById('saveMemoBtn').innerText = "저장하기";
+            document.getElementById('cancelEditBtn').style.display = "none";
         }
 
         function renderMemoHTML(container, memoArray) {
@@ -888,7 +955,11 @@
                     <div class="memo-card ${impClass}">
                         <div class="memo-header">
                             <div>${impBadge}👤 ${data.author}</div>
-                            <span>${data.displayTime}</span>
+                            <div class="memo-actions">
+                                <span>${data.displayTime}</span>
+                                <button class="action-btn" onclick="editMemo('${data.id}')">수정</button>
+                                <button class="action-btn" onclick="deleteMemo('${data.id}')">삭제</button>
+                            </div>
                         </div>
                         <div class="memo-body">${data.content}</div>
                     </div>
@@ -899,7 +970,7 @@
         }
 
         // ==========================================
-        // 4. TBM 안전교육 (가로 스크롤 제거, 화면 꽉 차는 태그 형태)
+        // 4. TBM 안전교육 탭 제어
         // ==========================================
         function openTBMView() {
             document.getElementById('headerTitle').innerText = "TBM 안전교육";
@@ -957,7 +1028,6 @@
             }
         }
 
-        // 구형 모바일 브라우저를 위한 복사 Fallback
         function fallbackCopyTextToClipboard(text) {
             var textArea = document.createElement("textarea");
             textArea.value = text;

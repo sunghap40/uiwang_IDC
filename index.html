@@ -116,7 +116,7 @@
         }
         .category-header:first-of-type { margin-top: 0; }
 
-        /* 메인 그리드 메뉴 */
+        /* 메인 그리드 메뉴 (SVG 적용) */
         .grid-menu {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -140,7 +140,22 @@
             touch-action: manipulation; 
         }
         .menu-card:active { background-color: #2c2c2c; }
-        .menu-icon { font-size: 2.2rem; margin-bottom: 12px; color: var(--primary-color); pointer-events: none; }
+        .menu-icon { 
+            margin-bottom: 12px; 
+            pointer-events: none; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .menu-icon svg {
+            width: 44px;
+            height: 44px;
+            stroke: var(--primary-color);
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
 
         h2 {
             font-size: 1.1rem;
@@ -205,6 +220,8 @@
         .sys-fault-box h4 { margin: 0 0 8px 0; color: var(--text-muted); font-size: 0.85rem; border-bottom: 1px solid #333; padding-bottom: 4px; }
         .troubleshooting-steps { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #333; font-size: 0.85rem; color: #ccc; }
         .ts-title { color: var(--primary-color); font-weight: bold; }
+        
+        /* 체크리스트 */
         .checklist { list-style: none; padding: 0; margin-bottom: 24px; }
         .check-item { background-color: var(--surface-color); margin-bottom: 8px; padding: 16px; border-radius: 8px; display: flex; align-items: center; cursor: pointer; touch-action: manipulation; }
         .check-item.done { opacity: 0.5; text-decoration: line-through; }
@@ -218,10 +235,17 @@
         .contact-company { font-size: 0.8rem; color: var(--text-muted); }
         .contact-name { font-size: 1.1rem; font-weight: bold; }
         .call-btn { background-color: var(--success-color); color: white; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
+        
+        /* 복사 기능 추가된 보고 양식 */
         .report-box { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-        .report-box h3 { margin-top: 0; color: var(--info-color); border-bottom: 1px solid #333; padding-bottom: 8px; }
+        .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 12px; }
+        .report-header h3 { margin: 0; color: var(--info-color); font-size: 1.05rem;}
+        .copy-btn { background-color: #333; color: white; border: 1px solid #555; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .copy-btn:active { background-color: var(--primary-color); color: #000; }
         .report-content { font-size: 0.95rem; line-height: 1.6; white-space: pre-line; }
         .report-time { color: var(--danger-color); font-weight: bold; margin-top: 12px; font-size: 0.9rem; }
+        
+        /* 프로세스 스텝 */
         .process-step { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #333; }
         .process-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .step-title { color: var(--success-color); font-weight: bold; margin-bottom: 4px; }
@@ -234,1013 +258,45 @@
         .memo-submit { background-color: var(--primary-color); color: #000; width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; }
         
         .memo-card { background-color: var(--surface-color); border-left: 4px solid var(--primary-color); padding: 16px; border-radius: 4px; margin-bottom: 12px; }
-        .memo-card.important {
-            border-left: 4px solid var(--danger-color);
-            background-color: rgba(244, 67, 54, 0.12); 
-        }
-        .important-badge {
-            color: var(--danger-color);
-            font-weight: bold;
-            font-size: 0.8rem;
-            border: 1px solid var(--danger-color);
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-right: 8px;
-            display: inline-block;
-        }
+        .memo-card.important { border-left: 4px solid var(--danger-color); background-color: rgba(244, 67, 54, 0.12); }
+        .important-badge { color: var(--danger-color); font-weight: bold; font-size: 0.8rem; border: 1px solid var(--danger-color); padding: 2px 6px; border-radius: 4px; margin-right: 8px; display: inline-block; }
         .memo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); }
         .memo-body { font-size: 0.95rem; line-height: 1.5; white-space: pre-line; }
 
-        /* TBM 안전교육 UI */
-        .tbm-card { background-color: var(--surface-color); border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px; overflow: hidden; }
-        .tbm-header { background-color: #2c2c2c; padding: 16px; font-weight: bold; font-size: 1.1rem; color: var(--primary-color); }
-        .tbm-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background-color: #333; }
-        .tbm-row { background-color: var(--surface-color); padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
-        .tbm-label { font-size: 0.8rem; color: var(--info-color); font-weight: bold; }
-        .tbm-value { font-size: 0.95rem; line-height: 1.4; color: white; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <button type="button" class="back-btn" id="backBtn" onclick="goHome()">◀ 뒤로</button>
-        <span id="headerTitle">현대차 의왕IDC 장애 점검 Guide</span>
-        <span style="width: 50px;"></span>
-    </header>
-
-    <!-- [1] 홈 화면 -->
-    <div id="viewHome" class="container view active">
-        
-        <!-- 긴급 메뉴 영역 -->
-        <div class="emergency-nav">
-            <button class="em-btn em-btn-process" onclick="openView('viewProcess', '재해대응프로세스')">
-                <span class="em-icon">🔄</span>
-                <span>재해대응프로세스</span>
-            </button>
-            <button class="em-btn em-btn-report" onclick="openView('viewReportForm', '재해보고양식')">
-                <span class="em-icon">📝</span>
-                <span>재해보고양식</span>
-            </button>
-            <button class="em-btn em-btn-call" onclick="openView('viewContact', '비상연락망')">
-                <span class="em-icon">🚨</span>
-                <span>비상연락망</span>
-            </button>
-        </div>
-
-        <!-- 공통 업무 섹션 -->
-        <div class="category-header">📌 공통 업무</div>
-        <div class="grid-menu">
-            <button type="button" class="menu-card" onclick="openMemoView()">
-                <span class="menu-icon">📅</span>
-                <span>스케줄/인수인계</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openTBMView()">
-                <span class="menu-icon">🛡️</span>
-                <span>TBM 안전교육</span>
-            </button>
-        </div>
-
-        <!-- 의왕IDC 공조설비 섹션 -->
-        <div class="category-header">❄️ 의왕IDC 공조설비</div>
-        <div class="grid-menu">
-            <button type="button" class="menu-card" onclick="openDetail('CCU')">
-                <span class="menu-icon">❄️</span>
-                <span>항온항습기</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('OUTDOOR')">
-                <span class="menu-icon">💨</span>
-                <span>실외기</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('PUMP')">
-                <span class="menu-icon">🔄</span>
-                <span>냉각수 펌프</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('HEAT')">
-                <span class="menu-icon">🔥</span>
-                <span>열교환기/응축기</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('TANK')">
-                <span class="menu-icon">💧</span>
-                <span>보충수 탱크</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('SPRAY')">
-                <span class="menu-icon">🚿</span>
-                <span>살수펌프</span>
-            </button>
-        </div>
-
-        <!-- 의왕IDC 전기설비 섹션 -->
-        <div class="category-header">⚡ 의왕IDC 전기설비</div>
-        <div class="grid-menu">
-            <button type="button" class="menu-card" onclick="openDetail('VCB')">
-                <span class="menu-icon">🔌</span>
-                <span>VCB (진공차단기)</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('TR')">
-                <span class="menu-icon">🗄️</span>
-                <span>TR (변압기)</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('ACB')">
-                <span class="menu-icon">🎛️</span>
-                <span>ACB (기중차단기)</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('ATS')">
-                <span class="menu-icon">🔀</span>
-                <span>ATS (자동절환)</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('UPS')">
-                <span class="menu-icon">🔋</span>
-                <span>UPS (무정전전원)</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('PANEL')">
-                <span class="menu-icon">💡</span>
-                <span>분전반</span>
-            </button>
-            <button type="button" class="menu-card" onclick="openDetail('GEN')">
-                <span class="menu-icon">🏭</span>
-                <span>비상발전기</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- 스케줄 및 인수인계 메모장 화면 -->
-    <div id="viewMemo" class="container view">
-        <div class="memo-form">
-            <input type="text" id="memoAuthor" class="memo-input" placeholder="작성자 이름 (예: 홍길동)" autocomplete="off">
-            <textarea id="memoContent" class="memo-textarea" placeholder="주간/월간 스케줄 또는 인수인계 내용을 입력하세요."></textarea>
-            
-            <div style="margin-bottom: 12px; display: flex; align-items: center;">
-                <input type="checkbox" id="memoImportant" style="width: 20px; height: 20px; accent-color: var(--danger-color);">
-                <label for="memoImportant" style="margin-left: 8px; color: var(--danger-color); font-weight: bold; cursor: pointer;">⭐ 중요 (목록 최상단 고정)</label>
-            </div>
-            
-            <button class="memo-submit" id="saveMemoBtn" onclick="saveMemo()">저장하기</button>
-        </div>
-        <h2 style="margin-top:0;">실시간 메모 기록</h2>
-        <div id="memoList"></div>
-    </div>
-
-    <!-- TBM 안전교육 화면 -->
-    <div id="viewTBM" class="container view">
-        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 20px;">각 작업별 위험요인과 필수 안전보호구를 확인하세요.</p>
-        <div id="tbmList"></div>
-    </div>
-
-    <!-- 비상연락망 화면 -->
-    <div id="viewContact" class="container view">
-        <h2 class="view-title">🚨 비상연락망</h2>
-        <div class="contact-list" id="contactArea"></div>
-    </div>
-
-    <!-- 재해보고양식 화면 -->
-    <div id="viewReportForm" class="container view">
-        <h2 class="view-title">📝 재해발생 시 최초 문자보고 기준</h2>
-        <div class="report-box">
-            <h3>▶ 일반사고 (자산사업장 안전사고 보고)</h3>
-            <div class="report-content">1. 사업장명 : 000사업장(0팀)
-2. 일시 : 
-3. 재해정도 : 부상 0명
-   - 00골절
-4. 재해내용
-   - 누가 : 홍길동 (협력사명, 공종, 성별, 나이)
-   - 어디서 : 
-   - 무엇을 : 
-   - 어떻게 : 
-5. 기타 : 
-보고자 : OOO 소장</div>
-            <div class="report-time">* 초기보고: 3시간 이내 (중대재해 30분 이내)</div>
-        </div>
-        <div class="report-box">
-            <h3>▶ 물적피해사고 (화재 포함)</h3>
-            <div class="report-content">[자산사업장 OO피해 보고]
-1. 사업장명 : 000사업장(0팀)
-2. 일시 : 
-3. 피해정도
-   - 물적 : (예상 피해금액)
-4. 피해내용
-   - 내용 : (위치, 당사관리유무 등)
-   - 경과 : 
-   - 전망 : 
-   - 추정 원인 등
-5. 기타 : 
-보고자 : OOO 소장</div>
-             <div class="report-time">* 초기보고: 3시간 이내</div>
-        </div>
-    </div>
-
-    <!-- 재해대응프로세스 화면 -->
-    <div id="viewProcess" class="container view">
-        <h2 class="view-title">🔄 재해 대응 프로세스</h2>
-        <button class="process-acc">
-            <span>1. 중대 재해 (대형사고)</span>
-            <span style="color:var(--danger-color); font-size:0.85rem;">[30분 이내]</span>
-        </button>
-        <div class="process-content">
-            <div style="color:var(--danger-color); font-size:0.8rem; margin-bottom:8px; margin-top:8px;">* 업무 상 사망자 또는 6개월 이상 부상자가 동시에 2명 이상 발생한 사고</div>
-            <div class="process-step">
-                <div class="step-title">[초기대응] 사고발생 통보</div>
-                <div class="role-title">▶ 협력사 (당사사고 시 당사 수행)</div>
-                사고자 응급 조치(병원후송) → 사고발생통보(HEC) → 고용노동부 보고 → 환자상태 확인 → 가족연락 → 2차 재해방지/보존
-                <div class="role-title">▶ HEC 현장 (소속팀)</div>
-                최초 보고(본사) → 재해자 상태 확인 및 경과 보고 → 고객사 대응/협의
-            </div>
-        </div>
-        <button class="process-acc">
-            <span>2. 일반 재해</span>
-            <span style="color:var(--primary-color); font-size:0.85rem;">[3시간 이내]</span>
-        </button>
-        <div class="process-content">
-             <div style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px; margin-top:8px;">* 업무에 기인하여 발생한 인명사고(업무 중 교통사고 포함)</div>
-             <div class="process-step">
-                <div class="step-title">[초기대응]</div>
-                협력사: 병원후송, HEC통보, 2차 재해방지 현장보존<br>
-                HEC현장: 최초 보고(본사), 대체인력 투입 확인
-            </div>
-        </div>
-        <button class="process-acc">
-            <span>3. 기타 사고 (개인질환, 피해사고 등)</span>
-            <span style="color:var(--primary-color); font-size:0.85rem;">[3시간 이내]</span>
-        </button>
-        <div class="process-content">
-             <div style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px; margin-top:8px;">* 심혈관계/근골격계 질환 병원치료, 제3자 피해사고, 현장 내 인명사건 등</div>
-             <div class="process-step">
-                <div class="step-title">[초기대응]</div>
-                협력사: 병원후송, HEC통보, 질병정도 파악, 가족 연락<br>
-                HEC현장: 최초 보고(본사), 대체 인력 투입 확인
-            </div>
-        </div>
-    </div>
-
-    <!-- 설비 상세 화면 -->
-    <div id="viewDetail" class="container view">
-        <h2 id="detailSubtitle">계통별 장애 원인 및 조치</h2>
-        <div id="systemFaultArea"></div>
-        <h2>우선순위 점검 (터치하여 완료처리)</h2>
-        <ul class="checklist" id="checklistArea"></ul>
-        <h2>빈도순 장애 발생 가이드</h2>
-        <div id="guideArea"></div>
-    </div>
-
-    <script>
-        // ==========================================
-        // 1. 전달해주신 Firebase 실제 키 설정 완료
-        // ==========================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyCzsU9bB3ZBKsZ8p_hlS24ZHdxGZKuxXtY",
-            authDomain: "uiwang-idc.firebaseapp.com",
-            projectId: "uiwang-idc",
-            storageBucket: "uiwang-idc.firebasestorage.app",
-            messagingSenderId: "185648526696",
-            appId: "1:185648526696:web:dd6dc2994e00927abe52dd",
-            measurementId: "G-J3JCKQ3VKF"
-        };
-
-        // Firebase 초기화 및 Firestore 인스턴스 생성
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // ==========================================
-        // 2. TBM 안전교육 데이터 (30종)
-        // ==========================================
-        const tbmData = [
-            { task: "전기작업", detail: "전기설비 점검·정비", hazard: "감전, 단락, 화재", method: "전원 차단→검전→방전→접지 후 작업", ppe: "안전모, 절연장갑, 절연화, 보안경", control: "작업구역 출입통제", emergency: "감전 시 전원 차단 후 119 신고" },
-            { task: "수배전반 작업", detail: "배전반 점검·정비", hazard: "감전, 아크플래시", method: "LOTO 실시, 무전압 확인 후 작업", ppe: "안전모, 절연장갑, 절연화, 아크보호면", control: "전기실 출입통제", emergency: "사고 시 전원 차단 및 응급조치" },
-            { task: "고압전기 작업", detail: "고압설비 점검·정비", hazard: "감전, 아크폭발", method: "정전→검전→방전→접지 확인", ppe: "절연장갑, 절연화, 안전모, 아크보호면, 방염복", control: "관계자 외 출입금지", emergency: "즉시 전원 차단 및 119 신고" },
-            { task: "용접작업", detail: "배관·철재 용접", hazard: "화재, 폭발, 화상", method: "가연물 제거, 불티방지포 설치, 소화기 비치", ppe: "용접면, 방염복, 용접장갑, 안전화", control: "화기작업구역 통제", emergency: "화재 발생 시 작업중지·소화" },
-            { task: "용단작업", detail: "금속 절단", hazard: "화재, 폭발, 화상", method: "가스호스·밸브 점검, 가연물 제거", ppe: "보안면, 방염복, 장갑, 안전화", control: "불티 비산구역 통제", emergency: "가스 차단 후 소화 및 신고" },
-            { task: "그라인더 작업", detail: "금속 연마·절단", hazard: "비산물, 절단, 화재", method: "디스크 균열 확인, 방호커버 설치", ppe: "보안경/안면보호구, 장갑, 안전화, 귀마개", control: "불티 방향 통제", emergency: "장비 정지 후 부상자 응급조치" },
-            { task: "드릴·천공작업", detail: "벽체·철판 천공", hazard: "감전, 비산물, 끼임", method: "매설 전선·배관 확인 후 천공", ppe: "보안경, 안전화, 장갑, 귀마개", control: "작업반경 통제", emergency: "전선 발견 시 즉시 작업중지" },
-            { task: "고소작업", detail: "천장·높은 곳 작업", hazard: "추락, 낙하물", method: "작업발판·난간 확인, 안전대 체결", ppe: "안전모, 안전대, 안전화, 보안경", control: "하부 출입통제", emergency: "추락사고 시 119 신고" },
-            { task: "사다리 작업", detail: "사다리 이용 점검·정비", hazard: "추락, 전도", method: "사다리 상태·각도 확인, 미끄럼 방지", ppe: "안전모, 안전화, 안전대", control: "사다리 주변 통제", emergency: "전도·추락 시 작업중지" },
-            { task: "비계작업", detail: "비계 설치·해체·사용", hazard: "추락, 붕괴", method: "발판·난간·벽이음 확인", ppe: "안전모, 안전대, 안전화", control: "하부 출입금지", emergency: "붕괴·추락 시 즉시 신고" },
-            { task: "중량물 운반", detail: "기계·자재 이동", hazard: "깔림, 협착, 충돌", method: "중량·무게중심 확인, 운반경로 확보", ppe: "안전모, 안전화, 장갑", control: "운반구역 통제", emergency: "사고 시 장비 정지 및 119" },
-            { task: "크레인 작업", detail: "중량물 인양", hazard: "낙하, 충돌, 협착", method: "줄걸이 점검, 정격하중 확인, 신호수 배치", ppe: "안전모, 안전화, 장갑", control: "인양반경 출입금지", emergency: "낙하사고 시 접근 금지 후 신고" },
-            { task: "지게차 작업", detail: "자재 운반", hazard: "충돌, 전도, 협착", method: "운전자 확인, 후진경보·브레이크 확인", ppe: "안전모, 안전화, 반사조끼", control: "보행자 통로 분리", emergency: "사고 시 차량 정지 및 신고" },
-            { task: "배관작업", detail: "배관 교체·보수", hazard: "누수, 압력, 화상", method: "밸브 차단 및 잔압 제거", ppe: "안전모, 안전화, 장갑, 보안경", control: "작업구역 출입통제", emergency: "누수 발생 시 밸브 차단" },
-            { task: "펌프 정비", detail: "펌프 분해·점검", hazard: "감전, 회전체 끼임", method: "전원 차단·LOTO, 압력 제거", ppe: "안전모, 안전화, 장갑, 보안경", control: "장비 주변 통제", emergency: "전원 차단 후 응급조치" },
-            { task: "모터 정비", detail: "모터 점검·교체", hazard: "감전, 끼임, 협착", method: "전원 차단·검전, 회전체 정지 확인", ppe: "안전모, 안전화, 절연장갑, 보안경", control: "장비 운전금지 표시", emergency: "비상정지 후 전원 차단" },
-            { task: "소방설비 작업", detail: "소화전·펌프·감지기 점검", hazard: "감전, 오작동, 누수", method: "설비 정지 여부 확인, 작업 전 방재실 통보", ppe: "안전모, 안전화, 장갑, 보안경", control: "작업구역 통제", emergency: "화재 발생 시 즉시 복구·신고" },
-            { task: "승강기 작업", detail: "승강기 점검·정비", hazard: "추락, 끼임, 감전", method: "운전정지·전원차단, 작업표지 설치", ppe: "안전모, 안전화, 안전대, 장갑", control: "승강기 사용금지 및 출입통제", emergency: "비상상황 즉시 신고" },
-            { task: "밀폐공간 작업", detail: "탱크·피트·맨홀 작업", hazard: "질식, 중독, 추락", method: "산소·유해가스 측정, 환기, 감시인 배치", ppe: "안전모, 안전화, 안전대, 적정 호흡보호구", control: "출입통제 및 감시인 배치", emergency: "구조자 단독 진입 금지, 119 신고" },
-            { task: "화학물질 작업", detail: "약품 보충·교체", hazard: "중독, 화상, 누출", method: "MSDS 확인, 환기, 누출방지 조치", ppe: "보안경, 내화학장갑, 보호복, 적정 호흡보호구", control: "관계자 외 출입금지", emergency: "피부·눈 접촉 시 즉시 세척" },
-            { task: "도장작업", detail: "페인트·도장", hazard: "유기용제 중독, 화재", method: "충분한 환기, 화기 제거", ppe: "방독마스크, 보호장갑, 보안경, 보호복", control: "화기 및 출입 통제", emergency: "어지럼증 발생 시 신선한 공기로 이동" },
-            { task: "청소작업", detail: "바닥·공용부 청소", hazard: "미끄러짐, 넘어짐", method: "물기 즉시 제거, 미끄럼주의 표지", ppe: "안전화, 장갑", control: "청소구역 통제", emergency: "사고 발생 시 작업중지 및 응급조치" },
-            { task: "외부 작업", detail: "외벽·옥외설비 점검", hazard: "추락, 차량충돌, 낙하물", method: "안전대·작업발판 확인", ppe: "안전모, 안전화, 안전대, 반사조끼", control: "작업구역 및 차량 통제", emergency: "추락·충돌 시 119 신고" },
-            { task: "제초·예초작업", detail: "잡초 제거", hazard: "비산물, 베임, 소음", method: "작업 전 주변 확인, 보호덮개 확인", ppe: "보안면/보안경, 장갑, 안전화, 귀마개", control: "작업반경 출입금지", emergency: "장비 정지 후 부상 응급조치" },
-            { task: "벌목·전지작업", detail: "나뭇가지 절단", hazard: "낙하, 베임, 추락", method: "작업반경 통제, 절단방향 확인", ppe: "안전모, 보안면, 안전화, 장갑", control: "낙하범위 출입금지", emergency: "작업중지 후 119 신고" },
-            { task: "굴착작업", detail: "지반 굴착", hazard: "붕괴, 매몰, 매설물 파손", method: "지하매설물 확인, 굴착면 안전조치", ppe: "안전모, 안전화, 반사조끼", control: "굴착구역 출입통제", emergency: "붕괴 시 무리한 구조 금지·119" },
-            { task: "천장 점검", detail: "천장 내부 설비 점검", hazard: "추락, 낙하물, 감전", method: "작업발판 확인, 전기설비 차단", ppe: "안전모, 안전화, 안전대, 보안경", control: "하부 통제", emergency: "낙하·추락 시 작업중지" },
-            { task: "냉동기·공조기 작업", detail: "냉동기·AHU 정비", hazard: "감전, 회전체, 냉매 누출", method: "전원 차단, 압력·냉매 상태 확인", ppe: "안전모, 안전화, 장갑, 보안경", control: "장비 주변 통제", emergency: "냉매 누출 시 환기 및 대피" },
-            { task: "보일러 작업", detail: "보일러 점검·정비", hazard: "화상, 가스누출, 폭발", method: "연료 차단, 압력·온도 확인", ppe: "안전모, 안전화, 보안경, 내열장갑", control: "기계실 출입통제", emergency: "가스누출 시 밸브 차단·대피" },
-            { task: "가스작업", detail: "가스설비 점검", hazard: "폭발, 질식, 중독", method: "가스농도 확인, 밸브 차단, 환기", ppe: "방폭형 보호구/장비, 안전화, 장갑, 보안경", control: "화기·출입 통제", emergency: "가스밸브 차단 후 즉시 대피·119" }
-        ];
-
-        // 비상연락망 데이터
-        const contacts = [
-            { company: "현대오토에버", name: "김동호 책임", phone: "010-3028-0053" },
-            { company: "현대엔지니어링", name: "김성합 책임", phone: "010-7454-4482" },
-            { company: "두잉씨앤에스", name: "김정호 소장", phone: "010-6254-8975" },
-            { company: "두잉씨앤에스", name: "방민기 과장", phone: "010-9121-3102" },
-            { company: "현대엔지니어링 본사", name: "김회성 팀장", phone: "010-6645-0049" },
-            { company: "현대엔지니어링 본사", name: "오재학 팀장", phone: "010-2058-7845" },
-            { company: "현대엔지니어링 본사", name: "양정호 책임", phone: "010-4002-7067" },
-            { company: "현대엔지니어링 본사", name: "임진규 매니저", phone: "010-4543-5901" }
-        ];
-
-        // 설비 데이터베이스 (공조 6종 + 전기 7종)
-        const dbData = {
-            'CCU': {
-                name: '항온항습기',
-                systemFaults: [
-                    { category: '전원', cause: '• 전원선 누전<br>• EOCR 불량<br>• 압축기 절연 불량<br>• FAN 모터 절연 불량<br>• 접지 불량', action: '• 전원선 절연 저항 측정 및 교체<br>• EOCR 동작 확인 및 교체<br>• 압축기 절연 점검 후 교체<br>• FAN 모터 절연 점검 및 교체<br>• 접지 상태 보수<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 차단기 트립 확인 → ② EOCR 경보 점검 → ③ 전원선 및 모터 절연 측정 → ④ 접지 상태 점검</div>' },
-                    { category: '제어', cause: '• 콘트롤러 불량<br>• 릴레이 접점 불량<br>• 전자밸브 제어 불량<br>• 프로그램 설정 오류<br>• 제어 신호 단선', action: '• 콘트롤러 동작 확인 및 교체<br>• 릴레이 접점 청소/교체<br>• 전자밸브 신호 확인 및 교체<br>• 프로그램 설정값 점검<br>• 배선 점검 및 재결선<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 콘트롤러 경보 확인 → ② 설정값 점검 → ③ 릴레이 및 배선 점검 → ④ 전자밸브 동작 확인</div>' },
-                    { category: '냉동', cause: '• 냉매 부족/누설<br>• 팽창밸브 막힘<br>• 필터드라이어 막힘<br>• 응축기 열교환 불량<br>• 증발기 결빙', action: '• 냉매 압력 측정 및 보충<br>• 누설 부위 탐지 및 보수<br>• 팽창밸브 교체<br>• 필터드라이어 교체<br>• 응축기·증발기 청소<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 압력 게이지 확인 → ② 누설 부위 탐지 → ③ 팽창밸브/드라이어 점검 → ④ 열교환기 오염 확인</div>' },
-                    { category: '가습', cause: '• 히터 불량<br>• 급수 밸브 막힘<br>• 급수 부족<br>• 수위 센서 불량<br>• 스케일 축적', action: '• 히터 저항 측정 및 교체<br>• 급수 밸브 청소/교체<br>• 급수 라인 점검<br>• 수위 센서 교체<br>• 스케일 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 수위 센서 경보 확인 → ② 급수 라인/밸브 점검 → ③ 히터 동작 측정 → ④ 스케일 축적 점검</div>' },
-                    { category: '송풍', cause: '• 모터 베어링 손상<br>• 팬 날개 파손<br>• 벨트 이탈/마모<br>• 팬 속도 제어 불량<br>• 모터 절연 불량', action: '• 베어링 교체<br>• 팬 날개 교체<br>• 벨트 장력 조정/교체<br>• 팬 속도 제어 회로 점검<br>• 모터 절연 점검 및 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 풍량 및 알람 확인 → ② 벨트 장력 점검 → ③ 베어링 소음 확인 → ④ 모터 절연 측정</div>' }
-                ],
-                steps: ['전원 및 컨트롤러 알람 이력 확인', '냉매 사이클 압력(고/저압) 게이지 확인', '풍량 및 필터 상태 확인', '가습용 급수 라인 점검'],
-                guides: [
-                    { rank: 1, title: '고압/저압 알람', desc: '냉매 부족, 필터 막힘으로 인한 풍량 저하', action: '에어필터 세척/교체, 냉매 누설 부위 확인 및 보충' },
-                    { rank: 2, title: '가습기 장애', desc: '가습 팬 스케일 누적, 급수 전자변 고장', action: '실린더 스케일 제거 및 교체, 급수 밸브 교체' }
-                ]
-            },
-            'OUTDOOR': {
-                name: '실외기',
-                systemFaults: [
-                    { category: '전원계통', cause: '• 전원선 누전<br>• 차단기 트립<br>• EOCR 불량<br>• 접지 불량', action: '• 전원선 절연 점검<br>• 차단기 상태 확인<br>• EOCR 교체<br>• 접지 보수<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 차단기 확인 → ② 전원선 절연 측정 → ③ EOCR 동작 확인 → ④ 접지 상태 점검</div>' },
-                    { category: '냉각팬', cause: '• 팬 모터 절연 불량<br>• 베어링 손상<br>• 팬 날개 파손<br>• 속도 제어 불량', action: '• 모터 절연 점검<br>• 베어링 교체<br>• 팬 날개 교체<br>• 속도 제어 회로 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 팬 회전 상태 확인 → ② 모터 절연 측정 → ③ 베어링 소음 확인 → ④ 날개 손상 점검</div>' },
-                    { category: '응축기', cause: '• 핀 막힘<br>• 냉매 과다/부족<br>• 열교환 불량<br>• 고압 발생', action: '• 핀 청소<br>• 냉매량 조정<br>• 열교환 상태 점검<br>• 고압 경보 시 정지 후 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 압력 게이지 확인 → ② 핀 청소 → ③ 냉매량 점검 → ④ 열교환 효율 확인</div>' },
-                    { category: '기계적 장애', cause: '• 나사 풀림<br>• 진동 과다<br>• 구조물 변형<br>• 소음 발생', action: '• 나사 조임<br>• 진동 패드 설치<br>• 구조물 보수<br>• 소음 원인 부품 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 소음·진동 확인 → ② 나사 조임 → ③ 구조물 점검 → ④ 보수 실시</div>' }
-                ],
-                steps: ['응축기 핀 오염도 육안 검사', '팬 모터 기동 상태 및 소음 점검', '콤프레셔 이상 소음/진동 확인', '서비스 밸브 냉매 누설 검사'],
-                guides: [
-                    { rank: 1, title: '응축기 열교환 불량', desc: '핀에 먼지/이물질 부착, 고압 컷아웃', action: '고압 세척기 및 약품을 이용한 응축기 세척' },
-                    { rank: 2, title: '콤프레셔 과열/과전류', desc: '표면 온도 상승, 마그네트 스위치 트립', action: '오일 상태 점검, 냉매량 적정성 확인' }
-                ]
-            },
-            'PUMP': {
-                name: '냉각수 순환펌프',
-                systemFaults: [
-                    { category: '모터', cause: '• 절연 불량<br>• 베어링 손상<br>• 과열<br>• 회전 불량', action: '• 절연 점검<br>• 베어링 교체<br>• 냉각 상태 점검<br>• 모터 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 모터 소음 확인 → ② 절연 측정 → ③ 베어링 점검 → ④ 과열 여부 확인</div>' },
-                    { category: '메커니컬씰', cause: '• 씰 마모<br>• 누수<br>• 설치 불량<br>• 윤활 부족', action: '• 씰 교체<br>• 누수 보수<br>• 설치 상태 점검<br>• 윤활유 보충<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 누수 확인 → ② 씰 상태 점검 → ③ 윤활 상태 확인 → ④ 교체 여부 결정</div>' },
-                    { category: '유량 부족', cause: '• 흡입 라인 막힘<br>• 임펠러 손상<br>• 밸브 불량<br>• 펌프 회전 불량', action: '• 흡입 라인 청소<br>• 임펠러 교체<br>• 밸브 교체<br>• 펌프 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 유량 측정 → ② 흡입 라인 점검 → ③ 임펠러 확인 → ④ 밸브 상태 점검</div>' },
-                    { category: '캐비테이션', cause: '• 흡입 압력 부족<br>• 수온 과다<br>• 펌프 과속<br>• 설치 불량', action: '• 흡입 압력 조정<br>• 수온 관리<br>• 회전수 조정<br>• 설치 상태 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 소음 확인 → ② 압력 게이지 확인 → ③ 수온 점검 → ④ 회전수 확인</div>' }
-                ],
-                steps: ['펌프 주변 누수 여부(육안)', '베어링 소음/진동(청각/촉각)', '모터 전류/전압 측정(계측)', '입출구 압력 게이지 확인'],
-                guides: [
-                    { rank: 1, title: '메카니컬 씰 누수', desc: '펌프 축 주변에서 물이 지속적으로 떨어짐', action: '펌프 분해 후 메카니컬 씰 교체' }
-                ]
-            },
-            'HEAT': {
-                name: '열교환기/응축기',
-                systemFaults: [
-                    { category: '열교환기', cause: '• 스케일 축적<br>• 누수<br>• 열전달 면 오염<br>• 배관 막힘', action: '• 세관 및 스케일 제거<br>• 누수 보수<br>• 열전달 면 청소<br>• 배관 세척<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 유량 확인 → ② 누수 점검 → ③ 스케일 제거 → ④ 열전달 효율 확인</div>' }
-                ],
-                steps: ['입출구 온도차 및 압력차 확인', '배관 및 조인트 체결부 육안 검사', '리시버탱크 액면계 확인', '안전변(Safety valve) 상태'],
-                guides: [
-                    { rank: 1, title: '스케일 생성 (효율 저하)', desc: '입출구 수온차 감소, 응축압력 상승', action: '화학 세관(CIP) 작업 실시, 튜브 브러쉬 펀칭' }
-                ]
-            },
-            'TANK': {
-                name: '보충수 탱크',
-                systemFaults: [
-                    { category: '보충수탱크', cause: '• 수위 센서 불량<br>• 급수 부족<br>• 밸브 막힘<br>• 내부 오염', action: '• 센서 교체<br>• 급수 보충<br>• 밸브 청소<br>• 내부 청소<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 수위 확인 → ② 센서 점검 → ③ 급수 라인 확인 → ④ 밸브 점검</div>' }
-                ],
-                steps: ['탱크 수위 육안 확인', '정수위 밸브(볼탑) 동작 점검', '수위 센서(전극봉) 부식 상태', '배관 동파 및 누수'],
-                guides: [
-                    { rank: 1, title: '볼탑/정수위 밸브 고장', desc: '급수가 멈추지 않거나 물이 채워지지 않음', action: '볼탑 부구 손상 확인 후 교체, 다이아프램 청소' }
-                ]
-            },
-            'SPRAY': {
-                name: '살수펌프',
-                systemFaults: [
-                    { category: '살수펌프', cause: '• 스트레이너 막힘<br>• 노즐 막힘/이탈<br>• 펌프 에어 록<br>• 모터 절연 파괴', action: '• 이물질 제거 및 세척<br>• 분해 세척 및 분배기 점검<br>• 수위 정상화 및 에어 빼기<br>• 모터 코일 점검 및 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 스트레이너 점검 → ② 살수 패턴 확인 → ③ 펌프 수위 점검 → ④ 모터 상태 확인</div>' }
-                ],
-                steps: ['흡입측 스트레이너 막힘 여부', '쿨링타워 노즐 살수 패턴 상태', '펌프 수위(공회전 여부)', '모터 상태'],
-                guides: [
-                    { rank: 1, title: '스트레이너 막힘', desc: '살수량 급감, 펌프 흡입 압력 저하', action: '시스템 정지 후 분해 및 슬러지 제거' }
-                ]
-            },
-            'VCB': {
-                name: 'VCB (진공차단기)',
-                systemFaults: [
-                    { category: '투입 불량', cause: '• 투입코일 단선<br>• 조작전원 상실 및 퓨즈 단선<br>• 기계적 걸림 (스프링 축적 불량)', action: '• 투입코일 저항 측정 및 교체<br>• 조작전원(DC/AC) 전압 확인<br>• 기구부 주유 및 기계적 셋팅 조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 조작전원 전압 확인 → ② 투입신호 인가 여부 → ③ 코일 저항 측정 → ④ 기구부 윤활/걸림 확인</div>' },
-                    { category: '트립 불량 / 오동작', cause: '• 트립코일 소손<br>• 보호계전기(Relay) 오동작<br>• 내부 회로 단락', action: '• 트립코일 교체<br>• 계전기 정정치 및 동작 이력 확인<br>• 제어 케이블 절연 측정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 계전기 타겟/알람 확인 → ② 트립 코일 전압 측정 → ③ 코일 도통 테스트 → ④ 릴레이 리셋</div>' },
-                    { category: '진공도 저하', cause: '• 진공 인터럽터(VI) 노후화<br>• VI 크랙 및 파손', action: '• 진공도 테스트 (절연내력 시험)<br>• VCB 본체 또는 VI 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 아크/소음 발생 여부 확인 → ② 절연저항(Megger) 측정 → ③ 내전압 시험 실시 → ④ 부품 교체</div>' }
-                ],
-                steps: ['조작 전원(DC/AC) 전압 정상 여부 확인', '보호계전기(Relay) 동작 타겟 및 알람 확인', 'VCB 투입/트립 코일 상태 및 스프링 축적 점검', '진공인터럽터(VI) 3상 절연저항 측정'],
-                guides: [
-                    { rank: 1, title: '차단기 투입 안됨', desc: '조작전원 차단, 투입코일 소손, 기계적 락킹', action: '조작 퓨즈 점검, 투입코일 교체, 기구부 그리스 주입' },
-                    { rank: 2, title: '원인 불명 트립', desc: '보호계전기(OCR, OCGR 등) 오동작, 서지 유입', action: '계전기 정정치 확인, 부하측 지락/단락 여부 정밀 점검' }
-                ]
-            },
-            'TR': {
-                name: 'TR (변압기)',
-                systemFaults: [
-                    { category: '온도 상승', cause: '• 부하 과다 (과부하)<br>• 냉각팬 고장<br>• 전기실 내부 환기 불량', action: '• 부하 분산 및 차단<br>• 냉각팬 전원 확인 및 교체<br>• 전기실 환기팬(공조기) 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 변압기 온도계 지시치 확인 → ② 부하 전류량 측정 → ③ 냉각팬 수동 가동 → ④ 전기실 실온 점검</div>' },
-                    { category: '소음 및 진동', cause: '• 코어(철심) 체결 볼트 이완<br>• 고조파 유입 과다<br>• 과부하에 의한 자왜 현상', action: '• 정전 후 코어 볼트 재조임<br>• 고조파 필터(능동/수동) 점검<br>• 부하 불균형 조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 특이 소음(웅~, 지직) 청취 → ② 고조파 측정(PQ 미터) → ③ 상별 부하 균형 확인 → ④ 외함 진동 촉진</div>' },
-                    { category: '절연 저하', cause: '• 습기 및 먼지 다량 축적<br>• 장기 사용에 따른 권선 열화<br>• 결로 발생', action: '• 진공 청소기 및 에어건 크리닝<br>• 전기실 제습기 가동<br>• 정밀 절연 진단 및 교체 검토<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 외함 변색 및 먼지 확인 → ② 흡습호흡기(유입식) 색상 확인 → ③ 정전 후 절연저항 측정 → ④ 크리닝 실시</div>' }
-                ],
-                steps: ['변압기 온도계(권선/철심) 지시치 및 경보 확인', '특이 소음(코로나 방전음 등) 및 과다 진동 확인', '냉각팬 자동/수동 기동 상태 점검', '외관 에폭시 변색, 크랙 및 먼지 축적 상태 확인'],
-                guides: [
-                    { rank: 1, title: '온도 과상승 알람', desc: '냉각팬 고장, 여름철 실온 상승, 2차측 과부하', action: '냉각팬 강제 기동, 부하 차단, 전기실 환기 조치' },
-                    { rank: 2, title: '이상 소음 발생', desc: '고조파 과다 유입, 철심 조임 볼트 풀림', action: '전력품질 분석기 측정, 휴일 정전 후 내부 볼트 조임 작업' }
-                ]
-            },
-            'ACB': {
-                name: 'ACB (기중차단기)',
-                systemFaults: [
-                    { category: '투입/개방 불량', cause: '• UVT(부족전압트립) 소손 또는 전원 차단<br>• 축적 모터 고장<br>• 기계적 걸림 (윤활 부족)', action: '• UVT 모듈 교체 및 전원 복구<br>• 기어드 모터 교체<br>• 기구부 청소 및 건식 윤활제 도포<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① UVT 조작전원 확인 → ② 스프링 Charge 소음 확인 → ③ 모터 전압 측정 → ④ 기구부 수동 조작 테스트</div>' },
-                    { category: '단자부 과열', cause: '• 접속 단자 조임 불량<br>• 장기 진동에 의한 볼트 풀림<br>• 상 불평형 및 과부하', action: '• 정전 후 단자 볼트 규정 토크 재조임<br>• 상별 부하 분산 조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 열화상 카메라 발열 촬영 → ② 열화산 표시재 변색 확인 → ③ 상별 전류 측정 → ④ 볼트 재조임</div>' },
-                    { category: '트립 동작 (OCR)', cause: '• 과전류(Over Current)<br>• 단락(Short Circuit) 및 지락(Ground Fault)', action: '• 하위 부하 분전반 누전/단락 점검<br>• 원인 제거 후 OCR 리셋 및 재투입<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① OCR 트립 표시기(Fault indicator) 확인 → ② 하위 선로 절연 측정 → ③ 사고 구간 분리 → ④ 리셋 후 투입</div>' }
-                ],
-                steps: ['부하 전류, 전압 및 계측기 지시치 정상 확인', 'UVT(부족전압트립) 조작 전원 상태 점검', '접속 단자부 열화산 표시재 변색 및 발열 확인', '기구부 스프링 축적(Charged) 상태 점검'],
-                guides: [
-                    { rank: 1, title: 'OCR 트립 (정전)', desc: '하위 부하 단락/지락, 순간 과전류 발생', action: '트립 인디케이터 확인, 사고 부하 분리 후 차단기 리셋 및 투입' },
-                    { rank: 2, title: '투입 버튼 작동 안함', desc: 'UVT 코일 소손, 조작전원 상실, 스프링 미축적', action: '조작전원 NFB 확인, 수동 펌핑으로 스프링 축적 후 투입 시도' }
-                ]
-            },
-            'ATS': {
-                name: 'ATS (자동절환스위치)',
-                systemFaults: [
-                    { category: '절환 불량', cause: '• 절환용 조작 코일 단선<br>• 리미트 스위치 파손<br>• ATS 컨트롤러 제어 불량', action: '• 조작 코일 저항 측정 후 교체<br>• 마이크로 스위치 점검/교체<br>• 컨트롤러 리셋 또는 보드 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 상용/비상 전압 인가 확인 → ② 컨트롤러 램프 확인 → ③ 조작 코일 도통 테스트 → ④ 수동 핸들 절환 테스트</div>' },
-                    { category: '접점 소손 및 아크', cause: '• 절환 시 심한 아크 발생<br>• 주접점 마모 및 탄화<br>• 부하 연결 상태에서 강제 절환', action: '• 정전 후 주접점 샌드페이퍼 연마<br>• 마모 심할 경우 ATS 전체 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 절환 시 소음/불꽃 육안 확인 → ② 접점 흑색 탄화 확인 → ③ 접촉 저항 측정 → ④ 표면 연마</div>' }
-                ],
-                steps: ['상용전원(한전) 및 비상전원(발전기) 인입 전압 확인', 'ATS 컨트롤러 표시창 에러 코드 및 램프 점검', '절환 기계적 걸림 여부 및 접점 상태 육안 확인', '수동 핸들 조작 가능 여부(비상시 대조) 테스트'],
-                guides: [
-                    { rank: 1, title: '정전 시 발전기 쪽으로 절환 안됨', desc: 'ATS 제어전원 차단, 조작 코일 소손', action: '수동 핸들을 이용하여 발전기(E) 측 강제 절환, 이후 코일 점검' },
-                    { rank: 2, title: '절환 시 심한 소음 및 불꽃', desc: '주접점 표면 탄화 및 접촉 불량', action: '접점 교체 주기 도래 판단, 접촉저항 측정 후 오버홀 진행' }
-                ]
-            },
-            'UPS': {
-                name: 'UPS (무정전전원장치)',
-                systemFaults: [
-                    { category: '배터리 장애', cause: '• 배터리 수명 연한(통상 3~5년) 초과<br>• 내부 셀 단락 및 스웰링(부풀음)<br>• 충전기(Charger) 보드 고장', action: '• 불량 배터리 셀 솎아내기 또는 전체 교체<br>• 부동/균등 충전 전압 재조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 배터리 알람 확인 → ② 개별 셀 전압/내부저항 측정 → ③ 외관 부풀음/누액 확인 → ④ 배터리 교체</div>' },
-                    { category: '인버터 고장', cause: '• IGBT 등 전력 반도체 소자 소손<br>• 냉각팬 고장으로 인한 내부 과열<br>• 제어 보드 불량', action: '• 고장 소자 및 제어 보드 교체<br>• 냉각팬 교체 및 내부 방열판 먼지 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 인버터 Fault 알람 확인 → ② 냉각팬 회전 상태 점검 → ③ 내부 타는 냄새 확인 → ④ 제조사 A/S 요청</div>' },
-                    { category: 'Bypass 자동 절환', cause: '• 인버터 고장으로 인한 보호 동작<br>• 출력단 순간 과부하 트립<br>• 출력 회로 단락', action: '• 출력측 부하량 확인 및 불필요 부하 차단<br>• 원인 해소 후 인버터 모드로 재기동<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① Bypass 램프 점등 확인 → ② 디스플레이 과부하 이력 확인 → ③ 부하 분산 조치 → ④ Normal 모드 복귀</div>' }
-                ],
-                steps: ['전면 패널 알람 내역 및 에러 코드 발생 여부 확인', '배터리 충전 전압 및 방전 전류 정상 여부 확인', '냉각팬 동작 상태 및 필터 오염도 육안 점검', '입/출력 전압, 주파수 및 부하율(%) 안정성 확인'],
-                guides: [
-                    { rank: 1, title: '배터리 교체(Battery Replace) 알람', desc: '배터리 노후화로 인한 내부 저항 증가', action: '배터리 테스터기로 전수 검사, 불량 판정 시 신규 배터리 뱅크로 교체' },
-                    { rank: 2, title: 'Bypass(우회) 모드 작동', desc: '출력단 순간 과부하, 인버터 발열', action: '연결된 서버/부하의 돌입전류 확인, 알람 리셋 후 인버터 재기동' }
-                ]
-            },
-            'PANEL': {
-                name: '분전반 (Distribution Board)',
-                systemFaults: [
-                    { category: '차단기 트립', cause: '• 말단 기기 누전 (ELB 트립)<br>• 선로 단락(쇼트)<br>• 허용 전류 초과 과부하', action: '• 메거(Megger)를 이용한 선로 절연저항 측정<br>• 누전 기기 분리 후 차단기 재투입<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 트립된 차단기 색출 → ② 부하 플러그 뽑기 → ③ 선로 절연저항 측정 → ④ 이상 없을 시 재투입</div>' },
-                    { category: '단자 과열 및 소손', cause: '• 케이블 압착 단자(터미널) 조임 불량<br>• 특정 상(Phase)에 부하 집중 (불평형)', action: '• 단자 볼트 재조임 및 열화 케이블 재압착<br>• R, S, T 상 부하 재분배<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 타는 냄새 파악 → ② 열화상 카메라 측정 → ③ 후크메타로 전류 측정 → ④ 전원 차단 후 터미널 보수</div>' }
-                ],
-                steps: ['메인(MCCB) 및 분기 차단기(ELB) 트립 여부 육안 확인', '열화상 카메라를 이용한 접속 단자부 발열 상태 점검', '부하 케이블 피복 손상 및 절연 저항(누설전류) 측정', '분전반 내부 누수, 결로 및 먼지 축적 여부 점검'],
-                guides: [
-                    { rank: 1, title: '누전차단기(ELB) 반복 트립', desc: '현장 장비 누전, 습기 유입, 케이블 절연 파괴', action: '부하측 전선을 분리하고 차단기 자체 불량 테스트, 이상 없으면 선로 누전 수리' },
-                    { rank: 2, title: '분전반 내 타는 냄새 발생', desc: '차단기 단자 접속 불량에 의한 과열 탄화', action: '즉시 열화상 측정, 발열부 차단 후 볼트 조임 및 터미널 튜브 재시공' }
-                ]
-            },
-            'GEN': {
-                name: '비상발전기 (Generator)',
-                systemFaults: [
-                    { category: '기동 불량', cause: '• 시동 배터리 방전 (전압 저하)<br>• 스타트 모터 톱니바퀴 불량<br>• 제어반 조작전원 상실', action: '• 배터리 및 충전기 교체<br>• 스타트 모터 링기어 수리<br>• 제어반 퓨즈 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 배터리 전압(24V 이상) 측정 → ② 제어반 램프 확인 → ③ 충전기 출력 확인 → ④ 수동 기동 테스트</div>' },
-                    { category: '엔진 기동 후 정지', cause: '• 냉각수 과열 (히터 과열, 수량 부족)<br>• 엔진 오일 압력 저하<br>• 연료 계통 공기 유입 또는 고갈', action: '• 냉각수 보충 및 라디에이터 점검<br>• 엔진 오일 보충<br>• 연료 필터 청소 및 에어 빼기 실시<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 정지 알람(과열, 유압) 확인 → ② 오일/냉각수 레벨 게이지 확인 → ③ 연료 라인 에어 빼기 → ④ 재기동</div>' },
-                    { category: '전압 확립 불가', cause: '• AVR(자동전압조정기) 불량<br>• 발전기 회전 다이오드 소손<br>• 잔류 자기 상실', action: '• AVR 기판 점검 및 교체<br>• 회전 다이오드 저항 측정/교체<br>• 초기 여자(Flashing) 회로 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 출력 전압계 지시치 0V 확인 → ② AVR 퓨즈 확인 → ③ 다이오드 테스터기 점검 → ④ 전문가 A/S 의뢰</div>' }
-                ],
-                steps: ['시동 배터리 전압(DC 24~27V) 및 충전기 동작 상태 확인', '엔진 오일량(딥스틱) 및 냉각수 수위(레벨 게이지) 점검', '연료(경유) 탱크 유량 확인 및 밸브 개폐 상태 점검', '제어반 스위치가 자동(Auto) 모드에 있는지 필히 확인'],
-                guides: [
-                    { rank: 1, title: '정전 시 자동 기동 안됨', desc: '배터리 완전 방전, 조작 스위치 수동(Manual) 위치', action: '제어반 모드 Auto 확인, 배터리 충전기 점검, 수동으로 기동하여 비상 전원 공급' },
-                    { rank: 2, title: '기동 직후 시동 꺼짐 (오일 압력 저하)', desc: '엔진 오일 부족, 오일 필터 막힘, 유압 센서 고장', action: '엔진 오일량 보충, 필터 교체, 센서 단선 여부 확인 후 리셋 기동' }
-                ]
-            }
-        };
-
-        window.onload = function() {
-            renderContacts();
-            bindProcessAccordion();
-        }
-
-        // ==========================================
-        // 3. 스케줄/인수인계 (Firebase 실시간 리스너 적용)
-        // ==========================================
-        let unsubscribeMemoListener = null;
-
-        function openMemoView() {
-            document.getElementById('headerTitle').innerText = "스케줄/인수인계";
-            document.getElementById('backBtn').style.display = 'inline-block';
-            showView('viewMemo');
-            initRealtimeMemos();
-            window.scrollTo(0, 0);
-        }
-
-        // 실시간 동기화 리스너 등록
-        function initRealtimeMemos() {
-            const listDiv = document.getElementById('memoList');
-            listDiv.innerHTML = '<p style="color:#999; font-size:0.9rem;">클라우드 데이터 동기화 중...</p>';
-
-            if (unsubscribeMemoListener) {
-                unsubscribeMemoListener(); // 중복 리스너 해제
-            }
-
-            // Firestore 실시간 리스너 (새로고침 없이 모든 사용자에게 즉시 반영됨)
-            unsubscribeMemoListener = db.collection("memos")
-                .orderBy("timestamp", "desc")
-                .limit(50)
-                .onSnapshot((querySnapshot) => {
-                    let fetchedMemos = [];
-                    querySnapshot.forEach((doc) => fetchedMemos.push(doc.data()));
-                    renderMemoHTML(listDiv, fetchedMemos);
-                }, (error) => {
-                    console.error("Firestore 실시간 리스너 오류:", error);
-                    listDiv.innerHTML = `<p style="color:var(--danger-color); font-size:0.9rem;">
-                        데이터베이스 연결 오류가 발생했습니다.<br>
-                        (Firebase 콘솔 > Firestore Database > 규칙 탭에서 읽기/쓰기 권한을 확인해주세요.)
-                    </p>`;
-                });
-        }
-
-        function saveMemo() {
-            const author = document.getElementById('memoAuthor').value.trim();
-            const content = document.getElementById('memoContent').value.trim();
-            const isImportant = document.getElementById('memoImportant').checked;
-            const btn = document.getElementById('saveMemoBtn');
-
-            if (!author || !content) {
-                alert("작성자와 내용을 모두 입력해주세요.");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerText = "저장 중...";
-
-            const newMemo = {
-                author: author,
-                content: content,
-                important: isImportant,
-                timestamp: new Date().toISOString(),
-                displayTime: new Date().toLocaleString('ko-KR')
-            };
-
-            db.collection("memos").add(newMemo)
-            .then(() => {
-                resetMemoForm();
-                btn.disabled = false;
-                btn.innerText = "저장하기";
-            })
-            .catch((error) => {
-                console.error("저장 오류:", error);
-                alert("클라우드 저장에 실패했습니다. Firestore 보안 규칙을 확인해주세요.");
-                btn.disabled = false;
-                btn.innerText = "저장하기";
-            });
-        }
-
-        function resetMemoForm() {
-            document.getElementById('memoContent').value = '';
-            document.getElementById('memoImportant').checked = false;
-        }
-
-        function renderMemoHTML(container, memoArray) {
-            // 1. 중요(true) 최우선 정렬, 2. 최신 작성일자 정렬
-            memoArray.sort((a, b) => {
-                if (a.important === b.important) {
-                    return new Date(b.timestamp) - new Date(a.timestamp);
-                }
-                return a.important ? -1 : 1;
-            });
-
-            let html = '';
-            memoArray.forEach(data => {
-                const impClass = data.important ? 'important' : '';
-                const impBadge = data.important ? '<span class="important-badge">⭐ 중요</span>' : '';
-                html += `
-                    <div class="memo-card ${impClass}">
-                        <div class="memo-header">
-                            <div>${impBadge}👤 ${data.author}</div>
-                            <span>${data.displayTime}</span>
-                        </div>
-                        <div class="memo-body">${data.content}</div>
-                    </div>
-                `;
-            });
-            if(!html) html = '<p style="color:#999; font-size:0.9rem;">등록된 메모가 없습니다.</p>';
-            container.innerHTML = html;
-        }
-
-        // ==========================================
-        // 4. TBM 안전교육 렌더링
-        // ==========================================
-        function openTBMView() {
-            document.getElementById('headerTitle').innerText = "TBM 안전교육";
-            document.getElementById('backBtn').style.display = 'inline-block';
-            showView('viewTBM');
-            renderTBM();
-            window.scrollTo(0, 0);
-        }
-
-        function renderTBM() {
-            const tbmArea = document.getElementById('tbmList');
-            const html = tbmData.map(tbm => `
-                <div class="tbm-card">
-                    <div class="tbm-header">🛠️ ${tbm.task}</div>
-                    <div class="tbm-grid">
-                        <div class="tbm-row"><span class="tbm-label">① 작업내용</span><span class="tbm-value">${tbm.detail}</span></div>
-                        <div class="tbm-row"><span class="tbm-label">② 주요 위험요인</span><span class="tbm-value" style="color:var(--danger-color);">${tbm.hazard}</span></div>
-                        <div class="tbm-row"><span class="tbm-label">③ 안전작업 방법</span><span class="tbm-value">${tbm.method}</span></div>
-                        <div class="tbm-row"><span class="tbm-label">④ 필수 안전보호구</span><span class="tbm-value" style="color:#ffb300;">${tbm.ppe}</span></div>
-                        <div class="tbm-row"><span class="tbm-label">⑤ 작업구역 통제</span><span class="tbm-value">${tbm.control}</span></div>
-                        <div class="tbm-row"><span class="tbm-label">⑥ 비상상황 대응</span><span class="tbm-value">${tbm.emergency}</span></div>
-                    </div>
-                </div>
-            `).join('');
-            tbmArea.innerHTML = html;
-        }
-
-        // ==========================================
-        // 5. 공통 UI 조작 로직
-        // ==========================================
-        function renderContacts() {
-            const html = contacts.map(c => `
-                <div class="contact-card">
-                    <div class="contact-info">
-                        <span class="contact-company">${c.company}</span>
-                        <span class="contact-name">${c.name}</span>
-                        <span style="color:var(--text-muted); font-size:0.9rem;">${c.phone}</span>
-                    </div>
-                    <a href="tel:${c.phone.replace(/-/g, '')}" class="call-btn">📞 전화</a>
-                </div>
-            `).join('');
-            document.getElementById('contactArea').innerHTML = html;
-        }
-
-        function showView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-        }
-
-        function goHome() {
-            showView('viewHome');
-            document.getElementById('headerTitle').innerText = '현대차 의왕IDC 장애 점검 Guide';
-            document.getElementById('backBtn').style.display = 'none';
-            window.scrollTo(0, 0);
-        }
-
-        function openView(viewId, title) {
-            document.getElementById('headerTitle').innerText = title;
-            document.getElementById('backBtn').style.display = 'inline-block';
-            showView(viewId);
-            window.scrollTo(0, 0);
-        }
-
-        function openDetail(equipKey) {
-            const data = dbData[equipKey];
-            if(!data) { alert("해당 장비 데이터가 없습니다."); return; }
-
-            document.getElementById('headerTitle').innerText = data.name + ' 점검';
-            document.getElementById('backBtn').style.display = 'inline-block';
-            
-            const elecKeys = ['VCB', 'TR', 'ACB', 'ATS', 'UPS', 'PANEL', 'GEN'];
-            const isElec = elecKeys.includes(equipKey);
-            const contactInfo = isElec 
-                ? "두잉씨엔에스 방민기 과장 010-9121-3102" 
-                : "삼건이엔씨 이상호부장 010-5264-1640";
-
-            document.getElementById('detailSubtitle').innerHTML = `계통별 장애 원인 및 조치 <br><span style="font-size:0.9rem; color:var(--danger-color); font-weight:normal; margin-top:6px; display:inline-block;">🚨 긴급지원: ${contactInfo}</span>`;
-            
-            let sysHTML = '<p style="color:#9e9e9e; font-size:0.9rem;">등록된 계통별 세부 데이터가 없습니다.</p>';
-            if (data.systemFaults && data.systemFaults.length > 0) {
-                sysHTML = data.systemFaults.map(sys => `
-                    <div class="sys-fault-card">
-                        <div class="sys-fault-title">⚙️ ${sys.category}</div>
-                        <div class="sys-fault-grid">
-                            <div class="sys-fault-box">
-                                <h4>원인</h4>
-                                <div>${sys.cause}</div>
-                            </div>
-                            <div class="sys-fault-box">
-                                <h4>조치 방법</h4>
-                                <div>${sys.action}</div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            document.getElementById('systemFaultArea').innerHTML = sysHTML;
-
-            const checkHTML = data.steps.map(step => `
-                <li class="check-item" onclick="this.classList.toggle('done')">
-                    <span class="check-box"></span>
-                    <span>${step}</span>
-                </li>
-            `).join('');
-            document.getElementById('checklistArea').innerHTML = checkHTML;
-
-            const guideHTML = data.guides.map(guide => `
-                <button type="button" class="accordion">
-                    <span>🥇 ${guide.rank}위. ${guide.title}</span>
-                    <span>▼</span>
-                </button>
-                <div class="accordion-content">
-                    <p><span class="highlight">현상:</span> ${guide.desc}</p>
-                    <p><span class="highlight">조치:</span> ${guide.action}</p>
-                </div>
-            `).join('');
-            document.getElementById('guideArea').innerHTML = guideHTML;
-
-            bindAccordion();
-            showView('viewDetail');
-            window.scrollTo(0, 0);
-        }
-
-        function bindAccordion() {
-            const acc = document.querySelectorAll("#viewDetail .accordion");
-            acc.forEach(item => {
-                item.onclick = function() {
-                    this.classList.toggle("active");
-                    const content = this.nextElementSibling;
-                    if (content.style.maxHeight) {
-                        content.style.maxHeight = null;
-                    } else {
-                        content.style.maxHeight = content.scrollHeight + "px";
-                    }
-                };
-            });
-        }
-
-        function bindProcessAccordion() {
-            const acc = document.querySelectorAll(".process-acc");
-            acc.forEach(item => {
-                item.onclick = function() {
-                    this.classList.toggle("active");
-                    const content = this.nextElementSibling;
-                    if (content.classList.contains("open")) {
-                        content.classList.remove("open");
-                        content.style.maxHeight = null;
-                    } else {
-                        content.classList.add("open");
-                        content.style.maxHeight = content.scrollHeight + "px";
-                    }
-                };
-            });
-        }
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>현대차 의왕IDC 공조/전기설비 장애 점검 Guide</title>
-    
-    <!-- Firebase App (v8 호환 SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Firebase Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-    <style>
-        /* 기본 테마 (다크 모드) */
-        :root {
-            --bg-color: #121212;
-            --surface-color: #1e1e1e;
-            --primary-color: #ffb300;
-            --text-color: #ffffff;
-            --text-muted: #9e9e9e;
-            --border-color: #333333;
-            --danger-color: #f44336;
-            --info-color: #2196f3;
-            --success-color: #4caf50;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* 공통 UI */
-        header {
-            background-color: var(--surface-color);
-            padding: 16px;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        /* 수정된 TBM 탭 UI: 화면 너비에 맞춰 칩(Chip) 형태로 자동 정렬 */
+        .tbm-tabs {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            font-size: 1rem;
-            cursor: pointer;
-            display: none;
-            padding: 12px;
-            margin-left: -12px;
-        }
-
-        .container {
-            padding: 16px;
-            padding-bottom: 40px;
-        }
-
-        .view { display: none; }
-        .view.active { display: block; }
-
-        /* 긴급 버튼 영역 */
-        .emergency-nav {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            flex-wrap: wrap; /* 가로 공간이 부족하면 다음 줄로 자동 넘김 */
             gap: 8px;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 1px dashed var(--border-color);
+            margin-bottom: 16px;
+            justify-content: flex-start;
         }
-
-        .em-btn {
-            border: none;
-            border-radius: 8px;
-            padding: 12px 4px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: white;
+        .tbm-tab-btn {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
             cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+            transition: all 0.2s;
             text-align: center;
+            white-space: nowrap; /* 텍스트 줄바꿈 방지 */
             -webkit-appearance: none;
             touch-action: manipulation;
         }
-
-        .em-btn-call { background-color: var(--danger-color); }
-        .em-btn-report { background-color: var(--info-color); }
-        .em-btn-process { background-color: var(--success-color); }
-        .em-icon { font-size: 1.5rem; }
-
-        /* 카테고리 헤더 */
-        .category-header {
-            font-size: 1.1rem;
-            color: var(--primary-color);
-            margin: 24px 0 12px 0;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .category-header:first-of-type { margin-top: 0; }
-
-        /* 메인 그리드 메뉴 */
-        .grid-menu {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-        .menu-card {
-            background-color: var(--surface-color);
-            border-radius: 12px;
-            padding: 24px 16px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            color: var(--text-color);
-            font-size: 1rem;
-            font-family: inherit;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            -webkit-appearance: none;
-            touch-action: manipulation; 
-        }
-        .menu-card:active { background-color: #2c2c2c; }
-        .menu-icon { font-size: 2.2rem; margin-bottom: 12px; color: var(--primary-color); pointer-events: none; }
-
-        h2 {
-            font-size: 1.1rem;
-            color: var(--primary-color);
-            margin-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-            margin-top: 24px;
-        }
-        h2:first-child { margin-top: 0; }
-
-        .view-title {
-            color: white;
-            font-size: 1.2rem;
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: none;
-        }
-
-        /* 프로세스 아코디언 */
-        .process-acc, .accordion {
-            background-color: var(--surface-color);
-            color: var(--text-color);
-            cursor: pointer;
-            padding: 16px;
-            width: 100%;
-            text-align: left;
-            border: 1px solid var(--border-color);
-            outline: none;
-            font-size: 1rem;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .tbm-tab-btn.active {
+            background-color: var(--primary-color);
+            color: #000;
             font-weight: bold;
+            border-color: var(--primary-color);
         }
-        .process-acc.active, .accordion.active {
-            border-radius: 8px 8px 0 0;
-            border-bottom: none;
-            background-color: #2c2c2c;
-        }
-        .process-content, .accordion-content {
-            padding: 0 16px;
-            background-color: #1a1a1a;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.2s ease-out;
-            border-radius: 0 0 8px 8px;
-            border: 1px solid var(--border-color);
-            border-top: none;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        .process-content.open, .accordion-content.open { padding: 16px; }
         
-        .sys-fault-card { background-color: var(--surface-color); border-radius: 8px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); }
-        .sys-fault-title { color: var(--primary-color); font-weight: bold; font-size: 1.05rem; margin-bottom: 12px; display: flex; align-items: center; }
-        .sys-fault-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .sys-fault-box { background-color: #121212; padding: 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; }
-        .sys-fault-box h4 { margin: 0 0 8px 0; color: var(--text-muted); font-size: 0.85rem; border-bottom: 1px solid #333; padding-bottom: 4px; }
-        .troubleshooting-steps { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #333; font-size: 0.85rem; color: #ccc; }
-        .ts-title { color: var(--primary-color); font-weight: bold; }
-        .checklist { list-style: none; padding: 0; margin-bottom: 24px; }
-        .check-item { background-color: var(--surface-color); margin-bottom: 8px; padding: 16px; border-radius: 8px; display: flex; align-items: center; cursor: pointer; touch-action: manipulation; }
-        .check-item.done { opacity: 0.5; text-decoration: line-through; }
-        .check-box { width: 24px; height: 24px; border: 2px solid var(--text-muted); border-radius: 50%; margin-right: 12px; display: inline-block; pointer-events: none; }
-        .check-item.done .check-box { background-color: var(--primary-color); border-color: var(--primary-color); }
-
-        /* 비상연락망 및 보고서 */
-        .contact-list { display: flex; flex-direction: column; gap: 12px; }
-        .contact-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .contact-info { display: flex; flex-direction: column; gap: 4px; }
-        .contact-company { font-size: 0.8rem; color: var(--text-muted); }
-        .contact-name { font-size: 1.1rem; font-weight: bold; }
-        .call-btn { background-color: var(--success-color); color: white; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
-        .report-box { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-        .report-box h3 { margin-top: 0; color: var(--info-color); border-bottom: 1px solid #333; padding-bottom: 8px; }
-        .report-content { font-size: 0.95rem; line-height: 1.6; white-space: pre-line; }
-        .report-time { color: var(--danger-color); font-weight: bold; margin-top: 12px; font-size: 0.9rem; }
-        .process-step { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #333; }
-        .process-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .step-title { color: var(--success-color); font-weight: bold; margin-bottom: 4px; }
-        .role-title { color: #ffb300; font-size: 0.85rem; margin-top: 8px; }
-
-        /* 스케줄/메모장 UI */
-        .memo-form { background-color: var(--surface-color); padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--border-color); }
-        .memo-input { width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-family: inherit; }
-        .memo-textarea { width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-family: inherit; resize: vertical; min-height: 80px;}
-        .memo-submit { background-color: var(--primary-color); color: #000; width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        
-        .memo-card { background-color: var(--surface-color); border-left: 4px solid var(--primary-color); padding: 16px; border-radius: 4px; margin-bottom: 12px; }
-        .memo-card.important {
-            border-left: 4px solid var(--danger-color);
-            background-color: rgba(244, 67, 54, 0.12); 
-        }
-        .important-badge {
-            color: var(--danger-color);
-            font-weight: bold;
-            font-size: 0.8rem;
-            border: 1px solid var(--danger-color);
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-right: 8px;
-            display: inline-block;
-        }
-        .memo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); }
-        .memo-body { font-size: 0.95rem; line-height: 1.5; white-space: pre-line; }
-
-        /* TBM 안전교육 UI */
         .tbm-card { background-color: var(--surface-color); border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px; overflow: hidden; }
-        .tbm-header { background-color: #2c2c2c; padding: 16px; font-weight: bold; font-size: 1.1rem; color: var(--primary-color); }
+        .tbm-header { background-color: #2c2c2c; padding: 16px; font-weight: bold; font-size: 1.1rem; color: var(--primary-color); display: flex; align-items: center; gap: 8px;}
         .tbm-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background-color: #333; }
-        .tbm-row { background-color: var(--surface-color); padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
-        .tbm-label { font-size: 0.8rem; color: var(--info-color); font-weight: bold; }
+        .tbm-row { background-color: var(--surface-color); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+        .tbm-label { font-size: 0.85rem; color: var(--info-color); font-weight: bold; }
         .tbm-value { font-size: 0.95rem; line-height: 1.4; color: white; }
     </style>
 </head>
@@ -1275,11 +331,15 @@
         <div class="category-header">📌 공통 업무</div>
         <div class="grid-menu">
             <button type="button" class="menu-card" onclick="openMemoView()">
-                <span class="menu-icon">📅</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </span>
                 <span>스케줄/인수인계</span>
             </button>
             <button type="button" class="menu-card" onclick="openTBMView()">
-                <span class="menu-icon">🛡️</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </span>
                 <span>TBM 안전교육</span>
             </button>
         </div>
@@ -1288,27 +348,39 @@
         <div class="category-header">❄️ 의왕IDC 공조설비</div>
         <div class="grid-menu">
             <button type="button" class="menu-card" onclick="openDetail('CCU')">
-                <span class="menu-icon">❄️</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M8 6h8"/><path d="M8 10h8"/><circle cx="12" cy="16" r="3"/></svg>
+                </span>
                 <span>항온항습기</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('OUTDOOR')">
-                <span class="menu-icon">💨</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="12" cy="12" r="5"/><path d="M12 7v10"/><path d="M7 12h10"/></svg>
+                </span>
                 <span>실외기</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('PUMP')">
-                <span class="menu-icon">🔄</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="6"/><path d="M15 12h6v-4h-6"/><circle cx="9" cy="12" r="2"/></svg>
+                </span>
                 <span>냉각수 펌프</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('HEAT')">
-                <span class="menu-icon">🔥</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><path d="M4 6h12a2 2 0 012 2v8a2 2 0 01-2 2H4"/><path d="M20 18H8a2 2 0 01-2-2V8a2 2 0 012-2h12"/></svg>
+                </span>
                 <span>열교환기/응축기</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('TANK')">
-                <span class="menu-icon">💧</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10s3-2 8 0 8 0 8 0"/><path d="M4 14s3-2 8 0 8 0 8 0"/></svg>
+                </span>
                 <span>보충수 탱크</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('SPRAY')">
-                <span class="menu-icon">🚿</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 3v6"/><path d="M9 12a3 3 0 106 0"/><path d="M12 15v6"/><path d="M6 6l2 2"/><path d="M18 6l-2 2"/></svg>
+                </span>
                 <span>살수펌프</span>
             </button>
         </div>
@@ -1317,31 +389,45 @@
         <div class="category-header">⚡ 의왕IDC 전기설비</div>
         <div class="grid-menu">
             <button type="button" class="menu-card" onclick="openDetail('VCB')">
-                <span class="menu-icon">🔌</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="16" r="3"/><path d="M12 7v6"/></svg>
+                </span>
                 <span>VCB (진공차단기)</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('TR')">
-                <span class="menu-icon">🗄️</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="4"/><circle cx="15" cy="12" r="4"/><path d="M9 8V4"/><path d="M15 8V4"/></svg>
+                </span>
                 <span>TR (변압기)</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('ACB')">
-                <span class="menu-icon">🎛️</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10"/><path d="M12 11v2"/></svg>
+                </span>
                 <span>ACB (기중차단기)</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('ATS')">
-                <span class="menu-icon">🔀</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><path d="M5 6h4l4 6h6"/><path d="M5 18h4l4-6"/></svg>
+                </span>
                 <span>ATS (자동절환)</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('UPS')">
-                <span class="menu-icon">🔋</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M12 9l-2 3h4l-2 3"/></svg>
+                </span>
                 <span>UPS (무정전전원)</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('PANEL')">
-                <span class="menu-icon">💡</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 3v18"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h8"/></svg>
+                </span>
                 <span>분전반</span>
             </button>
             <button type="button" class="menu-card" onclick="openDetail('GEN')">
-                <span class="menu-icon">🏭</span>
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="10" rx="2"/><circle cx="7" cy="14" r="2"/><circle cx="17" cy="14" r="2"/><path d="M6 8V5h12v3"/></svg>
+                </span>
                 <span>비상발전기</span>
             </button>
         </div>
@@ -1364,10 +450,19 @@
         <div id="memoList"></div>
     </div>
 
-    <!-- TBM 안전교육 화면 -->
+    <!-- 신규: TBM 안전교육 (화면 폭 맞춤 탭 방식 적용) 화면 -->
     <div id="viewTBM" class="container view">
-        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 20px;">각 작업별 위험요인과 필수 안전보호구를 확인하세요.</p>
-        <div id="tbmList"></div>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 16px;">수행하실 작업을 탭에서 선택하여 위험요인과 보호구를 확인하세요.</p>
+        
+        <!-- 자동 줄바꿈(Wrap) 탭 영역 -->
+        <div class="tbm-tabs" id="tbmTabs">
+            <!-- JS 렌더링 -->
+        </div>
+
+        <!-- 탭 상세 내용 영역 -->
+        <div id="tbmDetailBox">
+            <!-- JS 렌더링 -->
+        </div>
     </div>
 
     <!-- 비상연락망 화면 -->
@@ -1376,12 +471,16 @@
         <div class="contact-list" id="contactArea"></div>
     </div>
 
-    <!-- 재해보고양식 화면 -->
+    <!-- 재해보고양식 화면 (복사 기능 추가) -->
     <div id="viewReportForm" class="container view">
         <h2 class="view-title">📝 재해발생 시 최초 문자보고 기준</h2>
+        
         <div class="report-box">
-            <h3>▶ 일반사고 (자산사업장 안전사고 보고)</h3>
-            <div class="report-content">1. 사업장명 : 000사업장(0팀)
+            <div class="report-header">
+                <h3>▶ 일반사고 (자산사업장 안전사고 보고)</h3>
+                <button class="copy-btn" onclick="copyReport('reportText1')">복사하기 📋</button>
+            </div>
+            <div class="report-content" id="reportText1">1. 사업장명 : 000사업장(0팀)
 2. 일시 : 
 3. 재해정도 : 부상 0명
    - 00골절
@@ -1394,9 +493,13 @@
 보고자 : OOO 소장</div>
             <div class="report-time">* 초기보고: 3시간 이내 (중대재해 30분 이내)</div>
         </div>
+        
         <div class="report-box">
-            <h3>▶ 물적피해사고 (화재 포함)</h3>
-            <div class="report-content">[자산사업장 OO피해 보고]
+            <div class="report-header">
+                <h3>▶ 물적피해사고 (화재 포함)</h3>
+                <button class="copy-btn" onclick="copyReport('reportText2')">복사하기 📋</button>
+            </div>
+            <div class="report-content" id="reportText2">[자산사업장 OO피해 보고]
 1. 사업장명 : 000사업장(0팀)
 2. 일시 : 
 3. 피해정도
@@ -1467,7 +570,7 @@
 
     <script>
         // ==========================================
-        // 1. 전달해주신 Firebase 실제 키 설정 완료
+        // 1. Firebase 연동 설정 영역 (Firestore)
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyCzsU9bB3ZBKsZ8p_hlS24ZHdxGZKuxXtY",
@@ -1488,38 +591,38 @@
         // ==========================================
         const tbmData = [
             { task: "전기작업", detail: "전기설비 점검·정비", hazard: "감전, 단락, 화재", method: "전원 차단→검전→방전→접지 후 작업", ppe: "안전모, 절연장갑, 절연화, 보안경", control: "작업구역 출입통제", emergency: "감전 시 전원 차단 후 119 신고" },
-            { task: "수배전반 작업", detail: "배전반 점검·정비", hazard: "감전, 아크플래시", method: "LOTO 실시, 무전압 확인 후 작업", ppe: "안전모, 절연장갑, 절연화, 아크보호면", control: "전기실 출입통제", emergency: "사고 시 전원 차단 및 응급조치" },
-            { task: "고압전기 작업", detail: "고압설비 점검·정비", hazard: "감전, 아크폭발", method: "정전→검전→방전→접지 확인", ppe: "절연장갑, 절연화, 안전모, 아크보호면, 방염복", control: "관계자 외 출입금지", emergency: "즉시 전원 차단 및 119 신고" },
+            { task: "수배전반", detail: "배전반 점검·정비", hazard: "감전, 아크플래시", method: "LOTO 실시, 무전압 확인 후 작업", ppe: "안전모, 절연장갑, 절연화, 아크보호면", control: "전기실 출입통제", emergency: "사고 시 전원 차단 및 응급조치" },
+            { task: "고압작업", detail: "고압설비 점검·정비", hazard: "감전, 아크폭발", method: "정전→검전→방전→접지 확인", ppe: "절연장갑, 절연화, 안전모, 아크보호면, 방염복", control: "관계자 외 출입금지", emergency: "즉시 전원 차단 및 119 신고" },
             { task: "용접작업", detail: "배관·철재 용접", hazard: "화재, 폭발, 화상", method: "가연물 제거, 불티방지포 설치, 소화기 비치", ppe: "용접면, 방염복, 용접장갑, 안전화", control: "화기작업구역 통제", emergency: "화재 발생 시 작업중지·소화" },
             { task: "용단작업", detail: "금속 절단", hazard: "화재, 폭발, 화상", method: "가스호스·밸브 점검, 가연물 제거", ppe: "보안면, 방염복, 장갑, 안전화", control: "불티 비산구역 통제", emergency: "가스 차단 후 소화 및 신고" },
-            { task: "그라인더 작업", detail: "금속 연마·절단", hazard: "비산물, 절단, 화재", method: "디스크 균열 확인, 방호커버 설치", ppe: "보안경/안면보호구, 장갑, 안전화, 귀마개", control: "불티 방향 통제", emergency: "장비 정지 후 부상자 응급조치" },
-            { task: "드릴·천공작업", detail: "벽체·철판 천공", hazard: "감전, 비산물, 끼임", method: "매설 전선·배관 확인 후 천공", ppe: "보안경, 안전화, 장갑, 귀마개", control: "작업반경 통제", emergency: "전선 발견 시 즉시 작업중지" },
+            { task: "그라인더", detail: "금속 연마·절단", hazard: "비산물, 절단, 화재", method: "디스크 균열 확인, 방호커버 설치", ppe: "보안경/안면보호구, 장갑, 안전화, 귀마개", control: "불티 방향 통제", emergency: "장비 정지 후 부상자 응급조치" },
+            { task: "드릴천공", detail: "벽체·철판 천공", hazard: "감전, 비산물, 끼임", method: "매설 전선·배관 확인 후 천공", ppe: "보안경, 안전화, 장갑, 귀마개", control: "작업반경 통제", emergency: "전선 발견 시 즉시 작업중지" },
             { task: "고소작업", detail: "천장·높은 곳 작업", hazard: "추락, 낙하물", method: "작업발판·난간 확인, 안전대 체결", ppe: "안전모, 안전대, 안전화, 보안경", control: "하부 출입통제", emergency: "추락사고 시 119 신고" },
-            { task: "사다리 작업", detail: "사다리 이용 점검·정비", hazard: "추락, 전도", method: "사다리 상태·각도 확인, 미끄럼 방지", ppe: "안전모, 안전화, 안전대", control: "사다리 주변 통제", emergency: "전도·추락 시 작업중지" },
+            { task: "사다리", detail: "사다리 이용 점검·정비", hazard: "추락, 전도", method: "사다리 상태·각도 확인, 미끄럼 방지", ppe: "안전모, 안전화, 안전대", control: "사다리 주변 통제", emergency: "전도·추락 시 작업중지" },
             { task: "비계작업", detail: "비계 설치·해체·사용", hazard: "추락, 붕괴", method: "발판·난간·벽이음 확인", ppe: "안전모, 안전대, 안전화", control: "하부 출입금지", emergency: "붕괴·추락 시 즉시 신고" },
-            { task: "중량물 운반", detail: "기계·자재 이동", hazard: "깔림, 협착, 충돌", method: "중량·무게중심 확인, 운반경로 확보", ppe: "안전모, 안전화, 장갑", control: "운반구역 통제", emergency: "사고 시 장비 정지 및 119" },
-            { task: "크레인 작업", detail: "중량물 인양", hazard: "낙하, 충돌, 협착", method: "줄걸이 점검, 정격하중 확인, 신호수 배치", ppe: "안전모, 안전화, 장갑", control: "인양반경 출입금지", emergency: "낙하사고 시 접근 금지 후 신고" },
-            { task: "지게차 작업", detail: "자재 운반", hazard: "충돌, 전도, 협착", method: "운전자 확인, 후진경보·브레이크 확인", ppe: "안전모, 안전화, 반사조끼", control: "보행자 통로 분리", emergency: "사고 시 차량 정지 및 신고" },
+            { task: "중량물", detail: "기계·자재 이동", hazard: "깔림, 협착, 충돌", method: "중량·무게중심 확인, 운반경로 확보", ppe: "안전모, 안전화, 장갑", control: "운반구역 통제", emergency: "사고 시 장비 정지 및 119" },
+            { task: "크레인", detail: "중량물 인양", hazard: "낙하, 충돌, 협착", method: "줄걸이 점검, 정격하중 확인, 신호수 배치", ppe: "안전모, 안전화, 장갑", control: "인양반경 출입금지", emergency: "낙하사고 시 접근 금지 후 신고" },
+            { task: "지게차", detail: "자재 운반", hazard: "충돌, 전도, 협착", method: "운전자 확인, 후진경보·브레이크 확인", ppe: "안전모, 안전화, 반사조끼", control: "보행자 통로 분리", emergency: "사고 시 차량 정지 및 신고" },
             { task: "배관작업", detail: "배관 교체·보수", hazard: "누수, 압력, 화상", method: "밸브 차단 및 잔압 제거", ppe: "안전모, 안전화, 장갑, 보안경", control: "작업구역 출입통제", emergency: "누수 발생 시 밸브 차단" },
-            { task: "펌프 정비", detail: "펌프 분해·점검", hazard: "감전, 회전체 끼임", method: "전원 차단·LOTO, 압력 제거", ppe: "안전모, 안전화, 장갑, 보안경", control: "장비 주변 통제", emergency: "전원 차단 후 응급조치" },
-            { task: "모터 정비", detail: "모터 점검·교체", hazard: "감전, 끼임, 협착", method: "전원 차단·검전, 회전체 정지 확인", ppe: "안전모, 안전화, 절연장갑, 보안경", control: "장비 운전금지 표시", emergency: "비상정지 후 전원 차단" },
-            { task: "소방설비 작업", detail: "소화전·펌프·감지기 점검", hazard: "감전, 오작동, 누수", method: "설비 정지 여부 확인, 작업 전 방재실 통보", ppe: "안전모, 안전화, 장갑, 보안경", control: "작업구역 통제", emergency: "화재 발생 시 즉시 복구·신고" },
-            { task: "승강기 작업", detail: "승강기 점검·정비", hazard: "추락, 끼임, 감전", method: "운전정지·전원차단, 작업표지 설치", ppe: "안전모, 안전화, 안전대, 장갑", control: "승강기 사용금지 및 출입통제", emergency: "비상상황 즉시 신고" },
-            { task: "밀폐공간 작업", detail: "탱크·피트·맨홀 작업", hazard: "질식, 중독, 추락", method: "산소·유해가스 측정, 환기, 감시인 배치", ppe: "안전모, 안전화, 안전대, 적정 호흡보호구", control: "출입통제 및 감시인 배치", emergency: "구조자 단독 진입 금지, 119 신고" },
-            { task: "화학물질 작업", detail: "약품 보충·교체", hazard: "중독, 화상, 누출", method: "MSDS 확인, 환기, 누출방지 조치", ppe: "보안경, 내화학장갑, 보호복, 적정 호흡보호구", control: "관계자 외 출입금지", emergency: "피부·눈 접촉 시 즉시 세척" },
+            { task: "펌프정비", detail: "펌프 분해·점검", hazard: "감전, 회전체 끼임", method: "전원 차단·LOTO, 압력 제거", ppe: "안전모, 안전화, 장갑, 보안경", control: "장비 주변 통제", emergency: "전원 차단 후 응급조치" },
+            { task: "모터정비", detail: "모터 점검·교체", hazard: "감전, 끼임, 협착", method: "전원 차단·검전, 회전체 정지 확인", ppe: "안전모, 안전화, 절연장갑, 보안경", control: "장비 운전금지 표시", emergency: "비상정지 후 전원 차단" },
+            { task: "소방설비", detail: "소화전·펌프·감지기 점검", hazard: "감전, 오작동, 누수", method: "설비 정지 여부 확인, 작업 전 방재실 통보", ppe: "안전모, 안전화, 장갑, 보안경", control: "작업구역 통제", emergency: "화재 발생 시 즉시 복구·신고" },
+            { task: "승강기", detail: "승강기 점검·정비", hazard: "추락, 끼임, 감전", method: "운전정지·전원차단, 작업표지 설치", ppe: "안전모, 안전화, 안전대, 장갑", control: "승강기 사용금지 및 출입통제", emergency: "비상상황 즉시 신고" },
+            { task: "밀폐공간", detail: "탱크·피트·맨홀 작업", hazard: "질식, 중독, 추락", method: "산소·유해가스 측정, 환기, 감시인 배치", ppe: "안전모, 안전화, 안전대, 적정 호흡보호구", control: "출입통제 및 감시인 배치", emergency: "구조자 단독 진입 금지, 119 신고" },
+            { task: "화학물질", detail: "약품 보충·교체", hazard: "중독, 화상, 누출", method: "MSDS 확인, 환기, 누출방지 조치", ppe: "보안경, 내화학장갑, 보호복, 적정 호흡보호구", control: "관계자 외 출입금지", emergency: "피부·눈 접촉 시 즉시 세척" },
             { task: "도장작업", detail: "페인트·도장", hazard: "유기용제 중독, 화재", method: "충분한 환기, 화기 제거", ppe: "방독마스크, 보호장갑, 보안경, 보호복", control: "화기 및 출입 통제", emergency: "어지럼증 발생 시 신선한 공기로 이동" },
             { task: "청소작업", detail: "바닥·공용부 청소", hazard: "미끄러짐, 넘어짐", method: "물기 즉시 제거, 미끄럼주의 표지", ppe: "안전화, 장갑", control: "청소구역 통제", emergency: "사고 발생 시 작업중지 및 응급조치" },
-            { task: "외부 작업", detail: "외벽·옥외설비 점검", hazard: "추락, 차량충돌, 낙하물", method: "안전대·작업발판 확인", ppe: "안전모, 안전화, 안전대, 반사조끼", control: "작업구역 및 차량 통제", emergency: "추락·충돌 시 119 신고" },
-            { task: "제초·예초작업", detail: "잡초 제거", hazard: "비산물, 베임, 소음", method: "작업 전 주변 확인, 보호덮개 확인", ppe: "보안면/보안경, 장갑, 안전화, 귀마개", control: "작업반경 출입금지", emergency: "장비 정지 후 부상 응급조치" },
-            { task: "벌목·전지작업", detail: "나뭇가지 절단", hazard: "낙하, 베임, 추락", method: "작업반경 통제, 절단방향 확인", ppe: "안전모, 보안면, 안전화, 장갑", control: "낙하범위 출입금지", emergency: "작업중지 후 119 신고" },
+            { task: "외부작업", detail: "외벽·옥외설비 점검", hazard: "추락, 차량충돌, 낙하물", method: "안전대·작업발판 확인", ppe: "안전모, 안전화, 안전대, 반사조끼", control: "작업구역 및 차량 통제", emergency: "추락·충돌 시 119 신고" },
+            { task: "예초작업", detail: "잡초 제거", hazard: "비산물, 베임, 소음", method: "작업 전 주변 확인, 보호덮개 확인", ppe: "보안면/보안경, 장갑, 안전화, 귀마개", control: "작업반경 출입금지", emergency: "장비 정지 후 부상 응급조치" },
+            { task: "벌목전지", detail: "나뭇가지 절단", hazard: "낙하, 베임, 추락", method: "작업반경 통제, 절단방향 확인", ppe: "안전모, 보안면, 안전화, 장갑", control: "낙하범위 출입금지", emergency: "작업중지 후 119 신고" },
             { task: "굴착작업", detail: "지반 굴착", hazard: "붕괴, 매몰, 매설물 파손", method: "지하매설물 확인, 굴착면 안전조치", ppe: "안전모, 안전화, 반사조끼", control: "굴착구역 출입통제", emergency: "붕괴 시 무리한 구조 금지·119" },
-            { task: "천장 점검", detail: "천장 내부 설비 점검", hazard: "추락, 낙하물, 감전", method: "작업발판 확인, 전기설비 차단", ppe: "안전모, 안전화, 안전대, 보안경", control: "하부 통제", emergency: "낙하·추락 시 작업중지" },
-            { task: "냉동기·공조기 작업", detail: "냉동기·AHU 정비", hazard: "감전, 회전체, 냉매 누출", method: "전원 차단, 압력·냉매 상태 확인", ppe: "안전모, 안전화, 장갑, 보안경", control: "장비 주변 통제", emergency: "냉매 누출 시 환기 및 대피" },
-            { task: "보일러 작업", detail: "보일러 점검·정비", hazard: "화상, 가스누출, 폭발", method: "연료 차단, 압력·온도 확인", ppe: "안전모, 안전화, 보안경, 내열장갑", control: "기계실 출입통제", emergency: "가스누출 시 밸브 차단·대피" },
+            { task: "천장점검", detail: "천장 내부 설비 점검", hazard: "추락, 낙하물, 감전", method: "작업발판 확인, 전기설비 차단", ppe: "안전모, 안전화, 안전대, 보안경", control: "하부 통제", emergency: "낙하·추락 시 작업중지" },
+            { task: "냉동/공조", detail: "냉동기·AHU 정비", hazard: "감전, 회전체, 냉매 누출", method: "전원 차단, 압력·냉매 상태 확인", ppe: "안전모, 안전화, 장갑, 보안경", control: "장비 주변 통제", emergency: "냉매 누출 시 환기 및 대피" },
+            { task: "보일러", detail: "보일러 점검·정비", hazard: "화상, 가스누출, 폭발", method: "연료 차단, 압력·온도 확인", ppe: "안전모, 안전화, 보안경, 내열장갑", control: "기계실 출입통제", emergency: "가스누출 시 밸브 차단·대피" },
             { task: "가스작업", detail: "가스설비 점검", hazard: "폭발, 질식, 중독", method: "가스농도 확인, 밸브 차단, 환기", ppe: "방폭형 보호구/장비, 안전화, 장갑, 보안경", control: "화기·출입 통제", emergency: "가스밸브 차단 후 즉시 대피·119" }
         ];
 
-        // 비상연락망 데이터
+        // 연락망 및 DB설비데이터 
         const contacts = [
             { company: "현대오토에버", name: "김동호 책임", phone: "010-3028-0053" },
             { company: "현대엔지니어링", name: "김성합 책임", phone: "010-7454-4482" },
@@ -1531,7 +634,6 @@
             { company: "현대엔지니어링 본사", name: "임진규 매니저", phone: "010-4543-5901" }
         ];
 
-        // 설비 데이터베이스 (공조 6종 + 전기 7종)
         const dbData = {
             'CCU': {
                 name: '항온항습기',
@@ -1702,7 +804,7 @@
         }
 
         // ==========================================
-        // 3. 스케줄/인수인계 (Firebase 실시간 리스너 적용)
+        // 3. 스케줄/인수인계 (Firebase 연동)
         // ==========================================
         let unsubscribeMemoListener = null;
 
@@ -1714,16 +816,12 @@
             window.scrollTo(0, 0);
         }
 
-        // 실시간 동기화 리스너 등록
         function initRealtimeMemos() {
             const listDiv = document.getElementById('memoList');
             listDiv.innerHTML = '<p style="color:#999; font-size:0.9rem;">클라우드 데이터 동기화 중...</p>';
 
-            if (unsubscribeMemoListener) {
-                unsubscribeMemoListener(); // 중복 리스너 해제
-            }
+            if (unsubscribeMemoListener) unsubscribeMemoListener();
 
-            // Firestore 실시간 리스너 (새로고침 없이 모든 사용자에게 즉시 반영됨)
             unsubscribeMemoListener = db.collection("memos")
                 .orderBy("timestamp", "desc")
                 .limit(50)
@@ -1733,10 +831,7 @@
                     renderMemoHTML(listDiv, fetchedMemos);
                 }, (error) => {
                     console.error("Firestore 실시간 리스너 오류:", error);
-                    listDiv.innerHTML = `<p style="color:var(--danger-color); font-size:0.9rem;">
-                        데이터베이스 연결 오류가 발생했습니다.<br>
-                        (Firebase 콘솔 > Firestore Database > 규칙 탭에서 읽기/쓰기 권한을 확인해주세요.)
-                    </p>`;
+                    listDiv.innerHTML = `<p style="color:var(--danger-color); font-size:0.9rem;">데이터베이스 연결 오류가 발생했습니다.</p>`;
                 });
         }
 
@@ -1764,29 +859,22 @@
 
             db.collection("memos").add(newMemo)
             .then(() => {
-                resetMemoForm();
+                document.getElementById('memoContent').value = '';
+                document.getElementById('memoImportant').checked = false;
                 btn.disabled = false;
                 btn.innerText = "저장하기";
             })
             .catch((error) => {
                 console.error("저장 오류:", error);
-                alert("클라우드 저장에 실패했습니다. Firestore 보안 규칙을 확인해주세요.");
+                alert("클라우드 저장에 실패했습니다. 규칙 설정을 확인해주세요.");
                 btn.disabled = false;
                 btn.innerText = "저장하기";
             });
         }
 
-        function resetMemoForm() {
-            document.getElementById('memoContent').value = '';
-            document.getElementById('memoImportant').checked = false;
-        }
-
         function renderMemoHTML(container, memoArray) {
-            // 1. 중요(true) 최우선 정렬, 2. 최신 작성일자 정렬
             memoArray.sort((a, b) => {
-                if (a.important === b.important) {
-                    return new Date(b.timestamp) - new Date(a.timestamp);
-                }
+                if (a.important === b.important) return new Date(b.timestamp) - new Date(a.timestamp);
                 return a.important ? -1 : 1;
             });
 
@@ -1809,19 +897,33 @@
         }
 
         // ==========================================
-        // 4. TBM 안전교육 렌더링
+        // 4. TBM 안전교육 (가로 스크롤 제거, 화면 꽉 차는 태그 형태)
         // ==========================================
         function openTBMView() {
             document.getElementById('headerTitle').innerText = "TBM 안전교육";
             document.getElementById('backBtn').style.display = 'inline-block';
             showView('viewTBM');
-            renderTBM();
+            
+            const tabsArea = document.getElementById('tbmTabs');
+            tabsArea.innerHTML = tbmData.map((tbm, idx) => 
+                `<button class="tbm-tab-btn" id="tbmBtn_${idx}" onclick="selectTBM(${idx})">${tbm.task}</button>`
+            ).join('');
+            
+            selectTBM(0);
             window.scrollTo(0, 0);
         }
 
-        function renderTBM() {
-            const tbmArea = document.getElementById('tbmList');
-            const html = tbmData.map(tbm => `
+        function selectTBM(index) {
+            document.querySelectorAll('.tbm-tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const activeBtn = document.getElementById('tbmBtn_' + index);
+            if(activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            const tbm = tbmData[index];
+            const detailArea = document.getElementById('tbmDetailBox');
+            detailArea.innerHTML = `
                 <div class="tbm-card">
                     <div class="tbm-header">🛠️ ${tbm.task}</div>
                     <div class="tbm-grid">
@@ -1833,13 +935,45 @@
                         <div class="tbm-row"><span class="tbm-label">⑥ 비상상황 대응</span><span class="tbm-value">${tbm.emergency}</span></div>
                     </div>
                 </div>
-            `).join('');
-            tbmArea.innerHTML = html;
+            `;
         }
 
         // ==========================================
-        // 5. 공통 UI 조작 로직
+        // 5. 공통 기능 (보고서 복사, 연락망 렌더링 등)
         // ==========================================
+        function copyReport(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            
+            if(navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    alert("양식이 복사되었습니다. 메신저에 붙여넣기 하세요.");
+                }).catch(err => {
+                    fallbackCopyTextToClipboard(textToCopy);
+                });
+            } else {
+                fallbackCopyTextToClipboard(textToCopy);
+            }
+        }
+
+        // 구형 모바일 브라우저를 위한 복사 Fallback
+        function fallbackCopyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert("양식이 복사되었습니다. 메신저에 붙여넣기 하세요.");
+            } catch (err) {
+                alert("복사에 실패했습니다.");
+            }
+            document.body.removeChild(textArea);
+        }
+
         function renderContacts() {
             const html = contacts.map(c => `
                 <div class="contact-card">

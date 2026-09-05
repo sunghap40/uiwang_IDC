@@ -38,11 +38,10 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 공통 UI */
+        /* 공통 UI (헤더 수정 - 비상연락망 우측 고정) */
         header {
             background-color: var(--surface-color);
-            padding: 16px;
-            text-align: center;
+            padding: 12px 16px;
             font-size: 1.1rem;
             font-weight: bold;
             border-bottom: 1px solid var(--border-color);
@@ -53,7 +52,21 @@
             justify-content: space-between;
             align-items: center;
         }
-
+        .header-left, .header-right {
+            width: 85px; /* 타이틀 중앙 정렬을 위해 좌우 너비 고정 */
+            display: flex;
+            align-items: center;
+        }
+        .header-right {
+            justify-content: flex-end;
+        }
+        .header-title {
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .back-btn {
             background: none;
             border: none;
@@ -61,8 +74,25 @@
             font-size: 1rem;
             cursor: pointer;
             display: none;
-            padding: 12px;
-            margin-left: -12px;
+            padding: 8px 0;
+        }
+        .header-call-btn {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: background-color 0.2s;
+        }
+        .header-call-btn:active {
+            background-color: var(--danger-color);
+            color: white;
         }
 
         .container {
@@ -72,39 +102,6 @@
 
         .view { display: none; }
         .view.active { display: block; }
-
-        /* 긴급 버튼 영역 */
-        .emergency-nav {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 1px dashed var(--border-color);
-        }
-
-        .em-btn {
-            border: none;
-            border-radius: 8px;
-            padding: 12px 4px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            text-align: center;
-            -webkit-appearance: none;
-            touch-action: manipulation;
-        }
-
-        .em-btn-call { background-color: var(--danger-color); }
-        .em-btn-report { background-color: var(--info-color); }
-        .em-btn-process { background-color: var(--success-color); }
-        .em-icon { font-size: 1.5rem; }
 
         /* 카테고리 헤더 */
         .category-header {
@@ -239,7 +236,7 @@
         .contact-name { font-size: 1.1rem; font-weight: bold; }
         .call-btn { background-color: var(--success-color); color: white; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
         
-        /* 보고 양식 (복사 기능) */
+        /* 복사 기능 추가된 보고 양식 */
         .report-box { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
         .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 12px; }
         .report-header h3 { margin: 0; color: var(--info-color); font-size: 1.05rem;}
@@ -266,12 +263,10 @@
         .memo-card { background-color: var(--surface-color); border-left: 4px solid var(--primary-color); padding: 16px; border-radius: 4px; margin-bottom: 12px; }
         .memo-card.important { border-left: 4px solid var(--danger-color); background-color: rgba(244, 67, 54, 0.12); }
         .important-badge { color: var(--danger-color); font-weight: bold; font-size: 0.8rem; border: 1px solid var(--danger-color); padding: 2px 6px; border-radius: 4px; margin-right: 8px; display: inline-block; }
-        
         .memo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); }
         .memo-actions { display: flex; gap: 4px; align-items: center;}
         .action-btn { background: none; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 4px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
         .action-btn:hover { color: white; border-color: var(--primary-color); }
-        
         .memo-body { font-size: 0.95rem; line-height: 1.5; white-space: pre-line; }
 
         /* TBM 탭 UI */
@@ -313,34 +308,35 @@
 </head>
 <body>
 
+    <!-- 헤더 영역 (비상연락망 우측 고정) -->
     <header>
-        <button type="button" class="back-btn" id="backBtn" onclick="goHome()">◀ 뒤로</button>
-        <span id="headerTitle">현대차 의왕IDC 장애 점검 Guide</span>
-        <span style="width: 50px;"></span>
+        <div class="header-left">
+            <button type="button" class="back-btn" id="backBtn" onclick="goHome()">◀ 뒤로</button>
+        </div>
+        <div class="header-title" id="headerTitle">의왕IDC 점검 Guide</div>
+        <div class="header-right">
+            <button type="button" class="header-call-btn" onclick="openView('viewContact', '비상연락망')">🚨 연락망</button>
+        </div>
     </header>
 
     <!-- [1] 홈 화면 -->
     <div id="viewHome" class="container view active">
-        
-        <!-- 긴급 메뉴 영역 -->
-        <div class="emergency-nav">
-            <button class="em-btn em-btn-process" onclick="openView('viewProcess', '재해대응프로세스')">
-                <span class="em-icon">🔄</span>
-                <span>재해대응프로세스</span>
-            </button>
-            <button class="em-btn em-btn-report" onclick="openView('viewReportForm', '재해보고양식')">
-                <span class="em-icon">📝</span>
-                <span>재해보고양식</span>
-            </button>
-            <button class="em-btn em-btn-call" onclick="openView('viewContact', '비상연락망')">
-                <span class="em-icon">🚨</span>
-                <span>비상연락망</span>
-            </button>
-        </div>
 
         <!-- 공통 업무 섹션 -->
         <div class="category-header">📌 공통 업무</div>
         <div class="grid-menu">
+            <button type="button" class="menu-card" onclick="openView('viewProcess', '재해대응프로세스')">
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                </span>
+                <span>재해대응프로세스</span>
+            </button>
+            <button type="button" class="menu-card" onclick="openView('viewReportForm', '재해보고양식')">
+                <span class="menu-icon">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </span>
+                <span>재해보고양식</span>
+            </button>
             <button type="button" class="menu-card" onclick="openMemoView()">
                 <span class="menu-icon">
                     <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
@@ -465,7 +461,7 @@
         <div id="memoList"></div>
     </div>
 
-    <!-- TBM 안전교육 화면 -->
+    <!-- TBM 안전교육 (화면 폭 맞춤 탭 방식 적용) 화면 -->
     <div id="viewTBM" class="container view">
         <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 16px;">수행하실 작업을 탭에서 선택하여 위험요인과 보호구를 확인하세요.</p>
         <div class="tbm-tabs" id="tbmTabs"></div>
@@ -474,14 +470,11 @@
 
     <!-- 비상연락망 화면 -->
     <div id="viewContact" class="container view">
-        <h2 class="view-title">🚨 비상연락망</h2>
         <div class="contact-list" id="contactArea"></div>
     </div>
 
     <!-- 재해보고양식 화면 -->
     <div id="viewReportForm" class="container view">
-        <h2 class="view-title">📝 재해발생 시 최초 문자보고 기준</h2>
-        
         <div class="report-box">
             <div class="report-header">
                 <h3>▶ 일반사고 (자산사업장 안전사고 보고)</h3>
@@ -524,7 +517,6 @@
 
     <!-- 재해대응프로세스 화면 -->
     <div id="viewProcess" class="container view">
-        <h2 class="view-title">🔄 재해 대응 프로세스</h2>
         <button class="process-acc">
             <span>1. 중대 재해 (대형사고)</span>
             <span style="color:var(--danger-color); font-size:0.85rem;">[30분 이내]</span>
@@ -814,7 +806,7 @@
         // ==========================================
         let unsubscribeMemoListener = null;
         let editingMemoId = null;
-        let currentMemosArray = []; // 현재 로드된 메모 목록 저장
+        let currentMemosArray = []; 
 
         function openMemoView() {
             document.getElementById('headerTitle').innerText = "스케줄/인수인계";
@@ -837,7 +829,7 @@
                     currentMemosArray = [];
                     querySnapshot.forEach((doc) => {
                         let data = doc.data();
-                        data.id = doc.id; // 파이어베이스 Document ID 저장
+                        data.id = doc.id;
                         currentMemosArray.push(data);
                     });
                     renderMemoHTML(listDiv, currentMemosArray);
@@ -862,7 +854,6 @@
             btn.innerText = "처리 중...";
 
             if (editingMemoId) {
-                // [수정 모드]
                 db.collection("memos").doc(editingMemoId).update({
                     author: author,
                     content: content,
@@ -878,7 +869,6 @@
                     btn.innerText = "수정하기";
                 });
             } else {
-                // [신규 생성 모드]
                 const newMemo = {
                     author: author,
                     content: content,
@@ -919,7 +909,6 @@
         function deleteMemo(id) {
             if (confirm("정말로 이 메모를 삭제하시겠습니까?")) {
                 db.collection("memos").doc(id).delete().then(() => {
-                    // 삭제 완료 시 실시간 리스너가 화면을 자동 갱신함
                 }).catch((error) => {
                     console.error("삭제 오류:", error);
                     alert("메모 삭제에 실패했습니다.");
@@ -1067,7 +1056,7 @@
 
         function goHome() {
             showView('viewHome');
-            document.getElementById('headerTitle').innerText = '현대차 의왕IDC 장애 점검 Guide';
+            document.getElementById('headerTitle').innerText = '의왕IDC 점검 Guide';
             document.getElementById('backBtn').style.display = 'none';
             window.scrollTo(0, 0);
         }

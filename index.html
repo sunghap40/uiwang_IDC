@@ -18,7 +18,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><ellipse cx=%2212%22 cy=%2212%22 rx=%2211%22 ry=%227%22/><path d=%22M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9%22/></svg>">
 
     <style>
-        /* 기본 테마 (다크 모드 + 현대엔지니어링 컬러) */
+        /* 기본 테마 (다크 모드 + 현대 컬러) */
         :root {
             --bg-color: #121212;
             --surface-color: #1e1e1e;
@@ -49,7 +49,7 @@
         .view.active { display: block; }
 
         /* =========================================
-           로그인 화면 UI (참고이미지 배색 적용)
+           로그인 화면 UI
         ========================================= */
         #viewLogin {
             min-height: 100vh;
@@ -71,9 +71,7 @@
             text-align: center;
             color: #333;
         }
-        .login-logo { margin-bottom: 24px; }
-        .login-logo h1 { color: var(--hec-blue); margin: 0 0 4px 0; font-size: 1.8rem; letter-spacing: -1px; }
-        .login-logo h2 { color: var(--hec-green); margin: 0; font-size: 1rem; font-weight: normal; }
+        .login-logo { margin-bottom: 16px; display: flex; justify-content: center; }
         .login-form { text-align: left; margin-bottom: 24px; }
         .login-form label { font-size: 0.85rem; font-weight: bold; color: #555; }
         .login-input {
@@ -117,7 +115,7 @@
         .header-left { display: flex; align-items: center; flex: 1; overflow: hidden; gap: 8px; }
         .header-right { flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
         
-        .header-title { font-size: 1.2rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-color); }
+        .header-title { font-size: 1.3rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-color); }
         .header-btn { background: none; border: none; color: var(--primary-color); font-size: 1rem; cursor: pointer; padding: 6px; font-weight: bold; }
         .header-btn.back { display: none; }
         .header-btn.logout { color: var(--text-muted); font-size: 0.85rem; border: 1px solid #555; border-radius: 4px; padding: 4px 8px;}
@@ -152,7 +150,7 @@
         h2:first-child { margin-top: 0; }
         .view-title { color: white; font-size: 1.3rem; font-weight: bold; text-align: left; margin-bottom: 20px; border-bottom: none; }
 
-        /* 아코디언 & 기타 UI (기존유지) */
+        /* 아코디언 & 기타 UI */
         .process-acc, .accordion { background-color: var(--surface-color); color: var(--text-color); cursor: pointer; padding: 16px; width: 100%; text-align: left; border: 1px solid var(--border-color); font-size: 1rem; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-weight: bold; }
         .process-acc.active, .accordion.active { border-radius: 8px 8px 0 0; border-bottom: none; background-color: #2c2c2c; }
         .process-content, .accordion-content { padding: 0 16px; background-color: #1a1a1a; max-height: 0; overflow: hidden; transition: max-height 0.2s ease-out; border-radius: 0 0 8px 8px; border: 1px solid var(--border-color); border-top: none; margin-bottom: 12px; font-size: 0.9rem; line-height: 1.5; }
@@ -198,8 +196,10 @@
     <div id="viewLogin" class="view active">
         <div class="login-card">
             <div class="login-logo">
-                <h1>HYUNDAI</h1>
-                <h2>ENGINEERING</h2>
+                <svg width="80" height="80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--hec-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="12" rx="11" ry="7"/>
+                    <path d="M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9"/>
+                </svg>
             </div>
             <div style="font-weight: bold; font-size: 1.2rem; margin-bottom: 24px; color: #222;">의왕IDC 업무수첩</div>
             
@@ -286,7 +286,7 @@
         </div>
     </div>
 
-    <!-- [신규] 설정 (회원관리) 화면 -->
+    <!-- 설정 (회원관리) 화면 -->
     <div id="viewSettings" class="container view">
         <h2 class="view-title">⚙️ 계정 및 권한 관리</h2>
         
@@ -445,13 +445,12 @@
 
         // 전역 상태 관리
         let currentUser = null; 
-        // 권한 객체 예: { id: 'admin', role: 'admin', canRead: true, canWrite: true, affiliation: '현대' }
 
         // ==========================================
-        // 2. 로그인 및 계정 관리 시스템
+        // 2. 로그인 및 계정 관리 시스템 (하드코딩 admin 추가)
         // ==========================================
         async function initAuth() {
-            // Firestore users 컬렉션 확인, 없으면 기본 어드민 생성
+            // DB 연결 체크용 (마스터 로그인은 DB 상태 무관하게 되도록 분리)
             try {
                 const snapshot = await db.collection("users").doc("admin").get();
                 if (!snapshot.exists) {
@@ -459,13 +458,25 @@
                         pw: "1234", role: "admin", affiliation: "시스템 관리자", canRead: true, canWrite: true
                     });
                 }
-            } catch (e) { console.error("Auth init error:", e); }
+            } catch (e) { 
+                console.warn("DB 연결 대기 또는 권한 없음. 하드코딩된 admin으로 접속 가능합니다."); 
+            }
         }
 
         async function attemptLogin() {
             const id = document.getElementById('loginId').value.trim();
             const pw = document.getElementById('loginPw').value.trim();
             if (!id || !pw) { alert("아이디와 비밀번호를 입력해주세요."); return; }
+
+            // 🔥 하드코딩 마스터 어드민: DB 상태와 무관하게 무조건 로그인 보장
+            if (id === 'admin' && pw === '1234') {
+                currentUser = { id: 'admin', role: 'admin', affiliation: '시스템 관리자', canRead: true, canWrite: true };
+                applyPermissions();
+                document.getElementById('viewLogin').classList.remove('active');
+                document.getElementById('mainHeader').style.display = 'flex';
+                goHome();
+                return;
+            }
 
             try {
                 const doc = await db.collection("users").doc(id).get();
@@ -479,7 +490,8 @@
                     alert("아이디 또는 비밀번호가 일치하지 않습니다.");
                 }
             } catch(e) {
-                alert("로그인 처리 중 에러가 발생했습니다.");
+                console.error(e);
+                alert("DB 연결 상태를 확인해주세요. (현재 admin / 1234 로 접속 가능)");
             }
         }
 
@@ -537,28 +549,33 @@
         async function loadUsers() {
             const listArea = document.getElementById('userListArea');
             listArea.innerHTML = "불러오는 중...";
-            const snapshot = await db.collection("users").get();
-            let html = '';
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const badge = data.role === 'admin' ? '<span class="user-badge badge-admin">관리자</span>' : '<span class="user-badge badge-op">운영자</span>';
-                const readTag = data.canRead ? '읽기 O' : '읽기 X';
-                const writeTag = data.canWrite ? '쓰기 O' : '쓰기 X';
-                html += `
-                    <div class="user-card">
-                        <div class="user-info">
-                            <div style="font-weight:bold;">${doc.id} ${badge}</div>
-                            <div style="font-size:0.85rem; color:#aaa;">소속: ${data.affiliation || '없음'}</div>
-                            <div style="font-size:0.8rem; color:#888;">권한: ${readTag} / ${writeTag}</div>
+            
+            try {
+                const snapshot = await db.collection("users").get();
+                let html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const badge = data.role === 'admin' ? '<span class="user-badge badge-admin">관리자</span>' : '<span class="user-badge badge-op">운영자</span>';
+                    const readTag = data.canRead ? '읽기 O' : '읽기 X';
+                    const writeTag = data.canWrite ? '쓰기 O' : '쓰기 X';
+                    html += `
+                        <div class="user-card">
+                            <div class="user-info">
+                                <div style="font-weight:bold;">${doc.id} ${badge}</div>
+                                <div style="font-size:0.85rem; color:#aaa;">소속: ${data.affiliation || '없음'}</div>
+                                <div style="font-size:0.8rem; color:#888;">권한: ${readTag} / ${writeTag}</div>
+                            </div>
+                            <div class="user-actions">
+                                <button onclick="editUserFill('${doc.id}', '${data.pw}', '${data.role}', '${data.affiliation}', ${data.canRead}, ${data.canWrite})">수정</button>
+                                <button style="background:var(--danger-color);" onclick="deleteUser('${doc.id}')">삭제</button>
+                            </div>
                         </div>
-                        <div class="user-actions">
-                            <button onclick="editUserFill('${doc.id}', '${data.pw}', '${data.role}', '${data.affiliation}', ${data.canRead}, ${data.canWrite})">수정</button>
-                            <button style="background:var(--danger-color);" onclick="deleteUser('${doc.id}')">삭제</button>
-                        </div>
-                    </div>
-                `;
-            });
-            listArea.innerHTML = html;
+                    `;
+                });
+                listArea.innerHTML = html;
+            } catch (e) {
+                listArea.innerHTML = `<p style="color:var(--danger-color);">데이터를 불러올 수 없습니다. DB 규칙을 확인하세요.</p>`;
+            }
         }
 
         function editUserFill(id, pw, role, affil, read, write) {
@@ -581,27 +598,35 @@
 
             if(!id || !pw) { alert("아이디와 비밀번호는 필수입니다."); return; }
 
-            await db.collection("users").doc(id).set({
-                pw: pw, role: role, affiliation: affil, canRead: read, canWrite: write
-            });
-            alert("저장되었습니다.");
-            
-            // 입력폼 초기화
-            document.getElementById('editUserId').value = '';
-            document.getElementById('editUserPw').value = '';
-            document.getElementById('editUserAffil').value = '';
-            document.getElementById('editUserRole').value = 'operator';
-            document.getElementById('editUserRead').checked = true;
-            document.getElementById('editUserWrite').checked = true;
-            
-            loadUsers();
+            try {
+                await db.collection("users").doc(id).set({
+                    pw: pw, role: role, affiliation: affil, canRead: read, canWrite: write
+                });
+                alert("저장되었습니다.");
+                
+                // 입력폼 초기화
+                document.getElementById('editUserId').value = '';
+                document.getElementById('editUserPw').value = '';
+                document.getElementById('editUserAffil').value = '';
+                document.getElementById('editUserRole').value = 'operator';
+                document.getElementById('editUserRead').checked = true;
+                document.getElementById('editUserWrite').checked = true;
+                
+                loadUsers();
+            } catch (e) {
+                alert("저장 실패. 데이터베이스 권한을 확인해주세요.");
+            }
         }
 
         async function deleteUser(id) {
             if(id === 'admin') { alert("최고 관리자 계정은 삭제할 수 없습니다."); return; }
             if(confirm(`[${id}] 계정을 정말 삭제하시겠습니까?`)) {
-                await db.collection("users").doc(id).delete();
-                loadUsers();
+                try {
+                    await db.collection("users").doc(id).delete();
+                    loadUsers();
+                } catch (e) {
+                    alert("삭제 실패.");
+                }
             }
         }
 

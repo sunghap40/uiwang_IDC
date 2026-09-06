@@ -14,15 +14,15 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-    <!-- 브라우저 탭 아이콘 (현대차 H 로고) -->
+    <!-- 브라우저 탭 아이콘 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><ellipse cx=%2212%22 cy=%2212%22 rx=%2211%22 ry=%227%22/><path d=%22M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9%22/></svg>">
 
     <style>
-        /* 기본 테마 (다크 모드 + 현대 컬러) */
+        /* 기본 테마 */
         :root {
             --bg-color: #121212;
             --surface-color: #1e1e1e;
-            --primary-color: #ffb300; /* Yellow */
+            --primary-color: #ffb300; 
             --hec-blue: #002c5f;
             --hec-green: #007c36;
             --text-color: #ffffff;
@@ -71,7 +71,6 @@
             text-align: center;
             color: #333;
         }
-        .login-logo { margin-bottom: 16px; display: flex; justify-content: center; }
         .login-form { text-align: left; margin-bottom: 24px; }
         .login-form label { font-size: 0.85rem; font-weight: bold; color: #555; }
         .login-input {
@@ -110,13 +109,13 @@
             padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
             position: sticky; top: 0; z-index: 100;
-            display: flex; justify-content: space-between; align-items: center; gap: 8px;
+            display: flex; justify-content: space-between; align-items: center; gap: 12px;
         }
         .header-left { display: flex; align-items: center; flex: 1; overflow: hidden; gap: 8px; }
-        .header-right { flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
+        .header-right { flex-shrink: 0; display: flex; align-items: center; gap: 8px;}
         
-        .header-title { font-size: 1.3rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-color); }
-        .header-btn { background: none; border: none; color: var(--primary-color); font-size: 1rem; cursor: pointer; padding: 6px; font-weight: bold; }
+        .header-title { font-size: 1.3rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-color); text-align: left; }
+        .header-btn { background: none; border: none; color: var(--primary-color); font-size: 1rem; cursor: pointer; padding: 6px; font-weight: bold; flex-shrink:0;}
         .header-btn.back { display: none; }
         .header-btn.logout { color: var(--text-muted); font-size: 0.85rem; border: 1px solid #555; border-radius: 4px; padding: 4px 8px;}
         
@@ -125,6 +124,7 @@
             padding: 8px 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
             display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(244, 67, 54, 0.5); white-space: nowrap;
         }
+        .header-call-btn:active { transform: scale(0.95); background-color: #d32f2f; }
         
         .settings-btn {
             background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 6px;
@@ -195,13 +195,8 @@
     <!-- [0] 로그인 화면 -->
     <div id="viewLogin" class="view active">
         <div class="login-card">
-            <div class="login-logo">
-                <svg width="80" height="80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--hec-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <ellipse cx="12" cy="12" rx="11" ry="7"/>
-                    <path d="M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9"/>
-                </svg>
-            </div>
-            <div style="font-weight: bold; font-size: 1.2rem; margin-bottom: 24px; color: #222;">의왕IDC 업무수첩</div>
+            <!-- H로고 삭제 후 글씨 크기 2.2rem 확대 -->
+            <div style="font-weight: 900; font-size: 2.2rem; margin-bottom: 30px; color: var(--hec-blue); letter-spacing: -1px;">의왕IDC 업무수첩</div>
             
             <div class="login-form">
                 <label>아이디</label>
@@ -443,43 +438,34 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 전역 상태 관리
         let currentUser = null; 
 
         // ==========================================
-        // 2. 로그인 및 계정 관리 시스템 (하드코딩 admin 추가)
+        // 2. 로그인 및 계정 관리 시스템 (강력한 하드코딩 Bypass)
         // ==========================================
-        async function initAuth() {
-            // DB 연결 체크용 (마스터 로그인은 DB 상태 무관하게 되도록 분리)
-            try {
-                const snapshot = await db.collection("users").doc("admin").get();
-                if (!snapshot.exists) {
-                    await db.collection("users").doc("admin").set({
-                        pw: "1234", role: "admin", affiliation: "시스템 관리자", canRead: true, canWrite: true
-                    });
-                }
-            } catch (e) { 
-                console.warn("DB 연결 대기 또는 권한 없음. 하드코딩된 admin으로 접속 가능합니다."); 
-            }
-        }
-
-        async function attemptLogin() {
+        
+        // 로그인 버튼 클릭 시 실행
+        function attemptLogin() {
             const id = document.getElementById('loginId').value.trim();
             const pw = document.getElementById('loginPw').value.trim();
-            if (!id || !pw) { alert("아이디와 비밀번호를 입력해주세요."); return; }
+            
+            if (!id || !pw) { 
+                alert("아이디와 비밀번호를 입력해주세요."); 
+                return; 
+            }
 
-            // 🔥 하드코딩 마스터 어드민: DB 상태와 무관하게 무조건 로그인 보장
+            // [1순위] 완벽하게 분리된 하드코딩 마스터 관리자 접속 (Firebase 오류/지연 완벽 무시)
             if (id === 'admin' && pw === '1234') {
                 currentUser = { id: 'admin', role: 'admin', affiliation: '시스템 관리자', canRead: true, canWrite: true };
                 applyPermissions();
                 document.getElementById('viewLogin').classList.remove('active');
                 document.getElementById('mainHeader').style.display = 'flex';
                 goHome();
-                return;
+                return; 
             }
 
-            try {
-                const doc = await db.collection("users").doc(id).get();
+            // [2순위] 일반 사용자 Firebase 접속 시도
+            db.collection("users").doc(id).get().then(doc => {
                 if (doc.exists && doc.data().pw === pw) {
                     currentUser = { id: doc.id, ...doc.data() };
                     applyPermissions();
@@ -489,14 +475,13 @@
                 } else {
                     alert("아이디 또는 비밀번호가 일치하지 않습니다.");
                 }
-            } catch(e) {
-                console.error(e);
-                alert("DB 연결 상태를 확인해주세요. (현재 admin / 1234 로 접속 가능)");
-            }
+            }).catch(e => {
+                console.error("Firebase Login Error:", e);
+                alert("DB 연결 상태를 확인해주세요. (현재 admin / 1234 로 즉시 접속 가능합니다.)");
+            });
         }
 
         function loginAsWorker() {
-            // 설비작업자 간편접속 (읽기전용 모드, 공통업무/비상연락망 가림)
             currentUser = { id: 'worker', role: 'worker', affiliation: '설비작업자', canRead: true, canWrite: false };
             applyPermissions();
             document.getElementById('viewLogin').classList.remove('active');
@@ -514,19 +499,15 @@
         }
 
         function applyPermissions() {
-            // 작업자 모드일 경우 숨김 처리
             const isWorker = currentUser.role === 'worker';
             document.getElementById('commonTaskSection').style.display = isWorker ? 'none' : 'block';
             document.getElementById('emergencyBtn').style.display = isWorker ? 'none' : 'flex';
             
-            // 설정(톱니바퀴) 아이콘은 관리자만 표시
             document.getElementById('settingsBtn').style.display = (currentUser.role === 'admin') ? 'inline-block' : 'none';
 
-            // 쓰기 권한이 없으면 메모 작성란 숨김
-            const canWrite = currentUser.canWrite;
             const memoWriteArea = document.getElementById('memoWriteArea');
             if(memoWriteArea) {
-                memoWriteArea.style.display = canWrite ? 'block' : 'none';
+                memoWriteArea.style.display = currentUser.canWrite ? 'block' : 'none';
             }
         }
 
@@ -604,7 +585,6 @@
                 });
                 alert("저장되었습니다.");
                 
-                // 입력폼 초기화
                 document.getElementById('editUserId').value = '';
                 document.getElementById('editUserPw').value = '';
                 document.getElementById('editUserAffil').value = '';
@@ -643,7 +623,6 @@
             document.getElementById('logoutBtn').style.display = 'none';
             showView('viewMemo');
             
-            // 작성자 자동 맵핑
             if(currentUser && currentUser.affiliation) {
                 document.getElementById('memoAuthor').value = currentUser.affiliation;
             }
@@ -772,6 +751,17 @@
             { task: "가스작업", detail: "가스설비 점검", hazard: "폭발, 질식, 중독", method: "가스농도 확인, 밸브 차단, 환기", ppe: "방폭형 보호구/장비, 안전화, 장갑, 보안경", control: "화기·출입 통제", emergency: "가스밸브 차단 후 즉시 대피·119" }
         ];
 
+        const contacts = [
+            { company: "현대오토에버", name: "김동호 책임", phone: "010-3028-0053" },
+            { company: "현대엔지니어링", name: "김성합 책임", phone: "010-7454-4482" },
+            { company: "두잉씨앤에스", name: "김정호 소장", phone: "010-6254-8975" },
+            { company: "두잉씨앤에스", name: "방민기 과장", phone: "010-9121-3102" },
+            { company: "현대엔지니어링 본사", name: "김회성 팀장", phone: "010-6645-0049" },
+            { company: "현대엔지니어링 본사", name: "오재학 팀장", phone: "010-2058-7845" },
+            { company: "현대엔지니어링 본사", name: "양정호 책임", phone: "010-4002-7067" },
+            { company: "현대엔지니어링 본사", name: "임진규 매니저", phone: "010-4543-5901" }
+        ];
+
         const dbData = {
             'CCU': {
                 name: '항온항습기',
@@ -860,7 +850,6 @@
         // 6. UI 조작 기본 함수
         // ==========================================
         window.onload = function() {
-            initAuth();
             renderContacts();
         }
 
@@ -936,8 +925,7 @@
                 <div class="sys-fault-box"><h4>조치 방법</h4><div>${sys.action}</div></div></div></div>
             `).join('');
 
-            // 체크리스트: 읽기 전용 여부 확인
-            const canWrite = currentUser.canWrite;
+            const canWrite = currentUser && currentUser.canWrite;
             const pointerStyle = canWrite ? 'cursor:pointer;' : 'pointer-events:none;';
             document.getElementById('checklistArea').innerHTML = data.steps.map(step => `
                 <li class="check-item" style="${pointerStyle}" onclick="if(${canWrite}) this.classList.toggle('done')">
@@ -975,7 +963,6 @@
             `).join('');
         }
         
-        // 아코디언 공통 바인딩
         document.querySelectorAll(".process-acc").forEach(item => {
             item.onclick = function() {
                 this.classList.toggle("active");

@@ -14,11 +14,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-    <!-- 브라우저 탭 아이콘 (현대차 H 로고) -->
+    <!-- 브라우저 탭 아이콘 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><ellipse cx=%2212%22 cy=%2212%22 rx=%2211%22 ry=%227%22/><path d=%22M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9%22/></svg>">
 
     <style>
-        /* 기본 테마 (다크 모드 + 현대 컬러) */
+        /* 기본 테마 */
         :root {
             --bg-color: #121212;
             --surface-color: #1e1e1e;
@@ -44,10 +44,10 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 뷰 전환 처리 (버그 수정됨) */
+        /* 뷰 전환 처리 */
         .view { display: none !important; }
         .view.active { display: block !important; }
-        #viewLogin.view.active { display: flex !important; } /* 로그인 화면 전용 flex 처리 */
+        #viewLogin.view.active { display: flex !important; }
 
         /* =========================================
            로그인 화면 UI
@@ -99,7 +99,7 @@
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-guest:active { background: #f0f0f0; }
-        .login-footer { margin-top: 30px; font-size: 0.85rem; color: #666; font-weight: bold; }
+        .login-footer { margin-top: 24px; font-size: 0.85rem; color: #888; font-weight: bold; }
 
         /* =========================================
            메인 앱 UI
@@ -195,11 +195,12 @@
     <!-- [0] 로그인 화면 -->
     <div id="viewLogin" class="view active">
         <div class="login-card">
-            <div style="font-weight: 900; font-size: 2.2rem; margin-bottom: 30px; color: var(--hec-blue); letter-spacing: -1px;">의왕IDC 업무수첩</div>
+            
+            <div style="font-weight: 900; font-size: 2.2rem; margin-bottom: 30px; color: var(--hec-blue); letter-spacing: -1px;">의왕IDC 설비업무수첩</div>
             
             <div class="login-form">
                 <label>아이디</label>
-                <input type="text" id="loginId" class="login-input" placeholder="아이디를 입력하세요">
+                <input type="text" id="loginId" class="login-input" placeholder="아이디 또는 오토에버사번을 입력하세요">
                 <label>비밀번호</label>
                 <input type="password" id="loginPw" class="login-input" placeholder="비밀번호를 입력하세요">
                 <button type="button" class="btn-login" onclick="attemptLogin()">로그인 ➔</button>
@@ -209,11 +210,13 @@
             
             <button type="button" class="btn-guest" onclick="loginAsWorker()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                설비작업자 간편접속
+                설비점검 간편접속
             </button>
-        </div>
-        <div class="login-footer">
-            웹관리자 010-7454-4482
+
+            <!-- 카드 안쪽 하단으로 웹관리자 정보 이동 -->
+            <div class="login-footer">
+                웹관리자 010-7454-4482
+            </div>
         </div>
     </div>
 
@@ -313,7 +316,9 @@
         </div>
 
         <h3 style="color: var(--primary-color);">등록된 계정 목록</h3>
-        <div class="user-list" id="userListArea"></div>
+        <div class="user-list" id="userListArea">
+            <!-- JS 렌더링 -->
+        </div>
     </div>
 
     <!-- 스케줄 및 인수인계 화면 -->
@@ -923,7 +928,7 @@
                 <div class="sys-fault-box"><h4>조치 방법</h4><div>${sys.action}</div></div></div></div>
             `).join('');
 
-            const canWrite = currentUser.canWrite;
+            const canWrite = currentUser && currentUser.canWrite;
             const pointerStyle = canWrite ? 'cursor:pointer;' : 'pointer-events:none;';
             document.getElementById('checklistArea').innerHTML = data.steps.map(step => `
                 <li class="check-item" style="${pointerStyle}" onclick="if(${canWrite}) this.classList.toggle('done')">

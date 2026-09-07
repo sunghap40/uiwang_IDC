@@ -14,7 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-    <!-- 브라우저 탭 아이콘 (현대차 H 로고) -->
+    <!-- 브라우저 탭 아이콘 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><ellipse cx=%2212%22 cy=%2212%22 rx=%2211%22 ry=%227%22/><path d=%22M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9%22/></svg>">
 
     <style>
@@ -195,9 +195,7 @@
         .tbm-cat-btn.active { background: linear-gradient(90deg, var(--hec-green), var(--hec-blue)); color: white; border-color: transparent; }
 
         /* TBM 탭 UI */
-        .tbm-tabs {
-            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; justify-content: flex-start;
-        }
+        .tbm-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; justify-content: flex-start; }
         .tbm-tab-btn {
             background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-color);
             padding: 8px 14px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
@@ -218,7 +216,7 @@
     <!-- [0] 로그인 화면 -->
     <div id="viewLogin" class="view active">
         <div class="login-card">
-            <div style="font-weight: 900; font-size: 2.2rem; margin-bottom: 30px; color: var(--hec-blue); letter-spacing: -1px;">의왕IDC설비 업무수첩</div>
+            <div style="font-weight: 900; font-size: 2.2rem; margin-bottom: 30px; color: var(--hec-blue); letter-spacing: -1px;">의왕IDC 설비 점검수첩</div>
             
             <div class="login-form">
                 <label>아이디</label>
@@ -345,7 +343,7 @@
 
     <!-- 스케줄 및 인수인계 화면 -->
     <div id="viewMemo" class="container view">
-        <div style="background: var(--surface-color); padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--border-color);" id="memoWriteArea">
+        <div class="memo-form" id="memoWriteArea">
             <input type="text" id="memoAuthor" style="width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px;" placeholder="작성자 이름 (예: 홍길동)" autocomplete="off">
             <textarea id="memoContent" style="width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; resize: vertical; min-height: 80px;" placeholder="주간/월간 스케줄 또는 인수인계 내용을 입력하세요."></textarea>
             <div style="margin-bottom: 12px; display: flex; align-items: center;">
@@ -682,12 +680,8 @@
             const author = document.getElementById('memoAuthor').value.trim();
             const content = document.getElementById('memoContent').value.trim();
             const isImportant = document.getElementById('memoImportant').checked;
-            const btn = document.getElementById('saveMemoBtn');
 
             if (!author || !content) { alert("내용을 입력해주세요."); return; }
-
-            btn.disabled = true;
-            btn.innerText = "처리 중...";
 
             if (editingMemoId) {
                 db.collection("memos").doc(editingMemoId).update({ author, content, important: isImportant }).then(() => {
@@ -740,7 +734,6 @@
             document.getElementById('memoImportant').checked = false;
             editingMemoId = null;
             document.getElementById('saveMemoBtn').innerText = "저장하기";
-            document.getElementById('saveMemoBtn').disabled = false;
             document.getElementById('cancelEditBtn').style.display = "none";
         }
 
@@ -780,11 +773,9 @@
         }
 
         // ==========================================
-        // 5. 정적 데이터 (TBM, 연락망, 설비)
+        // 5. 정적 데이터 (TBM, 연락망, 13개 전체 설비)
         // ==========================================
-        
-        // --- 신규 TBM 데이터 분류 적용 ---
-        let currentTbmCategory = 0; // 0: 자산 소수선, 1: 일반
+        let currentTbmCategory = 0; 
 
         const tbmDataAssets = [
             { task: "구조물 철거", ppe: "안전모, 안전화, 마스크, 귀마개, 보안경", hazard: "• 고소작업 중 떨어짐<br>• 상하 동시작업으로 인한 물체 낙하<br>• 날카로운 부위에 신체 손상", tbm: "1. 분진 다발 발생으로 보안경 및 마스크 필수 착용<br>2. 타 근로자 접근제한 통제 및 작업 중 안내 표지간판 출입구 게시<br>3. 작업 전 전원차단 확인 및 작업에 필요한 가설조도 확보<br>4. 높이에 따른 적정 작업발판 규격 준수 및 유동성이 없도록 고정 철저<br>5. 상하 동시작업 금지 및 적정 기계기구 방호", check: "- 높이에 따른 적정 작업발판 사용 및 1.8m 이상 고소작업 시 안전벨트 체결 여부<br>- 장비 사용에 따른 전담 유도원 배치를 통한 반경 내 근로자 접근제한 여부<br>- 작업구간 전원차단 및 사용하는 전기·기계기구 접지 및 방호장치 설치 여부<br>- 타 근로자 접근제한 통제 및 작업 중 안내 표지간판 설치 여부<br>- 소방시설 경보 등 해체 및 대체 소화시설 구비 및 작동가능 여부<br>- 산소절단 등 화기 사용에 따른 불티비산, 역화방지, 감시자 적정 여부<br>- 외부창호 등 철거 작업 시 라이프라인 적정 설치 및 고리 체결 여부" },
@@ -844,87 +835,179 @@
             { company: "현대엔지니어링 본사", name: "임진규 매니저", phone: "010-4543-5901" }
         ];
 
+        // 🔥 13개 설비의 100% 완전한 데이터 복구 완료 🔥
         const dbData = {
             'CCU': {
                 name: '항온항습기',
                 systemFaults: [
-                    { category: '전원', cause: '• 전원선 누전<br>• EOCR 불량', action: '• 전원선 절연 점검<br>• EOCR 교체' },
-                    { category: '냉동', cause: '• 냉매 부족/누설', action: '• 압력 측정 및 보충' }
+                    { category: '전원', cause: '• 전원선 누전<br>• EOCR 불량<br>• 압축기 절연 불량<br>• FAN 모터 절연 불량<br>• 접지 불량', action: '• 전원선 절연 저항 측정 및 교체<br>• EOCR 동작 확인 및 교체<br>• 압축기 절연 점검 후 교체<br>• FAN 모터 절연 점검 및 교체<br>• 접지 상태 보수<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 차단기 트립 확인 → ② EOCR 경보 점검 → ③ 전원선 및 모터 절연 측정 → ④ 접지 상태 점검</div>' },
+                    { category: '제어', cause: '• 콘트롤러 불량<br>• 릴레이 접점 불량<br>• 전자밸브 제어 불량<br>• 프로그램 설정 오류<br>• 제어 신호 단선', action: '• 콘트롤러 동작 확인 및 교체<br>• 릴레이 접점 청소/교체<br>• 전자밸브 신호 확인 및 교체<br>• 프로그램 설정값 점검<br>• 배선 점검 및 재결선<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 콘트롤러 경보 확인 → ② 설정값 점검 → ③ 릴레이 및 배선 점검 → ④ 전자밸브 동작 확인</div>' },
+                    { category: '냉동', cause: '• 냉매 부족/누설<br>• 팽창밸브 막힘<br>• 필터드라이어 막힘<br>• 응축기 열교환 불량<br>• 증발기 결빙', action: '• 냉매 압력 측정 및 보충<br>• 누설 부위 탐지 및 보수<br>• 팽창밸브 교체<br>• 필터드라이어 교체<br>• 응축기·증발기 청소<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 압력 게이지 확인 → ② 누설 부위 탐지 → ③ 팽창밸브/드라이어 점검 → ④ 열교환기 오염 확인</div>' },
+                    { category: '가습', cause: '• 히터 불량<br>• 급수 밸브 막힘<br>• 급수 부족<br>• 수위 센서 불량<br>• 스케일 축적', action: '• 히터 저항 측정 및 교체<br>• 급수 밸브 청소/교체<br>• 급수 라인 점검<br>• 수위 센서 교체<br>• 스케일 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 수위 센서 경보 확인 → ② 급수 라인/밸브 점검 → ③ 히터 동작 측정 → ④ 스케일 축적 점검</div>' },
+                    { category: '송풍', cause: '• 모터 베어링 손상<br>• 팬 날개 파손<br>• 벨트 이탈/마모<br>• 팬 속도 제어 불량<br>• 모터 절연 불량', action: '• 베어링 교체<br>• 팬 날개 교체<br>• 벨트 장력 조정/교체<br>• 팬 속도 제어 회로 점검<br>• 모터 절연 점검 및 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 풍량 및 알람 확인 → ② 벨트 장력 점검 → ③ 베어링 소음 확인 → ④ 모터 절연 측정</div>' },
+                    { category: '센서', cause: '• 온도 센서 불량<br>• 습도 센서 불량<br>• 센서 오염<br>• 배선 단선<br>• 교정 불량', action: '• 센서 교체<br>• 센서 청소<br>• 배선 점검 및 재결선<br>• 교정 장비로 재교정<br>• 예비 센서로 교차 확인<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 디스플레이 오차 확인 → ② 센서 오염 점검 → ③ 배선 단선 점검 → ④ 재교정 및 교체</div>' },
+                    { category: '통신', cause: '• RS485/RS232 불량<br>• 케이블 단선<br>• 포트 손상<br>• 프로토콜 오류<br>• EMI 간섭', action: '• 포트 점검 및 교체<br>• 케이블 연결 확인/교체<br>• 프로토콜 설정값 점검<br>• EMI 차폐 강화<br>• 통신 모듈 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 통신 에러 알람 확인 → ② 케이블/포트 점검 → ③ 프로토콜/설정값 확인 → ④ 모듈 점검</div>' },
+                    { category: '기계적', cause: '• 본체 연결부 이완<br>• 진동 과다<br>• 나사 풀림<br>• 구조물 변형<br>• 소음 발생', action: '• 나사 조임<br>• 진동 흡수 패드 설치<br>• 구조물 보수<br>• 소음 원인 부품 교체<br>• 정기 점검 강화<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 소음/진동 확인 → ② 나사 풀림 점검 → ③ 구조물 변형 확인 → ④ 소모품 교체</div>' }
                 ],
-                steps: ['전원 알람 확인', '냉매 사이클 게이지 확인'],
-                guides: [{ rank: 1, title: '고압/저압 알람', desc: '냉매 부족, 필터 막힘', action: '필터 세척, 냉매 보충' }]
+                steps: ['전원 및 컨트롤러 알람 이력 확인', '냉매 사이클 압력(고/저압) 게이지 확인', '풍량 및 필터 상태 확인', '가습용 급수 라인 점검'],
+                guides: [
+                    { rank: 1, title: '고압/저압 알람', desc: '냉매 부족, 필터 막힘으로 인한 풍량 저하', action: '에어필터 세척/교체, 냉매 누설 부위 확인 및 보충' },
+                    { rank: 2, title: '가습기 장애', desc: '가습 팬 스케일 누적, 급수 전자변 고장', action: '실린더 스케일 제거 및 교체, 급수 밸브 교체' },
+                    { rank: 3, title: '송풍기(팬) 장애', desc: '팬 모터 과전류 알람, 구동 벨트 끊어짐', action: 'V-벨트 장력 조정 및 교체, 모터 절연 테스트' },
+                    { rank: 4, title: '온습도 센서 오류', desc: '설정값과 실제 온습도 오차 발생, 단선', action: '센서 클리닝, 결선 상태 재확인 및 센서 교체' }
+                ]
             },
             'OUTDOOR': {
                 name: '실외기',
-                systemFaults: [{ category: '응축기', cause: '• 핀 막힘, 고압 발생', action: '• 고압 세척' }],
-                steps: ['응축기 오염 육안 검사'],
-                guides: [{ rank: 1, title: '열교환 불량', desc: '고압 컷아웃', action: '응축기 약품 세척' }]
+                systemFaults: [
+                    { category: '전원계통', cause: '• 전원선 누전<br>• 차단기 트립<br>• EOCR 불량<br>• 접지 불량', action: '• 전원선 절연 점검<br>• 차단기 상태 확인<br>• EOCR 교체<br>• 접지 보수<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 차단기 확인 → ② 전원선 절연 측정 → ③ EOCR 동작 확인 → ④ 접지 상태 점검</div>' },
+                    { category: '냉각팬', cause: '• 팬 모터 절연 불량<br>• 베어링 손상<br>• 팬 날개 파손<br>• 속도 제어 불량', action: '• 모터 절연 점검<br>• 베어링 교체<br>• 팬 날개 교체<br>• 속도 제어 회로 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 팬 회전 상태 확인 → ② 모터 절연 측정 → ③ 베어링 소음 확인 → ④ 날개 손상 점검</div>' },
+                    { category: '응축기', cause: '• 핀 막힘<br>• 냉매 과다/부족<br>• 열교환 불량<br>• 고압 발생', action: '• 핀 청소<br>• 냉매량 조정<br>• 열교환 상태 점검<br>• 고압 경보 시 정지 후 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 압력 게이지 확인 → ② 핀 청소 → ③ 냉매량 점검 → ④ 열교환 효율 확인</div>' },
+                    { category: '기계적 장애', cause: '• 나사 풀림<br>• 진동 과다<br>• 구조물 변형<br>• 소음 발생', action: '• 나사 조임<br>• 진동 패드 설치<br>• 구조물 보수<br>• 소음 원인 부품 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 소음·진동 확인 → ② 나사 조임 → ③ 구조물 점검 → ④ 보수 실시</div>' }
+                ],
+                steps: ['응축기 핀 오염도 육안 검사', '팬 모터 기동 상태 및 소음 점검', '콤프레셔 이상 소음/진동 확인', '서비스 밸브 냉매 누설 검사'],
+                guides: [
+                    { rank: 1, title: '응축기 열교환 불량', desc: '핀에 먼지/이물질 부착, 고압 컷아웃', action: '고압 세척기 및 약품을 이용한 응축기 세척' },
+                    { rank: 2, title: '콤프레셔 과열/과전류', desc: '표면 온도 상승, 마그네트 스위치 트립', action: '오일 상태 점검, 냉매량 적정성 확인' }
+                ]
             },
             'PUMP': {
                 name: '냉각수 순환펌프',
-                systemFaults: [{ category: '모터', cause: '• 베어링 소음, 절연 불량', action: '• 베어링 교체' }],
-                steps: ['펌프 주변 누수 여부'],
-                guides: [{ rank: 1, title: '메카니컬 씰 누수', desc: '펌프 축 주변 물 떨어짐', action: '씰 교체' }]
+                systemFaults: [
+                    { category: '전원·전기', cause: '• 전원선 손상<br>• 차단기 트립<br>• EOCR 불량<br>• 접지 불량', action: '• 전원선 절연 점검<br>• 차단기 상태 확인<br>• EOCR 교체<br>• 접지 보수<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 차단기 확인 → ② 전원선 절연 측정 → ③ EOCR 확인 → ④ 접지 점검</div>' },
+                    { category: '모터', cause: '• 절연 불량<br>• 베어링 손상<br>• 과열<br>• 회전 불량', action: '• 절연 점검<br>• 베어링 교체<br>• 냉각 상태 점검<br>• 모터 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 모터 소음 확인 → ② 절연 측정 → ③ 베어링 점검 → ④ 과열 여부 확인</div>' },
+                    { category: '펌프본체', cause: '• 임펠러 손상<br>• 내부 마모<br>• 부식<br>• 막힘', action: '• 임펠러 교체<br>• 내부 청소<br>• 부식 보수<br>• 막힘 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 유량 확인 → ② 임펠러 점검 → ③ 내부 청소 → ④ 부식 여부 확인</div>' },
+                    { category: '메커니컬씰', cause: '• 씰 마모<br>• 누수<br>• 설치 불량<br>• 윤활 부족', action: '• 씰 교체<br>• 누수 보수<br>• 설치 상태 점검<br>• 윤활유 보충<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 누수 확인 → ② 씰 상태 점검 → ③ 윤활 상태 확인 → ④ 교체 여부 결정</div>' },
+                    { category: '흡입·토출', cause: '• 밸브 막힘<br>• 배관 누설<br>• 역류<br>• 압력 불균형', action: '• 밸브 청소<br>• 배관 보수<br>• 역류 방지<br>• 압력 조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 압력 게이지 확인 → ② 밸브 점검 → ③ 배관 누수 확인 → ④ 역류 여부 점검</div>' },
+                    { category: '유량 부족', cause: '• 흡입 라인 막힘<br>• 임펠러 손상<br>• 밸브 불량<br>• 펌프 회전 불량', action: '• 흡입 라인 청소<br>• 임펠러 교체<br>• 밸브 교체<br>• 펌프 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 유량 측정 → ② 흡입 라인 점검 → ③ 임펠러 확인 → ④ 밸브 상태 점검</div>' },
+                    { category: '캐비테이션', cause: '• 흡입 압력 부족<br>• 수온 과다<br>• 펌프 과속<br>• 설치 불량', action: '• 흡입 압력 조정<br>• 수온 관리<br>• 회전수 조정<br>• 설치 상태 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 소음 확인 → ② 압력 게이지 확인 → ③ 수온 점검 → ④ 회전수 확인</div>' },
+                    { category: '진동·소음', cause: '• 베어링 손상<br>• 임펠러 불균형<br>• 설치 불량<br>• 구조물 변형', action: '• 베어링 교체<br>• 임펠러 교체<br>• 설치 상태 보수<br>• 구조물 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 소음 확인 → ② 베어링 점검 → ③ 임펠러 균형 확인 → ④ 설치 상태 점검</div>' },
+                    { category: '제어', cause: '• 콘트롤러 불량<br>• 센서 오류<br>• 신호 단선<br>• 설정값 오류', action: '• 콘트롤러 교체<br>• 센서 교체<br>• 배선 점검<br>• 설정값 재점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 콘트롤러 확인 → ② 센서 점검 → ③ 배선 확인 → ④ 설정값 점검</div>' }
+                ],
+                steps: ['펌프 주변 누수 여부(육안)', '베어링 소음/진동(청각/촉각)', '모터 전류/전압 측정(계측)', '입출구 압력 게이지 확인'],
+                guides: [
+                    { rank: 1, title: '메카니컬 씰 누수', desc: '펌프 축 주변에서 물이 지속적으로 떨어짐', action: '펌프 분해 후 메카니컬 씰 교체' }
+                ]
             },
             'HEAT': {
                 name: '열교환기/응축기',
-                systemFaults: [{ category: '열교환기', cause: '• 스케일 축적', action: '• 화학 세관(CIP)' }],
-                steps: ['입출구 온도/압력차 확인'],
-                guides: [{ rank: 1, title: '효율 저하', desc: '응축압력 상승', action: '튜브 브러쉬 펀칭' }]
+                systemFaults: [
+                    { category: '열교환기', cause: '• 스케일 축적<br>• 누수<br>• 열전달 면 오염<br>• 배관 막힘', action: '• 세관 및 스케일 제거<br>• 누수 보수<br>• 열전달 면 청소<br>• 배관 세척<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 유량 확인 → ② 누수 점검 → ③ 스케일 제거 → ④ 열전달 효율 확인</div>' },
+                    { category: '리시버탱크', cause: '• 냉매 누설<br>• 밸브 불량<br>• 내부 오염<br>• 압력 이상', action: '• 누설 탐지 및 보수<br>• 밸브 교체<br>• 내부 청소<br>• 압력 게이지 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 압력 확인 → ② 누설 점검 → ③ 밸브 상태 확인 → ④ 내부 청소</div>' }
+                ],
+                steps: ['입출구 온도차 및 압력차 확인', '배관 및 조인트 체결부 육안 검사', '리시버탱크 액면계 확인', '안전변(Safety valve) 상태'],
+                guides: [
+                    { rank: 1, title: '스케일 생성 (효율 저하)', desc: '입출구 수온차 감소, 응축압력 상승', action: '화학 세관(CIP) 작업 실시, 튜브 브러쉬 펀칭' }
+                ]
             },
             'TANK': {
                 name: '보충수 탱크',
-                systemFaults: [{ category: '보충수탱크', cause: '• 수위 센서 불량', action: '• 센서 교체' }],
-                steps: ['탱크 수위 육안 확인'],
-                guides: [{ rank: 1, title: '볼탑 고장', desc: '물이 채워지지 않음', action: '다이아프램 청소' }]
+                systemFaults: [
+                    { category: '보충수탱크', cause: '• 수위 센서 불량<br>• 급수 부족<br>• 밸브 막힘<br>• 내부 오염', action: '• 센서 교체<br>• 급수 보충<br>• 밸브 청소<br>• 내부 청소<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 수위 확인 → ② 센서 점검 → ③ 급수 라인 확인 → ④ 밸브 점검</div>' }
+                ],
+                steps: ['탱크 수위 육안 확인', '정수위 밸브(볼탑) 동작 점검', '수위 센서(전극봉) 부식 상태', '배관 동파 및 누수'],
+                guides: [
+                    { rank: 1, title: '볼탑/정수위 밸브 고장', desc: '급수가 멈추지 않거나 물이 채워지지 않음', action: '볼탑 부구 손상 확인 후 교체, 다이아프램 청소' }
+                ]
             },
             'SPRAY': {
                 name: '살수펌프',
-                systemFaults: [{ category: '살수펌프', cause: '• 스트레이너 막힘', action: '• 슬러지 제거' }],
-                steps: ['스트레이너 막힘 여부'],
-                guides: [{ rank: 1, title: '스트레이너 막힘', desc: '살수량 급감', action: '분해 및 세척' }]
+                systemFaults: [
+                    { category: '살수펌프', cause: '• 스트레이너 막힘<br>• 노즐 막힘/이탈<br>• 펌프 에어 록<br>• 모터 절연 파괴', action: '• 이물질 제거 및 세척<br>• 분해 세척 및 분배기 점검<br>• 수위 정상화 및 에어 빼기<br>• 모터 코일 점검 및 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 스트레이너 점검 → ② 살수 패턴 확인 → ③ 펌프 수위 점검 → ④ 모터 상태 확인</div>' }
+                ],
+                steps: ['흡입측 스트레이너 막힘 여부', '쿨링타워 노즐 살수 패턴 상태', '펌프 수위(공회전 여부)', '모터 상태'],
+                guides: [
+                    { rank: 1, title: '스트레이너 막힘', desc: '살수량 급감, 펌프 흡입 압력 저하', action: '시스템 정지 후 분해 및 슬러지 제거' }
+                ]
             },
             'VCB': {
                 name: 'VCB (진공차단기)',
-                systemFaults: [{ category: '투입 불량', cause: '• 투입코일 단선', action: '• 코일 저항 측정/교체' }],
-                steps: ['조작 전원 확인'],
-                guides: [{ rank: 1, title: '투입 안됨', desc: '조작전원 차단', action: '퓨즈 점검' }]
+                systemFaults: [
+                    { category: '투입 불량', cause: '• 투입코일 단선<br>• 조작전원 상실 및 퓨즈 단선<br>• 기계적 걸림 (스프링 축적 불량)', action: '• 투입코일 저항 측정 및 교체<br>• 조작전원(DC/AC) 전압 확인<br>• 기구부 주유 및 기계적 셋팅 조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 조작전원 전압 확인 → ② 투입신호 인가 여부 → ③ 코일 저항 측정 → ④ 기구부 윤활/걸림 확인</div>' },
+                    { category: '트립 불량 / 오동작', cause: '• 트립코일 소손<br>• 보호계전기(Relay) 오동작<br>• 내부 회로 단락', action: '• 트립코일 교체<br>• 계전기 정정치 및 동작 이력 확인<br>• 제어 케이블 절연 측정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 계전기 타겟/알람 확인 → ② 트립 코일 전압 측정 → ③ 코일 도통 테스트 → ④ 릴레이 리셋</div>' },
+                    { category: '진공도 저하', cause: '• 진공 인터럽터(VI) 노후화<br>• VI 크랙 및 파 파손', action: '• 진공도 테스트 (절연내력 시험)<br>• VCB 본체 또는 VI 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 아크/소음 발생 여부 확인 → ② 절연저항(Megger) 측정 → ③ 내전압 시험 실시 → ④ 부품 교체</div>' }
+                ],
+                steps: ['조작 전원(DC/AC) 전압 정상 여부 확인', '보호계전기(Relay) 동작 타겟 및 알람 확인', 'VCB 투입/트립 코일 상태 및 스프링 축적 점검', '진공인터럽터(VI) 3상 절연저항 측정'],
+                guides: [
+                    { rank: 1, title: '차단기 투입 안됨', desc: '조작전원 차단, 투입코일 소손, 기계적 락킹', action: '조작 퓨즈 점검, 투입코일 교체, 기구부 그리스 주입' },
+                    { rank: 2, title: '원인 불명 트립', desc: '보호계전기(OCR, OCGR 등) 오동작, 서지 유입', action: '계전기 정정치 확인, 부하측 지락/단락 여부 정밀 점검' }
+                ]
             },
             'TR': {
                 name: 'TR (변압기)',
-                systemFaults: [{ category: '온도 상승', cause: '• 냉각팬 고장', action: '• 냉각팬 점검' }],
-                steps: ['온도계 지시치 확인'],
-                guides: [{ rank: 1, title: '과열 알람', desc: '실온 상승', action: '팬 강제 기동' }]
+                systemFaults: [
+                    { category: '온도 상승', cause: '• 부하 과다 (과부하)<br>• 냉각팬 고장<br>• 전기실 내부 환기 불량', action: '• 부하 분산 및 차단<br>• 냉각팬 전원 확인 및 교체<br>• 전기실 환기팬(공조기) 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 변압기 온도계 지시치 확인 → ② 부하 전류량 측정 → ③ 냉각팬 수동 가동 → ④ 전기실 실온 점검</div>' },
+                    { category: '소음 및 진동', cause: '• 코어(철심) 체결 볼트 이완<br>• 고조파 유입 과다<br>• 과부하에 의한 자왜 현상', action: '• 정전 후 코어 볼트 재조임<br>• 고조파 필터(능동/수동) 점검<br>• 부하 불균형 조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 특이 소음(웅~, 지직) 청취 → ② 고조파 측정(PQ 미터) → ③ 상별 부하 균형 확인 → ④ 외함 진동 촉진</div>' },
+                    { category: '절연 저하', cause: '• 습기 및 먼지 다량 축적<br>• 장기 사용에 따른 권선 열화<br>• 결로 발생', action: '• 진공 청소기 및 에어건 크리닝<br>• 전기실 제습기 가동<br>• 정밀 절연 진단 및 교체 검토<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 외함 변색 및 먼지 확인 → ② 흡습호흡기(유입식) 색상 확인 → ③ 정전 후 절연저항 측정 → ④ 크리닝 실시</div>' }
+                ],
+                steps: ['변압기 온도계(권선/철심) 지시치 및 경보 확인', '특이 소음(코로나 방전음 등) 및 과다 진동 확인', '냉각팬 자동/수동 기동 상태 점검', '외관 에폭시 변색, 크랙 및 먼지 축적 상태 확인'],
+                guides: [
+                    { rank: 1, title: '온도 과상승 알람', desc: '냉각팬 고장, 여름철 실온 상승, 2차측 과부하', action: '냉각팬 강제 기동, 부하 차단, 전기실 환기 조치' },
+                    { rank: 2, title: '이상 소음 발생', desc: '고조파 과다 유입, 철심 조임 볼트 풀림', action: '전력품질 분석기 측정, 휴일 정전 후 내부 볼트 조임 작업' }
+                ]
             },
             'ACB': {
                 name: 'ACB (기중차단기)',
-                systemFaults: [{ category: '트립 동작', cause: '• 과전류, 단락', action: '• 하위 선로 점검 후 재투입' }],
-                steps: ['UVT 조작 전원 확인'],
-                guides: [{ rank: 1, title: 'OCR 트립', desc: '부하 단락', action: '사고 부하 분리' }]
+                systemFaults: [
+                    { category: '투입/개방 불량', cause: '• UVT(부족전압트립) 소손 또는 전원 차단<br>• 축적 모터 고장<br>• 기계적 걸림 (윤활 부족)', action: '• UVT 모듈 교체 및 전원 복구<br>• 기어드 모터 교체<br>• 기구부 청소 및 건식 윤활제 도포<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① UVT 조작전원 확인 → ② 스프링 Charge 소음 확인 → ③ 모터 전압 측정 → ④ 기구부 수동 조작 테스트</div>' },
+                    { category: '단자부 과열', cause: '• 접속 단자 조임 불량<br>• 장기 진동에 의한 볼트 풀림<br>• 상 불평형 및 과부하', action: '• 정전 후 단자 볼트 규정 토크 재조임<br>• 상별 부하 분산 조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 열화상 카메라 발열 촬영 → ② 열화산 표시재 변색 확인 → ③ 상별 전류 측정 → ④ 볼트 재조임</div>' },
+                    { category: '트립 동작 (OCR)', cause: '• 과전류(Over Current)<br>• 단락(Short Circuit) 및 지락(Ground Fault)', action: '• 하위 부하 분전반 누전/단락 점검<br>• 원인 제거 후 OCR 리셋 및 재투입<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① OCR 트립 표시기(Fault indicator) 확인 → ② 하위 선로 절연 측정 → ③ 사고 구간 분리 → ④ 리셋 후 투입</div>' }
+                ],
+                steps: ['부하 전류, 전압 및 계측기 지시치 정상 확인', 'UVT(부족전압트립) 조작 전원 상태 점검', '접속 단자부 열화산 표시재 변색 및 발열 확인', '기구부 스프링 축적(Charged) 상태 점검'],
+                guides: [
+                    { rank: 1, title: 'OCR 트립 (정전)', desc: '하위 부하 단락/지락, 순간 과전류 발생', action: '트립 인디케이터 확인, 사고 부하 분리 후 차단기 리셋 및 투입' },
+                    { rank: 2, title: '투입 버튼 작동 안함', desc: 'UVT 코일 소손, 조작전원 상실, 스프링 미축적', action: '조작전원 NFB 확인, 수동 펌핑으로 스프링 축적 후 투입 시도' }
+                ]
             },
             'ATS': {
                 name: 'ATS (자동절환스위치)',
-                systemFaults: [{ category: '절환 불량', cause: '• 조작 코일 단선', action: '• 코일 교체' }],
-                steps: ['상용/비상 전압 확인'],
-                guides: [{ rank: 1, title: '절환 안됨', desc: '제어전원 차단', action: '수동 핸들 절환' }]
+                systemFaults: [
+                    { category: '절환 불량', cause: '• 절환용 조작 코일 단선<br>• 리미트 스위치 파손<br>• ATS 컨트롤러 제어 불량', action: '• 조작 코일 저항 측정 후 교체<br>• 마이크로 스위치 점검/교체<br>• 컨트롤러 리셋 또는 보드 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 상용/비상 전압 인가 확인 → ② 컨트롤러 램프 확인 → ③ 조작 코일 도통 테스트 → ④ 수동 핸들 절환 테스트</div>' },
+                    { category: '접점 소손 및 아크', cause: '• 절환 시 심한 아크 발생<br>• 주접점 마모 및 탄화<br>• 부하 연결 상태에서 강제 절환', action: '• 정전 후 주접점 샌드페이퍼 연마<br>• 마모 심할 경우 ATS 전체 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 절환 시 소음/불꽃 육안 확인 → ② 접점 흑색 탄화 확인 → ③ 접촉 저항 측정 → ④ 표면 연마</div>' }
+                ],
+                steps: ['상용전원(한전) 및 비상전원(발전기) 인입 전압 확인', 'ATS 컨트롤러 표시창 에러 코드 및 램프 점검', '절환 기계적 걸림 여부 및 접점 상태 육안 확인', '수동 핸들 조작 가능 여부(비상시 대조) 테스트'],
+                guides: [
+                    { rank: 1, title: '정전 시 발전기 쪽으로 절환 안됨', desc: 'ATS 제어전원 차단, 조작 코일 소손', action: '수동 핸들을 이용하여 발전기(E) 측 강제 절환, 이후 코일 점검' },
+                    { rank: 2, title: '절환 시 심한 소음 및 불꽃', desc: '주접점 표면 탄화 및 접촉 불량', action: '접점 교체 주기 도래 판단, 접촉저항 측정 후 오버홀 진행' }
+                ]
             },
             'UPS': {
                 name: 'UPS (무정전전원장치)',
-                systemFaults: [{ category: '배터리', cause: '• 수명 연한 초과', action: '• 배터리 전체 교체' }],
-                steps: ['전면 패널 알람 확인'],
-                guides: [{ rank: 1, title: '배터리 교체 알람', desc: '내부 저항 증가', action: '배터리 뱅크 교체' }]
+                systemFaults: [
+                    { category: '배터리 장애', cause: '• 배터리 수명 연한(통상 3~5년) 초과<br>• 내부 셀 단락 및 스웰링(부풀음)<br>• 충전기(Charger) 보드 고장', action: '• 불량 배터리 셀 솎아내기 또는 전체 교체<br>• 부동/균등 충전 전압 재조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 배터리 알람 확인 → ② 개별 셀 전압/내부저항 측정 → ③ 외관 부풀음/누액 확인 → ④ 배터리 교체</div>' },
+                    { category: '인버터 고장', cause: '• IGBT 등 전력 반도체 소자 소손<br>• 냉각팬 고장으로 인한 내부 과열<br>• 제어 보드 불량', action: '• 고장 소자 및 제어 보드 교체<br>• 냉각팬 교체 및 내부 방열판 먼지 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 인버터 Fault 알람 확인 → ② 냉각팬 회전 상태 점검 → ③ 내부 타는 냄새 확인 → ④ 제조사 A/S 요청</div>' },
+                    { category: 'Bypass 자동 절환', cause: '• 인버터 고장으로 인한 보호 동작<br>• 출력단 순간 과부하 트립<br>• 출력 회로 단락', action: '• 출력측 부하량 확인 및 불필요 부하 차단<br>• 원인 해소 후 인버터 모드로 재기동<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① Bypass 램프 점등 확인 → ② 디스플레이 과부하 이력 확인 → ③ 부하 분산 조치 → ④ Normal 모드 복귀</div>' }
+                ],
+                steps: ['전면 패널 알람 내역 및 에러 코드 발생 여부 확인', '배터리 충전 전압 및 방전 전류 정상 여부 확인', '냉각팬 동작 상태 및 필터 오염도 육안 점검', '입/출력 전압, 주파수 및 부하율(%) 안정성 확인'],
+                guides: [
+                    { rank: 1, title: '배터리 교체(Battery Replace) 알람', desc: '배터리 노후화로 인한 내부 저항 증가', action: '배터리 테스터기로 전수 검사, 불량 판정 시 신규 배터리 뱅크로 교체' },
+                    { rank: 2, title: 'Bypass(우회) 모드 작동', desc: '출력단 순간 과부하, 인버터 발열', action: '연결된 서버/부하의 돌입전류 확인, 알람 리셋 후 인버터 재기동' }
+                ]
             },
             'PANEL': {
-                name: '분전반',
-                systemFaults: [{ category: '차단기 트립', cause: '• 기기 누전 (ELB)', action: '• 누전 기기 분리' }],
-                steps: ['차단기 트립 육안 확인'],
-                guides: [{ rank: 1, title: 'ELB 반복 트립', desc: '케이블 절연 파괴', action: '선로 누전 수리' }]
+                name: '분전반 (Distribution Board)',
+                systemFaults: [
+                    { category: '차단기 트립', cause: '• 말단 기기 누전 (ELB 트립)<br>• 선로 단락(쇼트)<br>• 허용 전류 초과 과부하', action: '• 메거(Megger)를 이용한 선로 절연저항 측정<br>• 누전 기기 분리 후 차단기 재투입<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 트립된 차단기 색출 → ② 부하 플러그 뽑기 → ③ 선로 절연저항 측정 → ④ 이상 없을 시 재투입</div>' },
+                    { category: '단자 과열 및 소손', cause: '• 케이블 압착 단자(터미널) 조임 불량<br>• 특정 상(Phase)에 부하 집중 (불평형)', action: '• 단자 볼트 재조임 및 열화 케이블 재압착<br>• R, S, T 상 부하 재분배<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 타는 냄새 파악 → ② 열화상 카메라 측정 → ③ 후크메타로 전류 측정 → ④ 전원 차단 후 터미널 보수</div>' }
+                ],
+                steps: ['메인(MCCB) 및 분기 차단기(ELB) 트립 여부 육안 확인', '열화상 카메라를 이용한 접속 단자부 발열 상태 점검', '부하 케이블 피복 손상 및 절연 저항(누설전류) 측정', '분전반 내부 누수, 결로 및 먼지 축적 여부 점검'],
+                guides: [
+                    { rank: 1, title: '누전차단기(ELB) 반복 트립', desc: '현장 장비 누전, 습기 유입, 케이블 절연 파괴', action: '부하측 전선을 분리하고 차단기 자체 불량 테스트, 이상 없으면 선로 누전 수리' },
+                    { rank: 2, title: '분전반 내 타는 냄새 발생', desc: '차단기 단자 접속 불량에 의한 과열 탄화', action: '즉시 열화상 측정, 발열부 차단 후 볼트 조임 및 터미널 튜브 재시공' }
+                ]
             },
             'GEN': {
-                name: '비상발전기',
-                systemFaults: [{ category: '기동 불량', cause: '• 배터리 방전', action: '• 충전기 교체' }],
-                steps: ['배터리 전압 확인'],
-                guides: [{ rank: 1, title: '자동 기동 안됨', desc: '수동 위치', action: '제어반 모드 Auto 변경' }]
+                name: '비상발전기 (Generator)',
+                systemFaults: [
+                    { category: '기동 불량', cause: '• 시동 배터리 방전 (전압 저하)<br>• 스타트 모터 톱니바퀴 불량<br>• 제어반 조작전원 상실', action: '• 배터리 및 충전기 교체<br>• 스타트 모터 링기어 수리<br>• 제어반 퓨즈 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 배터리 전압(24V 이상) 측정 → ② 제어반 램프 확인 → ③ 충전기 출력 확인 → ④ 수동 기동 테스트</div>' },
+                    { category: '엔진 기동 후 정지', cause: '• 냉각수 과열 (히터 과열, 수량 부족)<br>• 엔진 오일 압력 저하<br>• 연료 계통 공기 유입 또는 고갈', action: '• 냉각수 보충 및 라디에이터 점검<br>• 엔진 오일 보충<br>• 연료 필터 청소 및 에어 빼기 실시<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 정지 알람(과열, 유압) 확인 → ② 오일/냉각수 레벨 게이지 확인 → ③ 연료 라인 에어 빼기 → ④ 재기동</div>' },
+                    { category: '전압 확립 불가', cause: '• AVR(자동전압조정기) 불량<br>• 발전기 회전 다이오드 소손<br>• 잔류 자기 상실', action: '• AVR 기판 점검 및 교체<br>• 회전 다이오드 저항 측정/교체<br>• 초기 여자(Flashing) 회로 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 출력 전압계 지시치 0V 확인 → ② AVR 퓨즈 확인 → ③ 다이오드 테스터기 점검 → ④ 전문가 A/S 의뢰</div>' }
+                ],
+                steps: ['시동 배터리 전압(DC 24~27V) 및 충전기 동작 상태 확인', '엔진 오일량(딥스틱) 및 냉각수 수위(레벨 게이지) 점검', '연료(경유) 탱크 유량 확인 및 밸브 개폐 상태 점검', '제어반 스위치가 자동(Auto) 모드에 있는지 필히 확인'],
+                guides: [
+                    { rank: 1, title: '정전 시 자동 기동 안됨', desc: '배터리 완전 방전, 조작 스위치 수동(Manual) 위치', action: '제어반 모드 Auto 확인, 배터리 충전기 점검, 수동으로 기동하여 비상 전원 공급' },
+                    { rank: 2, title: '기동 직후 시동 꺼짐 (오일 압력 저하)', desc: '엔진 오일 부족, 오일 필터 막힘, 유압 센서 고장', action: '엔진 오일량 보충, 필터 교체, 센서 단선 여부 확인 후 리셋 기동' }
+                ]
             }
         };
 
@@ -956,16 +1039,14 @@
             window.scrollTo(0, 0);
         }
 
-        // --- 신규 TBM 카테고리 로직 ---
         function openTBMView() {
             openView('viewTBM', 'TBM 안전교육');
-            selectTBMCategory(0); // 최초 진입 시 자산 소수선 TBM 기본 선택
+            selectTBMCategory(0); 
         }
 
         function selectTBMCategory(catIndex) {
             currentTbmCategory = catIndex;
             
-            // 카테고리 버튼 UI 변경
             const btn0 = document.getElementById('tbmCatBtn0');
             const btn1 = document.getElementById('tbmCatBtn1');
             
@@ -977,7 +1058,6 @@
                 btn1.classList.add('active');
             }
 
-            // 하단 탭 버튼 재렌더링
             const dataArray = catIndex === 0 ? tbmDataAssets : tbmDataGeneral;
             const tabsArea = document.getElementById('tbmTabs');
             
@@ -985,25 +1065,21 @@
                 `<button class="tbm-tab-btn" id="tbmBtn_${idx}" onclick="selectTBMItem(${idx})">${tbm.task}</button>`
             ).join('');
             
-            // 첫 번째 탭 아이템 자동 선택
             selectTBMItem(0);
         }
 
         function selectTBMItem(index) {
-            // 탭 버튼 UI 변경
             document.querySelectorAll('.tbm-tab-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.getElementById('tbmBtn_' + index);
             if(activeBtn) {
                 activeBtn.classList.add('active');
             }
 
-            // 상세 데이터 렌더링
             const dataArray = currentTbmCategory === 0 ? tbmDataAssets : tbmDataGeneral;
             const tbm = dataArray[index];
             const detailArea = document.getElementById('tbmDetailBox');
             
             if (currentTbmCategory === 0) {
-                // 자산 소수선공사 TBM 포맷
                 detailArea.innerHTML = `
                     <div class="tbm-card">
                         <div class="tbm-header">🛠️ ${tbm.task}</div>
@@ -1016,7 +1092,6 @@
                     </div>
                 `;
             } else {
-                // 일반 TBM 포맷
                 detailArea.innerHTML = `
                     <div class="tbm-card">
                         <div class="tbm-header">🛠️ ${tbm.task}</div>

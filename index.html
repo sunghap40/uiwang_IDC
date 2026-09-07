@@ -233,7 +233,6 @@
                 설비점검 간편접속
             </button>
 
-            <!-- 카드 안쪽 하단으로 웹관리자 정보 이동 -->
             <div class="login-footer">
                 웹관리자 010-7454-4482
             </div>
@@ -680,8 +679,12 @@
             const author = document.getElementById('memoAuthor').value.trim();
             const content = document.getElementById('memoContent').value.trim();
             const isImportant = document.getElementById('memoImportant').checked;
+            const btn = document.getElementById('saveMemoBtn');
 
             if (!author || !content) { alert("내용을 입력해주세요."); return; }
+
+            btn.disabled = true;
+            btn.innerText = "처리 중...";
 
             if (editingMemoId) {
                 db.collection("memos").doc(editingMemoId).update({ author, content, important: isImportant }).then(() => {
@@ -734,6 +737,7 @@
             document.getElementById('memoImportant').checked = false;
             editingMemoId = null;
             document.getElementById('saveMemoBtn').innerText = "저장하기";
+            document.getElementById('saveMemoBtn').disabled = false;
             document.getElementById('cancelEditBtn').style.display = "none";
         }
 
@@ -835,16 +839,15 @@
             { company: "현대엔지니어링 본사", name: "임진규 매니저", phone: "010-4543-5901" }
         ];
 
-        // 🔥 13개 설비의 100% 완전한 데이터 복구 완료 🔥
         const dbData = {
             'CCU': {
                 name: '항온항습기',
                 systemFaults: [
                     { category: '전원', cause: '• 전원선 누전<br>• EOCR 불량<br>• 압축기 절연 불량<br>• FAN 모터 절연 불량<br>• 접지 불량', action: '• 전원선 절연 저항 측정 및 교체<br>• EOCR 동작 확인 및 교체<br>• 압축기 절연 점검 후 교체<br>• FAN 모터 절연 점검 및 교체<br>• 접지 상태 보수<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 차단기 트립 확인 → ② EOCR 경보 점검 → ③ 전원선 및 모터 절연 측정 → ④ 접지 상태 점검</div>' },
                     { category: '제어', cause: '• 콘트롤러 불량<br>• 릴레이 접점 불량<br>• 전자밸브 제어 불량<br>• 프로그램 설정 오류<br>• 제어 신호 단선', action: '• 콘트롤러 동작 확인 및 교체<br>• 릴레이 접점 청소/교체<br>• 전자밸브 신호 확인 및 교체<br>• 프로그램 설정값 점검<br>• 배선 점검 및 재결선<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 콘트롤러 경보 확인 → ② 설정값 점검 → ③ 릴레이 및 배선 점검 → ④ 전자밸브 동작 확인</div>' },
-                    { category: '냉동', cause: '• 냉매 부족/누설<br>• 팽창밸브 막힘<br>• 필터드라이어 막힘<br>• 응축기 열교환 불량<br>• 증발기 결빙', action: '• 냉매 압력 측정 및 보충<br>• 누설 부위 탐지 및 보수<br>• 팽창밸브 교체<br>• 필터드라이어 교체<br>• 응축기·증발기 청소<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 압력 게이지 확인 → ② 누설 부위 탐지 → ③ 팽창밸브/드라이어 점검 → ④ 열교환기 오염 확인</div>' },
+                    { category: '냉각', cause: '• 냉매 부족/누설<br>• 팽창밸브 막힘<br>• 필터드라이어 막힘<br>• 응축기 열교환 불량<br>• 증발기 결빙', action: '• 냉매 압력 측정 및 보충<br>• 누설 부위 탐지 및 보수<br>• 팽창밸브 교체<br>• 필터드라이어 교체<br>• 응축기·증발기 청소<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 압력 게이지 확인 → ② 누설 부위 탐지 → ③ 팽창밸브/드라이어 점검 → ④ 열교환기 오염 확인</div>' },
                     { category: '가습', cause: '• 히터 불량<br>• 급수 밸브 막힘<br>• 급수 부족<br>• 수위 센서 불량<br>• 스케일 축적', action: '• 히터 저항 측정 및 교체<br>• 급수 밸브 청소/교체<br>• 급수 라인 점검<br>• 수위 센서 교체<br>• 스케일 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 수위 센서 경보 확인 → ② 급수 라인/밸브 점검 → ③ 히터 동작 측정 → ④ 스케일 축적 점검</div>' },
-                    { category: '송풍', cause: '• 모터 베어링 손상<br>• 팬 날개 파손<br>• 벨트 이탈/마모<br>• 팬 속도 제어 불량<br>• 모터 절연 불량', action: '• 베어링 교체<br>• 팬 날개 교체<br>• 벨트 장력 조정/교체<br>• 팬 속도 제어 회로 점검<br>• 모터 절연 점검 및 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 풍량 및 알람 확인 → ② 벨트 장력 점검 → ③ 베어링 소음 확인 → ④ 모터 절연 측정</div>' },
+                    { category: '송풍', cause: '• 모터 베어링 손상<br>• 팬 날개 파손<br>• 팬 속도 제어 불량<br>• 모터 절연 불량', action: '• 베어링 교체<br>• 팬 날개 교체<br>• 팬 속도 제어 회로 점검<br>• 모터 절연 점검 및 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 풍량 및 알람 확인 → ② 베어링 소음 확인 → ③ 모터 절연 측정</div>' },
                     { category: '센서', cause: '• 온도 센서 불량<br>• 습도 센서 불량<br>• 센서 오염<br>• 배선 단선<br>• 교정 불량', action: '• 센서 교체<br>• 센서 청소<br>• 배선 점검 및 재결선<br>• 교정 장비로 재교정<br>• 예비 센서로 교차 확인<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 디스플레이 오차 확인 → ② 센서 오염 점검 → ③ 배선 단선 점검 → ④ 재교정 및 교체</div>' },
                     { category: '통신', cause: '• RS485/RS232 불량<br>• 케이블 단선<br>• 포트 손상<br>• 프로토콜 오류<br>• EMI 간섭', action: '• 포트 점검 및 교체<br>• 케이블 연결 확인/교체<br>• 프로토콜 설정값 점검<br>• EMI 차폐 강화<br>• 통신 모듈 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 통신 에러 알람 확인 → ② 케이블/포트 점검 → ③ 프로토콜/설정값 확인 → ④ 모듈 점검</div>' },
                     { category: '기계적', cause: '• 본체 연결부 이완<br>• 진동 과다<br>• 나사 풀림<br>• 구조물 변형<br>• 소음 발생', action: '• 나사 조임<br>• 진동 흡수 패드 설치<br>• 구조물 보수<br>• 소음 원인 부품 교체<br>• 정기 점검 강화<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 소음/진동 확인 → ② 나사 풀림 점검 → ③ 구조물 변형 확인 → ④ 소모품 교체</div>' }
@@ -853,7 +856,7 @@
                 guides: [
                     { rank: 1, title: '고압/저압 알람', desc: '냉매 부족, 필터 막힘으로 인한 풍량 저하', action: '에어필터 세척/교체, 냉매 누설 부위 확인 및 보충' },
                     { rank: 2, title: '가습기 장애', desc: '가습 팬 스케일 누적, 급수 전자변 고장', action: '실린더 스케일 제거 및 교체, 급수 밸브 교체' },
-                    { rank: 3, title: '송풍기(팬) 장애', desc: '팬 모터 과전류 알람, 구동 벨트 끊어짐', action: 'V-벨트 장력 조정 및 교체, 모터 절연 테스트' },
+                    { rank: 3, title: '송풍기(팬) 장애', desc: '팬 모터 과전류 알람', action: '모터 절연 테스트 및 교체' },
                     { rank: 4, title: '온습도 센서 오류', desc: '설정값과 실제 온습도 오차 발생, 단선', action: '센서 클리닝, 결선 상태 재확인 및 센서 교체' }
                 ]
             },
@@ -862,13 +865,12 @@
                 systemFaults: [
                     { category: '전원계통', cause: '• 전원선 누전<br>• 차단기 트립<br>• EOCR 불량<br>• 접지 불량', action: '• 전원선 절연 점검<br>• 차단기 상태 확인<br>• EOCR 교체<br>• 접지 보수<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 차단기 확인 → ② 전원선 절연 측정 → ③ EOCR 동작 확인 → ④ 접지 상태 점검</div>' },
                     { category: '냉각팬', cause: '• 팬 모터 절연 불량<br>• 베어링 손상<br>• 팬 날개 파손<br>• 속도 제어 불량', action: '• 모터 절연 점검<br>• 베어링 교체<br>• 팬 날개 교체<br>• 속도 제어 회로 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 팬 회전 상태 확인 → ② 모터 절연 측정 → ③ 베어링 소음 확인 → ④ 날개 손상 점검</div>' },
-                    { category: '응축기', cause: '• 핀 막힘<br>• 냉매 과다/부족<br>• 열교환 불량<br>• 고압 발생', action: '• 핀 청소<br>• 냉매량 조정<br>• 열교환 상태 점검<br>• 고압 경보 시 정지 후 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 압력 게이지 확인 → ② 핀 청소 → ③ 냉매량 점검 → ④ 열교환 효율 확인</div>' },
                     { category: '기계적 장애', cause: '• 나사 풀림<br>• 진동 과다<br>• 구조물 변형<br>• 소음 발생', action: '• 나사 조임<br>• 진동 패드 설치<br>• 구조물 보수<br>• 소음 원인 부품 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 소음·진동 확인 → ② 나사 조임 → ③ 구조물 점검 → ④ 보수 실시</div>' }
                 ],
-                steps: ['응축기 핀 오염도 육안 검사', '팬 모터 기동 상태 및 소음 점검', '콤프레셔 이상 소음/진동 확인', '서비스 밸브 냉매 누설 검사'],
+                steps: ['핀 오염도 육안 검사', '팬 모터 기동 상태 및 소음 점검'],
                 guides: [
-                    { rank: 1, title: '응축기 열교환 불량', desc: '핀에 먼지/이물질 부착, 고압 컷아웃', action: '고압 세척기 및 약품을 이용한 응축기 세척' },
-                    { rank: 2, title: '콤프레셔 과열/과전류', desc: '표면 온도 상승, 마그네트 스위치 트립', action: '오일 상태 점검, 냉매량 적정성 확인' }
+                    { rank: 1, title: '열교환 불량', desc: '핀에 먼지/이물질 부착, 고압 컷아웃', action: '고압 세척기 및 약품 세척' },
+                    { rank: 2, title: '과열/과전류', desc: '표면 온도 상승, 마그네트 스위치 트립', action: '오일 상태 점검, 냉매량 적정성 확인' }
                 ]
             },
             'PUMP': {
@@ -999,7 +1001,7 @@
             'GEN': {
                 name: '비상발전기 (Generator)',
                 systemFaults: [
-                    { category: '기동 불량', cause: '• 시동 배터리 방전 (전압 저하)<br>• 스타트 모터 톱니바퀴 불량<br>• 제어반 조작전원 상실', action: '• 배터리 및 충전기 교체<br>• 스타트 모터 링기어 수리<br>• 제어반 퓨즈 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 배터리 전압(24V 이상) 측정 → ② 제어반 램프 확인 → ③ 충전기 출력 확인 → ④ 수동 기동 테스트</div>' },
+                    { category: '기동 불량', cause: '• 시동 배터리 방전 (전압 저하)<br>• 기어 불량<br>• 제어반 조작전원 상실', action: '• 배터리 및 충전기 교체<br>• 스타트 모터 링기어 수리<br>• 제어반 퓨즈 교체<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 배터리 전압(24V 이상) 측정 → ② 제어반 램프 확인 → ③ 충전기 출력 확인 → ④ 수동 기동 테스트</div>' },
                     { category: '엔진 기동 후 정지', cause: '• 냉각수 과열 (히터 과열, 수량 부족)<br>• 엔진 오일 압력 저하<br>• 연료 계통 공기 유입 또는 고갈', action: '• 냉각수 보충 및 라디에이터 점검<br>• 엔진 오일 보충<br>• 연료 필터 청소 및 에어 빼기 실시<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 정지 알람(과열, 유압) 확인 → ② 오일/냉각수 레벨 게이지 확인 → ③ 연료 라인 에어 빼기 → ④ 재기동</div>' },
                     { category: '전압 확립 불가', cause: '• AVR(자동전압조정기) 불량<br>• 발전기 회전 다이오드 소손<br>• 잔류 자기 상실', action: '• AVR 기판 점검 및 교체<br>• 회전 다이오드 저항 측정/교체<br>• 초기 여자(Flashing) 회로 점검<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 출력 전압계 지시치 0V 확인 → ② AVR 퓨즈 확인 → ③ 다이오드 테스터기 점검 → ④ 전문가 A/S 의뢰</div>' }
                 ],
@@ -1039,6 +1041,7 @@
             window.scrollTo(0, 0);
         }
 
+        // --- 신규 TBM 카테고리 로직 ---
         function openTBMView() {
             openView('viewTBM', 'TBM 안전교육');
             selectTBMCategory(0); 

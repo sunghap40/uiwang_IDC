@@ -14,7 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-    <!-- 브라우저 탭 아이콘 -->
+    <!-- 브라우저 탭 아이콘 (현대차 H 로고) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><ellipse cx=%2212%22 cy=%2212%22 rx=%2211%22 ry=%227%22/><path d=%22M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9%22/></svg>">
 
     <style>
@@ -188,6 +188,29 @@
         .form-group label { display: block; font-size: 0.85rem; margin-bottom: 4px; color: var(--text-muted); }
         .form-group input, .form-group select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #121212; color: white; box-sizing: border-box; }
         .form-row { display: flex; gap: 12px; align-items: center; margin-top: 12px;}
+        
+        /* TBM 카테고리 선택 버튼 (소수선/일반) */
+        .tbm-cat-group { display: flex; gap: 8px; margin-bottom: 16px; }
+        .tbm-cat-btn { flex: 1; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; border: 1px solid var(--border-color); background: var(--surface-color); color: var(--text-muted); transition: 0.2s; }
+        .tbm-cat-btn.active { background: linear-gradient(90deg, var(--hec-green), var(--hec-blue)); color: white; border-color: transparent; }
+
+        /* TBM 탭 UI */
+        .tbm-tabs {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; justify-content: flex-start;
+        }
+        .tbm-tab-btn {
+            background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-color);
+            padding: 8px 14px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+            text-align: center; white-space: nowrap; -webkit-appearance: none; touch-action: manipulation;
+        }
+        .tbm-tab-btn.active { background-color: var(--primary-color); color: #000; font-weight: bold; border-color: var(--primary-color); }
+        
+        .tbm-card { background-color: var(--surface-color); border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px; overflow: hidden; }
+        .tbm-header { background-color: #2c2c2c; padding: 16px; font-weight: bold; font-size: 1.1rem; color: var(--primary-color); display: flex; align-items: center; gap: 8px;}
+        .tbm-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background-color: #333; }
+        .tbm-row { background-color: var(--surface-color); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+        .tbm-label { font-size: 0.85rem; color: var(--info-color); font-weight: bold; }
+        .tbm-value { font-size: 0.95rem; line-height: 1.4; color: white; }
     </style>
 </head>
 <body>
@@ -195,8 +218,7 @@
     <!-- [0] 로그인 화면 -->
     <div id="viewLogin" class="view active">
         <div class="login-card">
-            
-            <div style="font-weight: 900; font-size: 2.2rem; margin-bottom: 30px; color: var(--hec-blue); letter-spacing: -1px;">의왕IDC 설비업무수첩</div>
+            <div style="font-weight: 900; font-size: 2.2rem; margin-bottom: 30px; color: var(--hec-blue); letter-spacing: -1px;">의왕IDC 업무수첩</div>
             
             <div class="login-form">
                 <label>아이디</label>
@@ -323,7 +345,7 @@
 
     <!-- 스케줄 및 인수인계 화면 -->
     <div id="viewMemo" class="container view">
-        <div class="memo-form" id="memoWriteArea">
+        <div style="background: var(--surface-color); padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--border-color);" id="memoWriteArea">
             <input type="text" id="memoAuthor" style="width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px;" placeholder="작성자 이름 (예: 홍길동)" autocomplete="off">
             <textarea id="memoContent" style="width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; resize: vertical; min-height: 80px;" placeholder="주간/월간 스케줄 또는 인수인계 내용을 입력하세요."></textarea>
             <div style="margin-bottom: 12px; display: flex; align-items: center;">
@@ -341,8 +363,15 @@
 
     <!-- TBM 안전교육 화면 -->
     <div id="viewTBM" class="container view">
-        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 16px;">수행하실 작업을 탭에서 선택하여 위험요인과 보호구를 확인하세요.</p>
-        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;" id="tbmTabs"></div>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 16px;">분류를 선택하신 후 아래에서 수행하실 작업을 탭하여 위험요인과 보호구를 확인하세요.</p>
+        
+        <!-- 분류 선택 탭 (자산 소수선 / 일반) -->
+        <div class="tbm-cat-group">
+            <button id="tbmCatBtn0" class="tbm-cat-btn" onclick="selectTBMCategory(0)">1. 자산 소수선공사 T.B.M</button>
+            <button id="tbmCatBtn1" class="tbm-cat-btn" onclick="selectTBMCategory(1)">2. 일반 T.B.M</button>
+        </div>
+
+        <div class="tbm-tabs" id="tbmTabs"></div>
         <div id="tbmDetailBox"></div>
     </div>
 
@@ -397,22 +426,31 @@
     <div id="viewProcess" class="container view">
         <button class="process-acc"><span>1. 중대 재해 (대형사고)</span><span style="color:var(--danger-color); font-size:0.85rem;">[30분 이내]</span></button>
         <div class="process-content">
-            <div style="color:var(--danger-color); font-size:0.8rem; margin:8px 0;">* 업무 상 사망자 또는 6개월 이상 부상자 2명 이상</div>
+            <div style="color:var(--danger-color); font-size:0.8rem; margin:8px 0;">* 업무 상 사망자 또는 6개월 이상 부상자가 동시에 2명 이상 발생한 사고</div>
             <div style="margin-bottom:12px; border-bottom:1px dashed #333; padding-bottom:12px;">
                 <div style="color:var(--success-color); font-weight:bold; margin-bottom:4px;">[초기대응] 사고발생 통보</div>
                 <div style="color:#ffb300; font-size:0.85rem; margin-top:8px;">▶ 협력사 (당사사고 시 당사 수행)</div>
-                응급 조치(병원후송) → 사고발생통보(HEC) → 환자상태 확인 → 가족연락 → 2차 재해방지
+                사고자 응급 조치(병원후송) → 사고발생통보(HEC) → 고용노동부 보고 → 환자상태 확인 → 가족연락 → 2차 재해방지/보존
                 <div style="color:#ffb300; font-size:0.85rem; margin-top:8px;">▶ HEC 현장 (소속팀)</div>
-                최초 보고(본사) → 재해자 상태 확인 및 경과 보고
+                최초 보고(본사) → 재해자 상태 확인 및 경과 보고 → 고객사 대응/협의
             </div>
         </div>
         <button class="process-acc"><span>2. 일반 재해</span><span style="color:var(--primary-color); font-size:0.85rem;">[3시간 이내]</span></button>
         <div class="process-content">
-             <div style="color:var(--text-muted); font-size:0.8rem; margin:8px 0;">* 업무에 기인하여 발생한 인명사고</div>
+             <div style="color:var(--text-muted); font-size:0.8rem; margin:8px 0;">* 업무에 기인하여 발생한 인명사고(업무 중 교통사고 포함)</div>
              <div style="margin-bottom:12px; padding-bottom:12px;">
                 <div style="color:var(--success-color); font-weight:bold; margin-bottom:4px;">[초기대응]</div>
                 협력사: 병원후송, HEC통보, 2차 재해방지 현장보존<br>
                 HEC현장: 최초 보고(본사), 대체인력 투입 확인
+            </div>
+        </div>
+        <button class="process-acc"><span>3. 기타 사고 (개인질환, 피해사고 등)</span><span style="color:var(--primary-color); font-size:0.85rem;">[3시간 이내]</span></button>
+        <div class="process-content">
+             <div style="color:var(--text-muted); font-size:0.8rem; margin:8px 0;">* 심혈관계/근골격계 질환 병원치료, 제3자 피해사고, 현장 내 인명사건 등</div>
+             <div class="process-step">
+                <div class="step-title">[초기대응]</div>
+                협력사: 병원후송, HEC통보, 질병정도 파악, 가족 연락<br>
+                HEC현장: 최초 보고(본사), 대체 인력 투입 확인
             </div>
         </div>
     </div>
@@ -644,18 +682,40 @@
             const author = document.getElementById('memoAuthor').value.trim();
             const content = document.getElementById('memoContent').value.trim();
             const isImportant = document.getElementById('memoImportant').checked;
+            const btn = document.getElementById('saveMemoBtn');
 
             if (!author || !content) { alert("내용을 입력해주세요."); return; }
+
+            btn.disabled = true;
+            btn.innerText = "처리 중...";
 
             if (editingMemoId) {
                 db.collection("memos").doc(editingMemoId).update({ author, content, important: isImportant }).then(() => {
                     cancelEdit();
+                }).catch((error) => {
+                    console.error("수정 오류:", error);
+                    alert("메모 수정에 실패했습니다.");
+                    btn.disabled = false;
+                    btn.innerText = "수정하기";
                 });
             } else {
-                db.collection("memos").add({
-                    author, content, important: isImportant,
-                    timestamp: new Date().toISOString(), displayTime: new Date().toLocaleString('ko-KR')
-                }).then(() => { cancelEdit(); });
+                const newMemo = {
+                    author: author,
+                    content: content,
+                    important: isImportant,
+                    timestamp: new Date().toISOString(),
+                    displayTime: new Date().toLocaleString('ko-KR')
+                };
+
+                db.collection("memos").add(newMemo)
+                .then(() => {
+                    cancelEdit();
+                }).catch((error) => {
+                    console.error("저장 오류:", error);
+                    alert("메모 저장에 실패했습니다. 규칙 설정을 확인해주세요.");
+                    btn.disabled = false;
+                    btn.innerText = "저장하기";
+                });
             }
         }
 
@@ -680,6 +740,7 @@
             document.getElementById('memoImportant').checked = false;
             editingMemoId = null;
             document.getElementById('saveMemoBtn').innerText = "저장하기";
+            document.getElementById('saveMemoBtn').disabled = false;
             document.getElementById('cancelEditBtn').style.display = "none";
         }
 
@@ -721,7 +782,25 @@
         // ==========================================
         // 5. 정적 데이터 (TBM, 연락망, 설비)
         // ==========================================
-        const tbmData = [
+        
+        // --- 신규 TBM 데이터 분류 적용 ---
+        let currentTbmCategory = 0; // 0: 자산 소수선, 1: 일반
+
+        const tbmDataAssets = [
+            { task: "구조물 철거", ppe: "안전모, 안전화, 마스크, 귀마개, 보안경", hazard: "• 고소작업 중 떨어짐<br>• 상하 동시작업으로 인한 물체 낙하<br>• 날카로운 부위에 신체 손상", tbm: "1. 분진 다발 발생으로 보안경 및 마스크 필수 착용<br>2. 타 근로자 접근제한 통제 및 작업 중 안내 표지간판 출입구 게시<br>3. 작업 전 전원차단 확인 및 작업에 필요한 가설조도 확보<br>4. 높이에 따른 적정 작업발판 규격 준수 및 유동성이 없도록 고정 철저<br>5. 상하 동시작업 금지 및 적정 기계기구 방호", check: "- 높이에 따른 적정 작업발판 사용 및 1.8m 이상 고소작업 시 안전벨트 체결 여부<br>- 장비 사용에 따른 전담 유도원 배치를 통한 반경 내 근로자 접근제한 여부<br>- 작업구간 전원차단 및 사용하는 전기·기계기구 접지 및 방호장치 설치 여부<br>- 타 근로자 접근제한 통제 및 작업 중 안내 표지간판 설치 여부<br>- 소방시설 경보 등 해체 및 대체 소화시설 구비 및 작동가능 여부<br>- 산소절단 등 화기 사용에 따른 불티비산, 역화방지, 감시자 적정 여부<br>- 외부창호 등 철거 작업 시 라이프라인 적정 설치 및 고리 체결 여부" },
+            { task: "난간대 작업", ppe: "안전모, 안전화, 안전대, 마스크, 귀마개, 보안경", hazard: "• 고소작업 중 떨어짐<br>• 상하 동시작업으로 인한 물체 낙하<br>• 날카로운 부위에 신체 손상", tbm: "1. 고소작업에 따른 이동 및 작업중 안전벨트 체결 철저<br>2. 작업구간 생명줄(16mm) 선행 설치<br>3. 자재 인양시 달줄, 유도로프 사용<br>4. 화기 작업 시 불티비산 및 자동전격방지, 절연방호, 소화기 배치 철저<br>5. 상하 동시작업 금지 및 적정 기계기구 방호", check: "- 높이에 따른 적정 작업발판 사용 및 떨어짐의 위험이 있는 고소작업 시 안전벨트 체결 여부<br>- 작업장소 미끌림 여부<br>- 장비 사용에 따른 전담 유도원 배치를 통한 반경 내 근로자 접근제한 여부<br>- 작업구간 전원차단 및 사용하는 전기·기계기구 접지 및 방호장치 설치 여부<br>- 타 근로자 접근제한 통제 및 작업 중 안내 표지간판 설치 여부<br>- 미고정 상태의 난간대를 잡고 이동하는 등 불안전한 행위 여부<br>- 단부에 자재 등 등 떨어질수 있는 위험요소 방치 여부" },
+            { task: "에스컬레이터 작업", ppe: "안전모, 안전화, 보안경", hazard: "• 발판 해체구간 이동 중 넘어짐<br>• 작업 중 작동으로 인한 끼임<br>• 날카로운 부위에 신체 손상", tbm: "1. 전원조작 1인 지정관리 철저 및 작동방지커버 설치<br>2. 작업과 동력구동은 팀원이 모두 확인된 상태에서 분리하여 진행<br>3. 발판 철거 구간 이동 금지<br>4. 화기 작업 시 불티비산 및 자동전격방지, 절연방호, 소화기 배치 철저<br>5. 타 근로자 접근통제 및 작업 중 간판 게시", check: "- 수동조작 전환 및 1인 전원관리 작동방지커버 여부<br>- 2차 전원 비상정지스위치 적용 여부<br>- 화기작업구간 주변 구리스, 오일류 정리정돈 여부<br>- 신체 베임방지를 위한 긴팔, 긴바지 착용 여부<br>- 타 근로자 접근제한 통제 및 작업 중 안내 표지간판 설치 여부<br>- 핸드레일 조립에 따른 떨어짐 위험시 안전벨트 체결 여부<br>- 발판 체결을 위해 수동조작 중 협착의 위험 여부" },
+            { task: "승강기 작업", ppe: "안전모, 안전화, 안전대, 보안경", hazard: "• 발판이 탈락하면서 넘어짐<br>• 작업 중 작동으로 인한 끼임 또는 떨어짐", tbm: "1. 정비에 따른 작업자 외 조작 금지 표지판 등 설치<br>2. 작업 전 수동모드로 전환 및 안전 스위치 확인 (Loto)<br>3. 카 리프트 상부에서 작업 시 안전난간 설치<br>4. 떨어짐 위험장소에서 안전벨트 체결<br>5. 중량물 취급에 따른 체인블럭 등 제원 확인 및 상하동시작업 금지", check: "- 수동조작 전환 및 1인 전원관리 작동방지커버 여부<br>- 분전함 및 엘레베이터 전면 작업 중 표지 게시 및 잠금관리 여부<br>- 중량물 취급에 따른 안전성 검토 여부 (체인블럭, 앙카, 시브 등)<br>- 화기작업구간 하부 정리정돈 여부<br>- 회전체 방호커버 설치 후 시운전 여부<br>- 고소작업에 따른 난간대 설치 및 안전벨트 사용 여부<br>- 작업발판 고정 및 비전문가 임의조작 여부" },
+            { task: "지붕/옥상 작업", ppe: "안전모, 안전화, 안전대, 보안경", hazard: "• 지붕자재가 이탈하며 떨어짐<br>• 자재 과적으로 인한 낙하", tbm: "1. 작업구간 생명줄(PP 16mm 등) 선행 설치<br>2. 고소작업에 따른 이동 및 작업중 안전벨트 체결 철저<br>3. 채광창, 개구부 등 강도저하 구간 떨어짐 주의 및 적정 작업발판, 덮개 사용<br>4. 자재 과적 및 상하 동시작업 금지<br>5. 도료 등 사용에 따른 흡연 금지 및 건강이상 발생 시 즉시 작업중지", check: "- 작업 및 이동구간 생명줄(16mm) 설치<br>- 장비 사용에 따른 전담 유도원 배치를 통한 반경 내 근로자 접근제한 여부<br>- 채광창 및 개구부 등 안전덮개 설치여부<br>- 상하 동시작업 및 자재 과적 여부<br>- 도료 사용 중 흡연 여부<br>- 사용하는 전기·기계기구 접지 및 방호장치 설치 여부<br>- 강풍 및 강설 등 작업환경 여부" },
+            { task: "건물외벽 작업", ppe: "안전모, 안전화, 안전대", hazard: "• 로프가 마모되어 끊어지며 떨어짐<br>• 로프 지지점 탈락으로 인해 떨어짐", tbm: "1. 작업 전 주 로프(20mm) 및 보조로프(16mm) 손상여부 확인 철저<br>2. 로프의 마모를 위한 보호대 및 젠다이, 샤클 등 부속품 확인 철저<br>3. 주로프 및 보조로프 2점지지, 매듭 고정 자물쇠 체결<br>4. 탑승 전 안전고리 선체결 철저<br>5. 상/하부 작업관리 철저 타 근로자 임의 해체 방지를 위해 관리자 상주", check: "- 주로프(20mm) 및 보조로프(16mm) 손상 및 규격 준수 여부<br>- 보조로프 안전고리 체결 및 떨어짐 방지장치 정방향 여부<br>- 작업대 외 보조도구함 이용 시 낙하위험 여부<br>- 상하 동시작업 여부<br>- 관리자 상주 여부<br>- 로프 체결 지지대 손상 및 변형 등 탈락위험 여부<br>- 주로프 및 보조로프 길이 적정 및 2포인트 체결 여부" },
+            { task: "밀폐공간 작업", ppe: "안전모, 안전화, 안전대, 송기마스크", hazard: "• 산소결핍으로 인한 질식<br>• 유해가스 중독으로 인한 질식<br>• 화기 사용으로 인한 폭발<br>• 수직사다리 이용 중 떨어짐", tbm: "1. 작업 전 근로자 건강상태 확인<br>2. 수직사다리, 난간대 미설치 등 이동 중 및 떨어짐 예방을 위한 사전확인<br>3. 로프 등을 이용하여 작업 전 작업장소 복합가스 측정(검교정) 후 투입<br>4. 단독작업 금지, 작업 중 표지 게시 및 지속적 소통 확인<br>5. 송기마스크 및 환기장치, 구조용 장비 비치 및 사용", check: "- 측정기(유해가스, 산소 등) 검교정 여부<br>- 작업 전 복합가스 측정 여부 (로프 등 이용 권장)<br>- 질식 위험공간 및 작업 중 표지 게시 여부<br>- 송기마스크 및 환기장치 작동 여부<br>- 구조용 장비(삼각대) 등 구비 여부<br>- 2인 이상 작업 및 관리자를 통한 지속적 소통 여부<br>- 어지럼증, 답답함, 호흡곤란 등 신체이상 여부" },
+            { task: "화기 작업", ppe: "보호의, 용접장갑, 보안면, 방진 마스크", hazard: "• 화재, 감전, 중독, 폭발", tbm: "1. 인화성, 화학물질 등 주변 정리정돈 철저<br>2. 불연소재를 이용하여 불티비산 방지 등 화재예방<br>3. 용접흄 발생 및 불티 비산에 따른 용접 보호구 착용 등 컨디션 모니터링<br>4. 젖은손 전기취급 및 접속부, 절연홀더, 자동전격방지기 방호장치 확인<br>5. 화기감시자 배치 및 필수 구비품목, 비상대피로 확인 철저", check: "- 작업구간으로 부터 반경 11m 이내 인화성 물질 제거<br>- 소화기 3개 + 방화수 + 대형소화기(권고) 구비<br>- 용접 보호구 사용 (보호의, 용접장갑, 보안면, 방진 마스크)<br>- 화재감시자 이중 업무 금지<br>- 절연파괴, 체결불량 및 피복 손상 확인 시 교체<br>- 불티의 비산을 최소화 하여 혼재되지 않도록 적정 바운더리 설치<br>- 스프링클러 가동 불가 시 옥내 소화전 운영 검토<br>- 화기 작업 후 잔여 불씨 확인" },
+            { task: "기계설비 작업", ppe: "안전모, 안전화, 안전대, 보안경", hazard: "• 회전축에 접촉하여 말림<br>• 작업 중 전원투입으로 인한 절단<br>• 비정형 고소작업 중 떨어짐", tbm: "1. 작업 전 동력 전원차단 및 비상정지장치 작동여부 확인 후 설정<br>2. 전원투입장소 작업 중 표지 게시 및 임의조작 예방 잠금관리 철저<br>3. 해당 기계 정지 및 수리에 따른 후속 조치 여부 확인, 시운전 시 방호커버 설치<br>4. 중량물 취급에 따른 인양제원 검토 (체인블럭 등 지지대 포함)<br>5. 배관 등 설비를 밟고 올라서서 작업하는 등 불안전작업 금지", check: "- 작업 중 작업방법 및 순서 인지 여부<br>- 협소 공간에 따른 신체부위 베임 위험 여부<br>- 전원차단 및 작업 중 표지 게시, 잠금관리 여부<br>- 중량물 취급 체인 및 지지대 변형, 훼손, 이탈위험 여부<br>- 안전을 위해 보조도구 사용 가능한 작업인 경우 보조도구 사용 여부<br>- 불안전한 작업발판 사용 또는 고소작업 시 안전벨트 체결 여부<br>- 작업 후 방호장치 재설치 여부" },
+            { task: "냉난방기 작업", ppe: "안전모, 안전화, 안전대, 보안경", hazard: "• 사다리를 이용하여 작업 중 떨어짐<br>• 실외기 점검 중 떨어짐<br>• 가스 기밀시험 중 폭발", tbm: "1. 감전의 위험이 있는 작업의 경우 작업 전 동력 전원차단 여부 확인 후 설정<br>2. 전원투입장소 작업 중 표지 게시 및 임의조작 예방 잠금관리 철저<br>3. 떨어짐 위험이 있는 경우 (고소, 구조 안전성) 안전벨트 체결 철저<br>4. 가연성 가스 충전 및 기밀시험 등 작업 중 흡연, 용접 절대 금지<br>5. 사다리 등 이동 중 중량물 취급 병행 금지", check: "- 가연성 가스 취급, 압력테스트 등 작업 중 화기작업 여부<br>- 고소작업 시 안전벨트 체결 여부<br>- 감전의 위험이 있는 작업의 경우 전원차단 실시여부<br>- 중량물 취급 체인 및 지지대 변형, 훼손, 이탈위험 여부<br>- 고소작업차 사용 시 전면 난간대 설치 여부<br>- 작업발판의 변형, 손상, 이탈 위험 여부<br>- 일자형 사다리를 작업용 사용 여부" },
+            { task: "누수/방수 작업", ppe: "안전모, 안전화, 안전대, 보안경, 불침투성보호구, 방진마스크", hazard: "• 고소 작업중 떨어짐<br>• 휘발/가연성 도료를 통한 화재발생<br>• 유해물질 접촉으로 안구/피부 손상", tbm: "1. 떨어짐 위험이 있는 경우 (고소, 구조 안전성) 안전벨트 체결 철저<br>2. 작업구간 내 감전의 위험이 있는 경우 전원차단 또는 최소 이격거리 확보<br>3. 밀폐공간 내 가연성/휘발성(신나 등) 도장도료 사용 시 환기시설 확보 / 흡연금지<br>4. 사다리 등 이동 중 중량물 취급 병행 금지 및 불침투성 보호구 착용<br>5. 소화시설 확보 및 타 근로자 출입통제, 작업 중 입간판 설치", check: "- 도장/방수 작업구간 내 동시(화기)작업 여부<br>- 고소작업 시 안전벨트 체결 여부<br>- 감전의 위험이 있는 작업의 경우 전원차단 또는 이격거리 확보 여부<br>- 작업구간 통제(입간판 설치) 여부<br>- 소화 및 환기시설 확보 여부<br>- 작업발판의 변형, 손상, 이탈 위험 여부<br>- 불침투성 보호구 착용 여부" }
+        ];
+
+        const tbmDataGeneral = [
             { task: "전기작업", detail: "전기설비 점검·정비", hazard: "감전, 단락, 화재", method: "전원 차단→검전→방전→접지 후 작업", ppe: "안전모, 절연장갑, 절연화, 보안경", control: "작업구역 출입통제", emergency: "감전 시 전원 차단 후 119 신고" },
             { task: "수배전반", detail: "배전반 점검·정비", hazard: "감전, 아크플래시", method: "LOTO 실시, 무전압 확인 후 작업", ppe: "안전모, 절연장갑, 절연화, 아크보호면", control: "전기실 출입통제", emergency: "사고 시 전원 차단 및 응급조치" },
             { task: "고압작업", detail: "고압설비 점검·정비", hazard: "감전, 아크폭발", method: "정전→검전→방전→접지 확인", ppe: "절연장갑, 절연화, 안전모, 아크보호면, 방염복", control: "관계자 외 출입금지", emergency: "즉시 전원 차단 및 119 신고" },
@@ -877,40 +956,81 @@
             window.scrollTo(0, 0);
         }
 
+        // --- 신규 TBM 카테고리 로직 ---
         function openTBMView() {
             openView('viewTBM', 'TBM 안전교육');
-            const tabsArea = document.getElementById('tbmTabs');
-            tabsArea.innerHTML = tbmData.map((tbm, idx) => 
-                `<button class="tbm-tab-btn" id="tbmBtn_${idx}" onclick="selectTBM(${idx})" style="background:var(--surface-color); border:1px solid var(--border-color); color:var(--text-color); padding:8px 14px; border-radius:20px; font-size:0.9rem; cursor:pointer;">${tbm.task}</button>`
-            ).join('');
-            selectTBM(0);
+            selectTBMCategory(0); // 최초 진입 시 자산 소수선 TBM 기본 선택
         }
 
-        function selectTBM(index) {
-            document.querySelectorAll('.tbm-tab-btn').forEach(btn => {
-                btn.style.backgroundColor = 'var(--surface-color)';
-                btn.style.color = 'var(--text-color)';
-                btn.style.borderColor = 'var(--border-color)';
-            });
+        function selectTBMCategory(catIndex) {
+            currentTbmCategory = catIndex;
+            
+            // 카테고리 버튼 UI 변경
+            const btn0 = document.getElementById('tbmCatBtn0');
+            const btn1 = document.getElementById('tbmCatBtn1');
+            
+            if (catIndex === 0) {
+                btn0.classList.add('active');
+                btn1.classList.remove('active');
+            } else {
+                btn0.classList.remove('active');
+                btn1.classList.add('active');
+            }
+
+            // 하단 탭 버튼 재렌더링
+            const dataArray = catIndex === 0 ? tbmDataAssets : tbmDataGeneral;
+            const tabsArea = document.getElementById('tbmTabs');
+            
+            tabsArea.innerHTML = dataArray.map((tbm, idx) => 
+                `<button class="tbm-tab-btn" id="tbmBtn_${idx}" onclick="selectTBMItem(${idx})">${tbm.task}</button>`
+            ).join('');
+            
+            // 첫 번째 탭 아이템 자동 선택
+            selectTBMItem(0);
+        }
+
+        function selectTBMItem(index) {
+            // 탭 버튼 UI 변경
+            document.querySelectorAll('.tbm-tab-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.getElementById('tbmBtn_' + index);
             if(activeBtn) {
-                activeBtn.style.backgroundColor = 'var(--primary-color)';
-                activeBtn.style.color = '#000';
-                activeBtn.style.fontWeight = 'bold';
+                activeBtn.classList.add('active');
             }
-            const tbm = tbmData[index];
-            document.getElementById('tbmDetailBox').innerHTML = `
-                <div style="background:var(--surface-color); border-radius:8px; overflow:hidden;">
-                    <div style="background:#2c2c2c; padding:16px; font-weight:bold; font-size:1.1rem; color:var(--primary-color);">🛠️ ${tbm.task}</div>
-                    <div style="display:grid; gap:1px; background:#333;">
-                        <div style="background:var(--surface-color); padding:14px 16px;"><div style="font-size:0.85rem; color:var(--info-color); font-weight:bold;">① 작업내용</div><div>${tbm.detail}</div></div>
-                        <div style="background:var(--surface-color); padding:14px 16px;"><div style="font-size:0.85rem; color:var(--info-color); font-weight:bold;">② 주요 위험요인</div><div style="color:var(--danger-color);">${tbm.hazard}</div></div>
-                        <div style="background:var(--surface-color); padding:14px 16px;"><div style="font-size:0.85rem; color:var(--info-color); font-weight:bold;">③ 안전작업 방법</div><div>${tbm.method}</div></div>
-                        <div style="background:var(--surface-color); padding:14px 16px;"><div style="font-size:0.85rem; color:var(--info-color); font-weight:bold;">④ 필수 안전보호구</div><div style="color:var(--primary-color);">${tbm.ppe}</div></div>
-                        <div style="background:var(--surface-color); padding:14px 16px;"><div style="font-size:0.85rem; color:var(--info-color); font-weight:bold;">⑤ 작업구역 통제</div><div>${tbm.control}</div></div>
-                        <div style="background:var(--surface-color); padding:14px 16px;"><div style="font-size:0.85rem; color:var(--info-color); font-weight:bold;">⑥ 비상상황 대응</div><div>${tbm.emergency}</div></div>
+
+            // 상세 데이터 렌더링
+            const dataArray = currentTbmCategory === 0 ? tbmDataAssets : tbmDataGeneral;
+            const tbm = dataArray[index];
+            const detailArea = document.getElementById('tbmDetailBox');
+            
+            if (currentTbmCategory === 0) {
+                // 자산 소수선공사 TBM 포맷
+                detailArea.innerHTML = `
+                    <div class="tbm-card">
+                        <div class="tbm-header">🛠️ ${tbm.task}</div>
+                        <div class="tbm-grid">
+                            <div class="tbm-row"><span class="tbm-label">① 필수 안전보호구</span><span class="tbm-value" style="color:var(--primary-color);">${tbm.ppe}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">② 재해유형</span><span class="tbm-value" style="color:var(--danger-color);">${tbm.hazard}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">③ 안전교육 (T.B.M)</span><span class="tbm-value">${tbm.tbm}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">④ 작업 안전점검 체크</span><span class="tbm-value">${tbm.check}</span></div>
+                        </div>
                     </div>
-                </div>`;
+                `;
+            } else {
+                // 일반 TBM 포맷
+                detailArea.innerHTML = `
+                    <div class="tbm-card">
+                        <div class="tbm-header">🛠️ ${tbm.task}</div>
+                        <div class="tbm-grid">
+                            <div class="tbm-row"><span class="tbm-label">① 작업내용</span><span class="tbm-value">${tbm.detail}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">② 주요 위험요인</span><span class="tbm-value" style="color:var(--danger-color);">${tbm.hazard}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">③ 안전작업 방법</span><span class="tbm-value">${tbm.method}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">④ 필수 안전보호구</span><span class="tbm-value" style="color:var(--primary-color);">${tbm.ppe}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">⑤ 작업구역 통제</span><span class="tbm-value">${tbm.control}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">⑥ 비상상황 대응</span><span class="tbm-value">${tbm.emergency}</span></div>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         function openDetail(equipKey) {
@@ -966,7 +1086,6 @@
             `).join('');
         }
         
-        // 아코디언 공통 바인딩
         document.querySelectorAll(".process-acc").forEach(item => {
             item.onclick = function() {
                 this.classList.toggle("active");

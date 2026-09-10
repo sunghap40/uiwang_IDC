@@ -164,11 +164,13 @@
         .sys-fault-box h4 { margin: 0 0 8px 0; color: var(--text-muted); font-size: 0.85rem; border-bottom: 1px solid #333; padding-bottom: 4px; }
         .ts-title { color: var(--primary-color); font-weight: bold; }
         
+        /* 체크리스트 개선 */
         .checklist { list-style: none; padding: 0; margin-bottom: 24px; }
-        .check-item { background-color: var(--surface-color); margin-bottom: 8px; padding: 16px; border-radius: 8px; display: flex; align-items: center; cursor: pointer; }
+        .check-item { background-color: var(--surface-color); margin-bottom: 8px; padding: 16px; border-radius: 8px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; touch-action: manipulation; }
         .check-item.done { opacity: 0.5; text-decoration: line-through; }
-        .check-box { width: 24px; height: 24px; border: 2px solid var(--text-muted); border-radius: 50%; margin-right: 12px; display: inline-block; }
-        .check-item.done .check-box { background-color: var(--primary-color); border-color: var(--primary-color); }
+        .check-box { width: 24px; height: 24px; border: 2px solid var(--text-muted); border-radius: 50%; margin-right: 12px; display: inline-flex; justify-content: center; align-items: center; flex-shrink: 0; pointer-events: none; transition: 0.2s; }
+        .check-item.done .check-box { background-color: var(--primary-color); border-color: var(--primary-color); color: #000; font-weight: bold; }
+        .check-item.done .check-box::after { content: '✓'; }
 
         .contact-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;}
         .contact-info { display: flex; flex-direction: column; gap: 4px; }
@@ -313,7 +315,7 @@
             <button type="button" class="menu-card" onclick="openDetail('PANEL')"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 3v18"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h8"/></svg></span><span>분전반</span></button>
             <button type="button" class="menu-card" onclick="openDetail('GEN')"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="10" rx="2"/><circle cx="7" cy="14" r="2"/><circle cx="17" cy="14" r="2"/><path d="M6 8V5h12v3"/></svg></span><span>비상발전기</span></button>
             
-            <!-- 신규 추가: 순간정전 보고양식 탭 -->
+            <!-- 순간정전 보고양식 탭 -->
             <button type="button" class="menu-card" onclick="openView('viewPowerOutage', '⚡ 순간정전 보고양식')">
                 <span class="menu-icon">
                     <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
@@ -380,6 +382,7 @@
     <!-- TBM 안전교육 화면 -->
     <div id="viewTBM" class="container view">
         <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 16px;">분류를 선택하신 후 아래에서 수행하실 작업을 탭하여 위험요인과 보호구를 확인하세요.</p>
+        
         <div class="tbm-cat-group">
             <button id="tbmCatBtn0" class="tbm-cat-btn" onclick="selectTBMCategory(0)">1. 자산 소수선공사 T.B.M</button>
             <button id="tbmCatBtn1" class="tbm-cat-btn" onclick="selectTBMCategory(1)">2. 일반 T.B.M</button>
@@ -435,7 +438,7 @@
         </div>
     </div>
 
-    <!-- 순간정전 보고양식 화면 (신규 추가) -->
+    <!-- 순간정전 보고양식 화면 -->
     <div id="viewPowerOutage" class="container view">
         <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:8px; padding:16px; margin-bottom:16px;">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:8px; margin-bottom:12px;">
@@ -583,7 +586,6 @@
             }
         }
 
-        // 로그인 화면 설정안내 토글 함수
         function toggleLoginInstallGuide() {
             const guide = document.getElementById('loginInstallGuide');
             guide.style.display = guide.style.display === 'none' ? 'block' : 'none';
@@ -1010,7 +1012,7 @@
                 ],
                 steps: ['상용전원(한전) 및 비상전원(발전기) 인입 전압 확인', 'ATS 컨트롤러 표시창 에러 코드 및 램프 점검', '절환 기계적 걸림 여부 및 접점 상태 육안 확인', '수동 핸들 조작 가능 여부(비상시 대조) 테스트'],
                 guides: [
-                    { rank: 1, title: '정전 시 발전기 쪽으로 절환 안됨', desc: 'ATS 제어전원 차단, 조작 코일 소손', action: '수동 핸문을 이용하여 발전기(E) 측 강제 절환, 이후 코일 점검' },
+                    { rank: 1, title: '정전 시 발전기 쪽으로 절환 안됨', desc: 'ATS 제어전원 차단, 조작 코일 소손', action: '수동 핸들을 이용하여 발전기(E) 측 강제 절환, 이후 코일 점검' },
                     { rank: 2, title: '절환 시 심한 소음 및 불꽃', desc: '주접점 표면 탄화 및 접촉 불량', action: '접점 교체 주기 도래 판단, 접촉저항 측정 후 오버홀 진행' }
                 ]
             },
@@ -1081,6 +1083,12 @@
             showView(viewId);
             window.scrollTo(0, 0);
         }
+
+        // 터치 체크 기능 안전하게 분리
+        // 권한(currentUser.canWrite) 상관없이 누구나 체크 가능하게 수정
+        window.toggleCheck = function(el) {
+            el.classList.toggle('done');
+        };
 
         function openTBMView() {
             openView('viewTBM', 'TBM 안전교육');
@@ -1166,11 +1174,12 @@
                 <div class="sys-fault-box"><h4>조치 방법</h4><div>${sys.action}</div></div></div></div>
             `).join('');
 
-            const canWrite = currentUser && currentUser.canWrite;
-            const pointerStyle = canWrite ? 'cursor:pointer;' : 'pointer-events:none;';
+            // 권한 체크 해제 - 누구나 터치하여 체크할 수 있음
+            const pointerStyle = 'cursor:pointer;';
+            
             document.getElementById('checklistArea').innerHTML = data.steps.map(step => `
-                <li class="check-item" style="${pointerStyle}" onclick="if(${canWrite}) this.classList.toggle('done')">
-                    <span class="check-box"></span><span>${step}</span>
+                <li class="check-item" style="${pointerStyle}" onclick="toggleCheck(this)">
+                    <span class="check-box"></span><span style="flex:1; word-break:keep-all;">${step}</span>
                 </li>
             `).join('');
 

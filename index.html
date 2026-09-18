@@ -14,10 +14,10 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-    <!-- 브라우저 탭 아이콘 -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><ellipse cx=%2212%22 cy=%2212%22 rx=%2211%22 ry=%227%22/><path d=%22M8.5 7.5l-2 9M17.5 7.5l-2 9M7.5 12h9%22/></svg>">
-
-    <style>
+    <!-- 브라우저 탭 아이콘 (IDC 서버 형상화) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><rect x=%222%22 y=%222%22 width=%2220%22 height=%226%22 rx=%222%22 ry=%222%22/><rect x=%222%22 y=%229%22 width=%2220%22 height=%226%22 rx=%222%22 ry=%222%22/><rect x=%222%22 y=%2216%22 width=%2220%22 height=%226%22 rx=%222%22 ry=%222%22/><line x1=%226%22 y1=%225%22 x2=%226.01%22 y2=%225%22/><line x1=%226%22 y1=%2212%22 x2=%226.01%22 y2=%2212%22/><line x1=%226%22 y1=%2219%22 x2=%226.01%22 y2=%2219%22/></svg>">
+    
+<style>
         /* 기본 테마 */
         :root {
             --bg-color: #121212;
@@ -126,6 +126,15 @@
             display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(244, 67, 54, 0.5); white-space: nowrap;
         }
         .header-call-btn:active { transform: scale(0.95); background-color: #d32f2f; }
+        
+        /* 카카오톡 입장 버튼 스타일 추가 */
+        .header-kakao-btn {
+            background-color: #FEE500; color: #3C1E1E; border: none; border-radius: 6px;
+            padding: 8px 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(254, 229, 0, 0.3); 
+            white-space: nowrap; text-decoration: none;
+        }
+        .header-kakao-btn:active { transform: scale(0.95); background-color: #E5CD00; }
         
         .settings-btn {
             background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 6px;
@@ -263,6 +272,10 @@
         </div>
         <div class="header-right">
             <button type="button" class="settings-btn" id="settingsBtn" onclick="openSettings()">⚙️</button>
+            
+            <!-- 카카오톡 입장 버튼 추가 -->
+            <a href="https://open.kakao.com/o/g1vey8Ni" target="_blank" class="header-kakao-btn">💬 카톡입장</a>
+            
             <button type="button" class="header-call-btn" id="emergencyBtn" onclick="openView('viewContact', '🚨 비상연락망')">🚨 비상연락망</button>
         </div>
     </header>
@@ -289,6 +302,22 @@
                 <button type="button" class="menu-card" onclick="openView('viewReportForm', '📝 재해보고양식')">
                     <span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
                     <span>재해보고양식</span>
+                </button>
+                
+                <!-- 신규 추가: IDC용 계산기 -->
+                <button type="button" class="menu-card" onclick="openView('viewIdcCalc', '🧮 IDC용 계산기')">
+                    <span class="menu-icon">
+                        <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="10" x2="8" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+                    </span>
+                    <span>IDC용 계산기</span>
+                </button>
+                
+                <!-- 신규 추가: 시설 실무 간편 계산기 -->
+                <button type="button" class="menu-card" onclick="window.open('https://facility-calculator-two.vercel.app/', '_blank')">
+                    <span class="menu-icon">
+                        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="8" y="8" width="8" height="3"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="17" x2="8" y2="17"/><line x1="12" y1="17" x2="12" y2="17"/><line x1="16" y1="17" x2="16" y2="17"/></svg>
+                    </span>
+                    <span>시설실무 간편 계산기</span>
                 </button>
             </div>
         </div>
@@ -322,6 +351,23 @@
                 </span>
                 <span>순간정전 보고양식</span>
             </button>
+        </div>
+    </div>
+
+    <!-- IDC용 계산기 화면 (신규 추가) -->
+    <div id="viewIdcCalc" class="container view">
+        <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:8px; padding:20px; margin-bottom:16px;">
+            <h3 style="margin-top:0; color:var(--primary-color);">▶ IDC용 계산기 목록</h3>
+            <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:20px; line-height:1.5;">원하시는 계산기를 선택하시면 새 창으로 열립니다.</p>
+            
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <a href="https://ups-battery-calculator.vercel.app/" target="_blank" style="display:block; background:linear-gradient(90deg, #007c36, #002c5f); color:white; padding:18px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:1.1rem; box-shadow:0 4px 10px rgba(0,0,0,0.3); text-align:center;">
+                    🔋 1. UPS 배터리 용량 산정
+                </a>
+                <a href="https://generator-fuel.vercel.app/" target="_blank" style="display:block; background:linear-gradient(90deg, #ffb300, #f44336); color:white; padding:18px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:1.1rem; box-shadow:0 4px 10px rgba(0,0,0,0.3); text-align:center;">
+                    ⛽ 2. 비상발전기 연료소모량
+                </a>
+            </div>
         </div>
     </div>
 

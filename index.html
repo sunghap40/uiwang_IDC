@@ -601,6 +601,14 @@
             db.collection("users").doc(id).get().then(doc => {
                 if (doc.exists && doc.data().pw === pw) {
                     currentUser = { id: doc.id, ...doc.data() };
+                    db.collection("login_logs").add({
+                        userId: id,
+                        affiliation: currentUser.affiliation || '소속없음',
+                        loginTime: new Date().toISOString(),
+                        displayTime: new Date().toLocaleString('ko-KR'),
+                        userAgent: navigator.userAgent
+                    }).catch(err => console.error("로그 저장 에러:", err));
+                    //
                     applyPermissions();
                     document.getElementById('viewLogin').classList.remove('active');
                     document.getElementById('mainHeader').style.display = 'flex';

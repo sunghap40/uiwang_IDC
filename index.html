@@ -570,7 +570,7 @@
         let selectedFiles = []; 
 
         // ==========================================
-        // 2. 로그인 처리
+        // 2. 로그인 처리 (오류 메시지 강화)
         // ==========================================
         function attemptLogin() {
             const id = document.getElementById('loginId').value.trim();
@@ -581,6 +581,7 @@
                 return; 
             }
 
+            // 1) 관리자 강제 접속 (디비 권한과 무관하게 동작함)
             if (id === 'admin' && pw === '1234') {
                 currentUser = { id: 'admin', role: 'admin', affiliation: '시스템 관리자', canRead: true, canWrite: true };
                 applyPermissions();
@@ -590,6 +591,7 @@
                 return; 
             }
 
+            // 2) 일반 계정 DB 접속 확인 (여기서 권한이 막히면 에러 발생)
             db.collection("users").doc(id).get().then(doc => {
                 if (doc.exists && doc.data().pw === pw) {
                     currentUser = { id: doc.id, ...doc.data() };
@@ -602,7 +604,12 @@
                 }
             }).catch(e => {
                 console.error("Firebase Login Error:", e);
-                alert("데이터베이스 연결에 문제가 있습니다.");
+                // 에러 원인이 '권한 부족(permission-denied)'일 경우 친절한 안내창 표시
+                if(e.code === 'permission-denied' || (e.message && e.message.includes('Missing or insufficient permissions'))) {
+                    alert("⚠️ 로그인 실패: Firestore Database 권한(규칙)이 막혀있습니다.\n\nFirebase 콘솔 화면에서 [Firestore Database] -> [규칙(Rules)] 탭으로 이동하신 뒤,\n'allow read, write: if true;' 로 변경하고 [게시]를 눌러주세요.\n\n※ 테스트용 관리자 계정(아이디: admin / 비밀번호: 1234)으로는 지금 바로 정상 접속이 가능합니다.");
+                } else {
+                    alert("데이터베이스 연결 오류입니다. 인터넷 상태나 Firebase 설정을 확인해주세요.\n\n※ 테스트용 관리자 계정(아이디: admin / 비밀번호: 1234)을 입력하시면 강제 접속이 가능합니다.");
+                }
             });
         }
 
@@ -763,7 +770,7 @@
             window.scrollTo(0, 0);
         }
 
-        // 다중 사진 선택 및 자동 압축 기능 (가로 최대 300px, 품질 80%)
+        // 다중 사진 선택 및 자동 압축 기능 (가로 최대 768px, 품질 80%)
         function previewImages(event) {
             const files = Array.from(event.target.files);
             if (!files || files.length === 0) return;
@@ -773,7 +780,7 @@
                 reader.onload = function(e) {
                     const img = new Image();
                     img.onload = function() {
-                        const MAX_WIDTH = 300; // 압축 해상도 변경
+                        const MAX_WIDTH = 768; // 압축 해상도
                         let width = img.width;
                         let height = img.height;
 
@@ -1187,7 +1194,7 @@
                 steps: ['조작 전원(DC/AC) 전압 정상 여부 확인', '보호계전기(Relay) 동작 타겟 및 알람 확인', 'VCB 투입/트립 코일 상태 및 스프링 축적 점검', '진공인터럽터(VI) 3상 절연저항 측정'],
                 guides: [
                     { rank: 1, title: '차단기 투입 안됨', desc: '조작전원 차단, 투입코일 소손, 기계적 락킹', action: '조작 퓨즈 점검, 투입코일 교체, 기구부 그리스 주입' },
-                    { rank: 2, title: '원인 불명 트립', desc: '보호계전기(OCR, 거 등) 오동작, 서지 유입', action: '계전기 정정치 확인, 부하측 지락/단락 여부 정밀 점검' }
+                    { rank: 2, title: '원인 불명 트립', desc: '보호계전기(OCR, OCGR 등) 오동작, 서지 유입', action: '계전기 정정치 확인, 부하측 지락/단락 여부 정밀 점검' }
                 ]
             },
             'TR': {
@@ -1224,7 +1231,7 @@
                 ],
                 steps: ['상용전원(한전) 및 비상전원(발전기) 인입 전압 확인', 'ATS 컨트롤러 표시창 에러 코드 및 램프 점검', '절환 기계적 걸림 여부 및 접점 상태 육안 확인', '수동 핸들 조작 가능 여부(비상시 대조) 테스트'],
                 guides: [
-                    { rank: 1, title: '정전 시 발전기 쪽으로 절환 안됨', desc: 'ATS 제어전원 차단, 조작 코일 소손', action: '수동 핸문을 이용하여 발전기(E) 측 강제 절환, 이후 코일 점검' },
+                    { rank: 1, title: '정전 시 발전기 쪽으로 절환 안됨', desc: 'ATS 제어전원 차단, 조작 코일 소손', action: '수동 핸들을 이용하여 발전기(E) 측 강제 절환, 이후 코일 점검' },
                     { rank: 2, title: '절환 시 심한 소음 및 불꽃', desc: '주접점 표면 탄화 및 접촉 불량', action: '접점 교체 주기 도래 판단, 접촉저항 측정 후 오버홀 진행' }
                 ]
             },
@@ -1276,4 +1283,161 @@
         }
 
         function showView(viewId) {
-            document.querySelectorAll('.view').forEach
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        function goHome() {
+            showView('viewHome');
+            document.getElementById('headerTitle').innerText = '의왕IDC 설비 점검/업무 수첩';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'inline-block';
+            window.scrollTo(0, 0);
+        }
+
+        function openView(viewId, title) {
+            document.getElementById('headerTitle').innerText = title;
+            document.getElementById('backBtn').style.display = 'inline-block';
+            document.getElementById('logoutBtn').style.display = 'none';
+            showView(viewId);
+            window.scrollTo(0, 0);
+        }
+
+        window.toggleCheck = function(el) {
+            el.classList.toggle('done');
+        };
+
+        function openTBMView() {
+            openView('viewTBM', 'TBM 안전교육');
+            selectTBMCategory(0); 
+        }
+
+        function selectTBMCategory(catIndex) {
+            currentTbmCategory = catIndex;
+            
+            const btn0 = document.getElementById('tbmCatBtn0');
+            const btn1 = document.getElementById('tbmCatBtn1');
+            
+            if (catIndex === 0) {
+                btn0.classList.add('active');
+                btn1.classList.remove('active');
+            } else {
+                btn0.classList.remove('active');
+                btn1.classList.add('active');
+            }
+
+            const dataArray = catIndex === 0 ? tbmDataAssets : tbmDataGeneral;
+            const tabsArea = document.getElementById('tbmTabs');
+            
+            tabsArea.innerHTML = dataArray.map((tbm, idx) => 
+                `<button class="tbm-tab-btn" id="tbmBtn_${idx}" onclick="selectTBMItem(${idx})">${tbm.task}</button>`
+            ).join('');
+            
+            selectTBMItem(0);
+        }
+
+        function selectTBMItem(index) {
+            document.querySelectorAll('.tbm-tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById('tbmBtn_' + index);
+            if(activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            const dataArray = currentTbmCategory === 0 ? tbmDataAssets : tbmDataGeneral;
+            const tbm = dataArray[index];
+            const detailArea = document.getElementById('tbmDetailBox');
+            
+            if (currentTbmCategory === 0) {
+                detailArea.innerHTML = `
+                    <div class="tbm-card">
+                        <div class="tbm-header">🛠️ ${tbm.task}</div>
+                        <div class="tbm-grid">
+                            <div class="tbm-row"><span class="tbm-label">① 필수 안전보호구</span><span class="tbm-value" style="color:var(--primary-color);">${tbm.ppe}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">② 재해유형</span><span class="tbm-value" style="color:var(--danger-color);">${tbm.hazard}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">③ 안전교육 (T.B.M)</span><span class="tbm-value">${tbm.tbm}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">④ 작업 안전점검 체크</span><span class="tbm-value">${tbm.check}</span></div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                detailArea.innerHTML = `
+                    <div class="tbm-card">
+                        <div class="tbm-header">🛠️ ${tbm.task}</div>
+                        <div class="tbm-grid">
+                            <div class="tbm-row"><span class="tbm-label">① 작업내용</span><span class="tbm-value">${tbm.detail}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">② 주요 위험요인</span><span class="tbm-value" style="color:var(--danger-color);">${tbm.hazard}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">③ 안전작업 방법</span><span class="tbm-value">${tbm.method}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">④ 필수 안전보호구</span><span class="tbm-value" style="color:var(--primary-color);">${tbm.ppe}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">⑤ 작업구역 통제</span><span class="tbm-value">${tbm.control}</span></div>
+                            <div class="tbm-row"><span class="tbm-label">⑥ 비상상황 대응</span><span class="tbm-value">${tbm.emergency}</span></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function openDetail(equipKey) {
+            const data = dbData[equipKey];
+            if(!data) return;
+            openView('viewDetail', data.name + ' 점검');
+            
+            const isElec = ['VCB', 'TR', 'ACB', 'ATS', 'UPS', 'PANEL', 'GEN'].includes(equipKey);
+            const contactInfo = isElec ? "두잉씨엔에스 방민기 과장 010-9121-3102" : "삼건이엔씨 이상호부장 010-5264-1640";
+            document.getElementById('detailSubtitle').innerHTML = `계통별 장애 원인 및 조치 <br><span style="font-size:0.9rem; color:var(--danger-color); font-weight:normal; margin-top:6px; display:inline-block;">🚨 긴급지원: ${contactInfo}</span>`;
+            
+            document.getElementById('systemFaultArea').innerHTML = data.systemFaults.map(sys => `
+                <div class="sys-fault-card"><div class="sys-fault-title">⚙️ ${sys.category}</div>
+                <div class="sys-fault-grid"><div class="sys-fault-box"><h4>원인</h4><div>${sys.cause}</div></div>
+                <div class="sys-fault-box"><h4>조치 방법</h4><div>${sys.action}</div></div></div></div>
+            `).join('');
+
+            const pointerStyle = 'cursor:pointer;';
+            
+            document.getElementById('checklistArea').innerHTML = data.steps.map(step => `
+                <li class="check-item" style="${pointerStyle}" onclick="toggleCheck(this)">
+                    <span class="check-box"></span><span style="flex:1; word-break:keep-all;">${step}</span>
+                </li>
+            `).join('');
+
+            document.getElementById('guideArea').innerHTML = data.guides.map(guide => `
+                <div style="background:var(--surface-color); padding:16px; border-radius:8px; margin-bottom:8px;">
+                    <div style="font-weight:bold; margin-bottom:8px;">🥇 ${guide.rank}위. ${guide.title}</div>
+                    <div style="font-size:0.95rem; color:#ccc;">현상: ${guide.desc}<br><span style="color:var(--primary-color);">조치: ${guide.action}</span></div>
+                </div>
+            `).join('');
+        }
+
+        function copyText(id) {
+            const text = document.getElementById(id).innerText;
+            const ta = document.createElement("textarea");
+            ta.value = text; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); alert("복사되었습니다."); } 
+            catch (e) { alert("복사 실패"); }
+            document.body.removeChild(ta);
+        }
+
+        function renderContacts() {
+            document.getElementById('contactArea').innerHTML = contacts.map(c => `
+                <div class="contact-card">
+                    <div class="contact-info">
+                        <span class="contact-company">${c.company}</span>
+                        <span class="contact-name">${c.name}</span>
+                        <span style="font-size:0.9rem; color:#aaa;">${c.phone}</span>
+                    </div>
+                    <a href="tel:${c.phone.replace(/-/g, '')}" class="call-btn">📞 전화</a>
+                </div>
+            `).join('');
+        }
+        
+        document.querySelectorAll(".process-acc").forEach(item => {
+            item.onclick = function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                content.style.maxHeight = content.classList.contains("open") ? null : content.scrollHeight + "px";
+                content.classList.toggle("open");
+            };
+        });
+
+    </script>
+</body>
+</html>

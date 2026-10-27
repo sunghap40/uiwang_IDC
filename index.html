@@ -770,7 +770,7 @@
             window.scrollTo(0, 0);
         }
 
-// 다중 사진 선택 및 자동 압축 기능 (고정 400x533 해상도, 비율 유지 크롭)
+// 다중 사진 선택 및 자동 압축 기능 (고정 768x1024 해상도, 비율 유지 크롭)
         function previewImages(event) {
             const files = Array.from(event.target.files);
             if (!files || files.length === 0) return;
@@ -780,8 +780,8 @@
                 reader.onload = function(e) {
                     const img = new Image();
                     img.onload = function() {
-                        const TARGET_WIDTH = 400;  // 고정 가로 해상도
-                        const TARGET_HEIGHT = 533; // 고정 세로 해상도
+                        const TARGET_WIDTH = 768;  // 고정 가로 해상도
+                        const TARGET_HEIGHT = 1024; // 고정 세로 해상도
                         
                         const canvas = document.createElement('canvas');
                         canvas.width = TARGET_WIDTH;

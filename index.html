@@ -13,11 +13,13 @@
     <!-- Firebase App (v8 호환 SDK) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- 추가: Firebase Storage SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
-    <!-- 브라우저 탭 아이콘 (IDC 서버 형상화) -->
+    <!-- 브라우저 탭 아이콘 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffb300%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><rect x=%222%22 y=%222%22 width=%2220%22 height=%226%22 rx=%222%22 ry=%222%22/><rect x=%222%22 y=%229%22 width=%2220%22 height=%226%22 rx=%222%22 ry=%222%22/><rect x=%222%22 y=%2216%22 width=%2220%22 height=%226%22 rx=%222%22 ry=%222%22/><line x1=%226%22 y1=%225%22 x2=%226.01%22 y2=%225%22/><line x1=%226%22 y1=%2212%22 x2=%226.01%22 y2=%2212%22/><line x1=%226%22 y1=%2219%22 x2=%226.01%22 y2=%2219%22/></svg>">
     
-<style>
+    <style>
         /* 기본 테마 */
         :root {
             --bg-color: #121212;
@@ -127,7 +129,6 @@
         }
         .header-call-btn:active { transform: scale(0.95); background-color: #d32f2f; }
         
-        /* 카카오톡 입장 버튼 스타일 추가 */
         .header-kakao-btn {
             background-color: #FEE500; color: #3C1E1E; border: none; border-radius: 6px;
             padding: 8px 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
@@ -160,7 +161,6 @@
         h2:first-child { margin-top: 0; }
         .view-title { color: white; font-size: 1.3rem; font-weight: bold; text-align: left; margin-bottom: 20px; border-bottom: none; }
 
-        /* 아코디언 & 기타 UI */
         .process-acc, .accordion { background-color: var(--surface-color); color: var(--text-color); cursor: pointer; padding: 16px; width: 100%; text-align: left; border: 1px solid var(--border-color); font-size: 1rem; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-weight: bold; }
         .process-acc.active, .accordion.active { border-radius: 8px 8px 0 0; border-bottom: none; background-color: #2c2c2c; }
         .process-content, .accordion-content { padding: 0 16px; background-color: #1a1a1a; max-height: 0; overflow: hidden; transition: max-height 0.2s ease-out; border-radius: 0 0 8px 8px; border: 1px solid var(--border-color); border-top: none; margin-bottom: 12px; font-size: 0.9rem; line-height: 1.5; }
@@ -173,7 +173,6 @@
         .sys-fault-box h4 { margin: 0 0 8px 0; color: var(--text-muted); font-size: 0.85rem; border-bottom: 1px solid #333; padding-bottom: 4px; }
         .ts-title { color: var(--primary-color); font-weight: bold; }
         
-        /* 체크리스트 개선 */
         .checklist { list-style: none; padding: 0; margin-bottom: 24px; }
         .check-item { background-color: var(--surface-color); margin-bottom: 8px; padding: 16px; border-radius: 8px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; touch-action: manipulation; }
         .check-item.done { opacity: 0.5; text-decoration: line-through; }
@@ -187,7 +186,6 @@
         .contact-name { font-size: 1.1rem; font-weight: bold; }
         .call-btn { background-color: var(--success-color); color: white; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
         
-        /* 회원관리(설정) UI */
         .user-list { display: flex; flex-direction: column; gap: 12px; }
         .user-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
         .user-info { display: flex; flex-direction: column; gap: 4px; }
@@ -201,12 +199,10 @@
         .form-group input, .form-group select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #121212; color: white; box-sizing: border-box; }
         .form-row { display: flex; gap: 12px; align-items: center; margin-top: 12px;}
         
-        /* TBM 카테고리 선택 버튼 (소수선/일반) */
         .tbm-cat-group { display: flex; gap: 8px; margin-bottom: 16px; }
         .tbm-cat-btn { flex: 1; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; border: 1px solid var(--border-color); background: var(--surface-color); color: var(--text-muted); transition: 0.2s; }
         .tbm-cat-btn.active { background: linear-gradient(90deg, var(--hec-green), var(--hec-blue)); color: white; border-color: transparent; }
 
-        /* TBM 탭 UI */
         .tbm-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; justify-content: flex-start; }
         .tbm-tab-btn {
             background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-color);
@@ -232,11 +228,11 @@
             
             <div class="login-form">
                 <label>아이디</label>
-    <input type="text" id="loginId" class="login-input" placeholder="아이디 또는 오토에버사번을 입력하세요" onkeyup="if(event.key === 'Enter') attemptLogin();">
-    <label>비밀번호</label>
-    <input type="password" id="loginPw" class="login-input" placeholder="비밀번호를 입력하세요" onkeyup="if(event.key === 'Enter') attemptLogin();">
-    <button type="button" class="btn-login" onclick="attemptLogin()">로그인 ➔</button>
-</div>
+                <input type="text" id="loginId" class="login-input" placeholder="아이디 또는 오토에버사번을 입력하세요" onkeyup="if(event.key === 'Enter') attemptLogin();">
+                <label>비밀번호</label>
+                <input type="password" id="loginPw" class="login-input" placeholder="비밀번호를 입력하세요" onkeyup="if(event.key === 'Enter') attemptLogin();">
+                <button type="button" class="btn-login" onclick="attemptLogin()">로그인 ➔</button>
+            </div>
             
             <div class="login-divider">또는</div>
             
@@ -245,7 +241,7 @@
                 설비점검 간편접속
             </button>
 
-            <!-- 카드 안쪽 하단 웹관리자 및 아이콘 설치 방법 -->
+            <!-- 하단 안내 -->
             <div class="login-footer">
                 <button type="button" onclick="toggleLoginInstallGuide()" style="background:none; border:none; color:var(--hec-blue); font-weight:bold; cursor:pointer; margin-bottom:12px; font-size:0.9rem; padding:8px; border-radius:6px; background:rgba(0, 44, 95, 0.05); width:100%;">
                     📱 바탕화면(앱) 아이콘 설치 방법 ▼
@@ -272,18 +268,13 @@
         </div>
         <div class="header-right">
             <button type="button" class="settings-btn" id="settingsBtn" onclick="openSettings()">⚙️</button>
-            
-            <!-- 카카오톡 입장 버튼 추가 -->
             <a href="https://open.kakao.com/o/g1vey8Ni" target="_blank" class="header-kakao-btn">💬 카톡입장</a>
-            
             <button type="button" class="header-call-btn" id="emergencyBtn" onclick="openView('viewContact', '🚨 비상연락망')">🚨 비상연락망</button>
         </div>
     </header>
 
     <!-- [1] 홈 화면 -->
     <div id="viewHome" class="container view">
-        
-        <!-- 공통 업무 섹션 -->
         <div id="commonTaskSection">
             <div class="category-header">📌 공통 업무</div>
             <div class="grid-menu">
@@ -303,16 +294,12 @@
                     <span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
                     <span>재해보고양식</span>
                 </button>
-                
-                <!-- 신규 추가: IDC용 계산기 -->
                 <button type="button" class="menu-card" onclick="openView('viewIdcCalc', ' IDC용 계산기')">
                     <span class="menu-icon">
                         <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="10" x2="8" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
                     </span>
                     <span>IDC용 계산기</span>
                 </button>
-                
-                <!-- 신규 추가: 시설 실무 간편 계산기 -->
                 <button type="button" class="menu-card" onclick="window.open('https://facility-calculator-two.vercel.app/', '_blank')">
                     <span class="menu-icon">
                         <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="8" y="8" width="8" height="3"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="17" x2="8" y2="17"/><line x1="12" y1="17" x2="12" y2="17"/><line x1="16" y1="17" x2="16" y2="17"/></svg>
@@ -322,7 +309,6 @@
             </div>
         </div>
 
-        <!-- 의왕IDC 공조설비 섹션 -->
         <div class="category-header">❄️ 의왕IDC 공조설비</div>
         <div class="grid-menu">
             <button type="button" class="menu-card" onclick="openDetail('CCU')"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M8 6h8"/><path d="M8 10h8"/><circle cx="12" cy="16" r="3"/></svg></span><span>항온항습기</span></button>
@@ -333,7 +319,6 @@
             <button type="button" class="menu-card" onclick="openDetail('SPRAY')"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M12 3v6"/><path d="M9 12a3 3 0 106 0"/><path d="M12 15v6"/><path d="M6 6l2 2"/><path d="M18 6l-2 2"/></svg></span><span>살수펌프</span></button>
         </div>
 
-        <!-- 의왕IDC 전기설비 섹션 -->
         <div class="category-header">⚡ 의왕IDC 전기설비</div>
         <div class="grid-menu">
             <button type="button" class="menu-card" onclick="openDetail('VCB')"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="16" r="3"/><path d="M12 7v6"/></svg></span><span>VCB (진공차단기)</span></button>
@@ -344,7 +329,6 @@
             <button type="button" class="menu-card" onclick="openDetail('PANEL')"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 3v18"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h8"/></svg></span><span>분전반</span></button>
             <button type="button" class="menu-card" onclick="openDetail('GEN')"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="10" rx="2"/><circle cx="7" cy="14" r="2"/><circle cx="17" cy="14" r="2"/><path d="M6 8V5h12v3"/></svg></span><span>비상발전기</span></button>
             
-            <!-- 순간정전 보고양식 탭 -->
             <button type="button" class="menu-card" onclick="openView('viewPowerOutage', '⚡ 순간정전 보고양식')">
                 <span class="menu-icon">
                     <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
@@ -354,7 +338,7 @@
         </div>
     </div>
 
-    <!-- IDC용 계산기 화면 (신규 추가) -->
+    <!-- IDC용 계산기 화면 -->
     <div id="viewIdcCalc" class="container view">
         <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:8px; padding:20px; margin-bottom:16px;">
             <h3 style="margin-top:0; color:var(--primary-color);">▶ IDC용 계산기 목록</h3>
@@ -412,6 +396,17 @@
         <div class="memo-form" id="memoWriteArea">
             <input type="text" id="memoAuthor" style="width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px;" placeholder="작성자 이름 (예: 홍길동)" autocomplete="off">
             <textarea id="memoContent" style="width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; resize: vertical; min-height: 80px;" placeholder="주간/월간 스케줄 또는 인수인계 내용을 입력하세요."></textarea>
+            
+            <!-- 추가된 사진 첨부 영역 -->
+            <div style="margin-bottom: 12px;">
+                <input type="file" id="memoImageInput" accept="image/*" style="display:none;" onchange="previewImage(event)">
+                <button type="button" onclick="document.getElementById('memoImageInput').click()" style="background:#333; color:white; border:1px solid #555; padding:8px 12px; border-radius:6px; font-size:0.85rem; cursor:pointer;">📷 사진 첨부</button>
+                <div id="imagePreviewContainer" style="display:none; margin-top:8px; position:relative; width:fit-content;">
+                    <img id="memoImagePreview" style="max-width: 100%; max-height: 200px; border-radius: 6px; border:1px solid #444;" alt="첨부 미리보기">
+                    <button type="button" onclick="removeImage()" style="position:absolute; top:4px; right:4px; background:rgba(244,67,54,0.8); color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-weight:bold;">X</button>
+                </div>
+            </div>
+
             <div style="margin-bottom: 12px; display: flex; align-items: center;">
                 <input type="checkbox" id="memoImportant" style="width: 20px; height: 20px; accent-color: var(--danger-color);">
                 <label for="memoImportant" style="margin-left: 8px; color: var(--danger-color); font-weight: bold; cursor: pointer;">⭐ 중요 (목록 최상단 고정)</label>
@@ -550,9 +545,10 @@
         <div id="guideArea"></div>
     </div>
 
+    <!-- 스크립트 시작 영역 -->
     <script>
         // ==========================================
-        // 1. Firebase 및 전역 변수 설정
+        // 1. Firebase 및 전역 변수 설정 (안전한 초기화)
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyCzsU9bB3ZBKsZ8p_hlS24ZHdxGZKuxXtY",
@@ -563,13 +559,23 @@
             appId: "1:185648526696:web:dd6dc2994e00927abe52dd",
             measurementId: "G-J3JCKQ3VKF"
         };
+        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        let storage = null;
+        
+        try {
+            // Storage 초기화 중 구형 브라우저 등에서 발생할 수 있는 에러 차단
+            storage = firebase.storage();
+        } catch (e) {
+            console.error("Firebase Storage 초기화 실패:", e);
+        }
 
         let currentUser = null; 
+        let selectedFile = null; // 선택된 사진 파일 임시 저장
 
         // ==========================================
-        // 2. 강력한 로그인 처리 (DB오류 완전 무시)
+        // 2. 로그인 처리
         // ==========================================
         function attemptLogin() {
             const id = document.getElementById('loginId').value.trim();
@@ -740,7 +746,7 @@
         }
 
         // ==========================================
-        // 4. 스케줄/인수인계 (Firebase)
+        // 4. 스케줄/인수인계 (Firebase + Storage)
         // ==========================================
         let unsubscribeMemoListener = null;
         let editingMemoId = null;
@@ -766,44 +772,84 @@
             window.scrollTo(0, 0);
         }
 
-        function saveMemo() {
+        // 사진 미리보기 기능
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('memoImagePreview').src = e.target.result;
+                    document.getElementById('imagePreviewContainer').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 선택된 사진 초기화
+        function removeImage() {
+            selectedFile = null;
+            document.getElementById('memoImageInput').value = '';
+            document.getElementById('imagePreviewContainer').style.display = 'none';
+            document.getElementById('memoImagePreview').src = '';
+        }
+
+        async function saveMemo() {
             const author = document.getElementById('memoAuthor').value.trim();
             const content = document.getElementById('memoContent').value.trim();
             const isImportant = document.getElementById('memoImportant').checked;
             const btn = document.getElementById('saveMemoBtn');
 
-            if (!author || !content) { alert("내용을 입력해주세요."); return; }
+            if (!author || (!content && !selectedFile)) { 
+                alert("내용이나 사진을 첨부해주세요."); 
+                return; 
+            }
 
             btn.disabled = true;
             btn.innerText = "처리 중...";
 
-            if (editingMemoId) {
-                db.collection("memos").doc(editingMemoId).update({ author, content, important: isImportant }).then(() => {
-                    cancelEdit();
-                }).catch((error) => {
-                    console.error("수정 오류:", error);
-                    alert("메모 수정에 실패했습니다.");
-                    btn.disabled = false;
-                    btn.innerText = "수정하기";
-                });
-            } else {
-                const newMemo = {
-                    author: author,
-                    content: content,
-                    important: isImportant,
-                    timestamp: new Date().toISOString(),
-                    displayTime: new Date().toLocaleString('ko-KR')
-                };
+            try {
+                let imageUrl = null;
+                
+                // 사진 파일이 선택된 경우 Firebase Storage에 먼저 업로드
+                if (selectedFile) {
+                    if (!storage) {
+                        alert("사진 업로드 시스템(Storage)에 연결할 수 없습니다. 관리자에게 문의하세요.");
+                        btn.disabled = false;
+                        btn.innerText = "저장하기";
+                        return;
+                    }
+                    
+                    btn.innerText = "사진 업로드 중...";
+                    const storageRef = storage.ref();
+                    const fileRef = storageRef.child('memos/' + Date.now() + '_' + selectedFile.name);
+                    await fileRef.put(selectedFile);
+                    imageUrl = await fileRef.getDownloadURL();
+                }
 
-                db.collection("memos").add(newMemo)
-                .then(() => {
+                if (editingMemoId) {
+                    const updateData = { author: author, content: content, important: isImportant };
+                    if (imageUrl) updateData.imageUrl = imageUrl; 
+                    
+                    await db.collection("memos").doc(editingMemoId).update(updateData);
                     cancelEdit();
-                }).catch((error) => {
-                    console.error("저장 오류:", error);
-                    alert("메모 저장에 실패했습니다. 규칙 설정을 확인해주세요.");
-                    btn.disabled = false;
-                    btn.innerText = "저장하기";
-                });
+                } else {
+                    const newMemo = {
+                        author: author,
+                        content: content,
+                        important: isImportant,
+                        imageUrl: imageUrl, // 업로드된 이미지 URL 저장
+                        timestamp: new Date().toISOString(),
+                        displayTime: new Date().toLocaleString('ko-KR')
+                    };
+                    await db.collection("memos").add(newMemo);
+                    cancelEdit();
+                }
+            } catch (error) {
+                console.error("저장 오류:", error);
+                alert("저장에 실패했습니다. Storage/DB 규칙 설정을 확인해주세요.");
+                btn.disabled = false;
+                btn.innerText = "저장하기";
             }
         }
 
@@ -820,12 +866,15 @@
         }
 
         function deleteMemo(id) {
-            if (confirm("삭제하시겠습니까?")) db.collection("memos").doc(id).delete();
+            if (confirm("삭제하시겠습니까? (첨부된 사진은 자동으로 삭제되지 않으므로 주의)")) {
+                db.collection("memos").doc(id).delete();
+            }
         }
 
         function cancelEdit() {
             document.getElementById('memoContent').value = '';
             document.getElementById('memoImportant').checked = false;
+            removeImage(); // 사진 첨부 영역도 초기화
             editingMemoId = null;
             document.getElementById('saveMemoBtn').innerText = "저장하기";
             document.getElementById('saveMemoBtn').disabled = false;
@@ -833,10 +882,9 @@
         }
 
         function renderMemos() {
-            // 1. 검색어 가져오기 (소문자로 변환하여 대소문자 구분 없이 검색)
-            const searchTerm = (document.getElementById('memoSearchInput')?.value || '').toLowerCase();
+            const searchInput = document.getElementById('memoSearchInput');
+            const searchTerm = (searchInput ? searchInput.value : '').toLowerCase();
 
-            // 2. 중요도 및 시간순 정렬
             currentMemosArray.sort((a, b) => {
                 if (a.important === b.important) return new Date(b.timestamp) - new Date(a.timestamp);
                 return a.important ? -1 : 1;
@@ -845,15 +893,12 @@
             let html = '';
             const canWrite = currentUser && currentUser.canWrite;
             
-            // 3. 검색어에 해당하는 메모만 필터링
             const filteredMemos = currentMemosArray.filter(data => 
                 data.content.toLowerCase().includes(searchTerm) || 
                 data.author.toLowerCase().includes(searchTerm)
             );
 
-            // 4. 필터링된 메모 렌더링
             filteredMemos.forEach(data => {
-                const impClass = data.important ? 'important' : '';
                 const impBadge = data.important ? '<span style="color:var(--danger-color);font-weight:bold;font-size:0.8rem;border:1px solid var(--danger-color);padding:2px 6px;border-radius:4px;margin-right:8px;">⭐ 중요</span>' : '';
                 
                 let actionBtns = '';
@@ -862,8 +907,15 @@
                                   <button style="background:none;border:1px solid #555;color:#aaa;border-radius:4px;padding:4px 8px;font-size:0.75rem;" onclick="deleteMemo('${data.id}')">삭제</button>`;
                 }
 
+                // 등록된 이미지가 있을 경우 img 태그 생성
+                const attachedImageHtml = data.imageUrl ? `<img src="${data.imageUrl}" style="max-width:100%; border-radius:6px; margin-top:12px; display:block; border:1px solid #333;" alt="첨부 이미지">` : '';
+
+                // 중요 공지 배경색
+                const bgStyle = data.important ? 'background-color:rgba(244,67,54,0.1);' : '';
+                const borderColor = data.important ? 'var(--danger-color)' : 'var(--primary-color)';
+
                 html += `
-                    <div style="background:var(--surface-color); border-left:4px solid ${data.important ? 'var(--danger-color)' : 'var(--primary-color)'}; padding:16px; border-radius:4px; margin-bottom:12px; ${data.important ? 'background-color:rgba(244,67,54,0.1);' : ''}">
+                    <div style="background:var(--surface-color); border-left:4px solid ${borderColor}; padding:16px; border-radius:4px; margin-bottom:12px; ${bgStyle}">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.85rem; color:var(--text-muted);">
                             <div>${impBadge}👤 ${data.author}</div>
                             <div style="display:flex; gap:4px; align-items:center;">
@@ -872,11 +924,11 @@
                             </div>
                         </div>
                         <div style="font-size:0.95rem; line-height:1.5; white-space:pre-line;">${data.content}</div>
+                        ${attachedImageHtml}
                     </div>
                 `;
             });
             
-            // 5. 결과 HTML 삽입 (검색 결과가 없을 때의 문구도 수정)
             document.getElementById('memoList').innerHTML = html || '<p style="color:#999; text-align:center; padding:20px;">검색된 메모가 없거나 등록된 메모가 없습니다.</p>';
         }
 
@@ -943,8 +995,6 @@
             { company: "HEC", name: "김성합 책임", phone: "010-7454-4482" },
             { company: "두잉씨앤에스", name: "김정호 소장", phone: "010-6254-8975" },
             { company: "두잉씨앤에스", name: "방민기 과장", phone: "010-9121-3102" }
-           
-           
         ];
 
         const dbData = {
@@ -1149,8 +1199,6 @@
             window.scrollTo(0, 0);
         }
 
-        // 터치 체크 기능 안전하게 분리
-        // 권한(currentUser.canWrite) 상관없이 누구나 체크 가능하게 수정
         window.toggleCheck = function(el) {
             el.classList.toggle('done');
         };
@@ -1239,7 +1287,6 @@
                 <div class="sys-fault-box"><h4>조치 방법</h4><div>${sys.action}</div></div></div></div>
             `).join('');
 
-            // 권한 체크 해제 - 누구나 터치하여 체크할 수 있음
             const pointerStyle = 'cursor:pointer;';
             
             document.getElementById('checklistArea').innerHTML = data.steps.map(step => `

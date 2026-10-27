@@ -772,18 +772,46 @@
             window.scrollTo(0, 0);
         }
 
-        // 사진 미리보기 기능
+        // 사진 미리보기 및 자동 압축 기능 (가로 최대 768px, 품질 80%)
         function previewImage(event) {
             const file = event.target.files[0];
-            if (file) {
-                selectedFile = file;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('memoImagePreview').src = e.target.result;
-                    document.getElementById('imagePreviewContainer').style.display = 'block';
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const MAX_WIDTH = 768; // 가로폭 768px 제한
+                    let width = img.width;
+                    let height = img.height;
+
+                    // 비율에 맞춰 이미지 크기 조절
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // 용량 압축 (0.8 = 80% 화질)
+                    canvas.toBlob((blob) => {
+                        // 압축된 데이터를 새 File 객체로 변환하여 업로드 대기
+                        selectedFile = new File([blob], file.name.split('.')[0] + '.jpg', {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        
+                        document.getElementById('memoImagePreview').src = URL.createObjectURL(blob);
+                        document.getElementById('imagePreviewContainer').style.display = 'block';
+                    }, 'image/jpeg', 0.8);
                 }
-                reader.readAsDataURL(file);
+                img.src = e.target.result;
             }
+            reader.readAsDataURL(file);
         }
 
         // 선택된 사진 초기화
@@ -1135,7 +1163,7 @@
                 name: 'UPS (무정전전원장치)',
                 systemFaults: [
                     { category: '배터리 장애', cause: '• 배터리 수명 연한(통상 3~5년) 초과<br>• 내부 셀 단락 및 스웰링(부풀음)<br>• 충전기(Charger) 보드 고장', action: '• 불량 배터리 셀 솎아내기 또는 전체 교체<br>• 부동/균등 충전 전압 재조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 배터리 알람 확인 → ② 개별 셀 전압/내부저항 측정 → ③ 외관 부풀음/누액 확인 → ④ 배터리 교체</div>' },
-                    { category: '인버터 고장', cause: '• IGBT 등 전력 반도체 소자 소손<br>• 냉각팬 고장으로 인한 내부 과열<br>• 제어 보드 불량', action: '• 고장 소자 및 제어 보드 교체<br>• 냉각팬 교체 및 내부 방열판 먼지 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 인버터 Fault 알람 확인 → ② 냉각팬 회전 상태 점검 → ③ 내부 타는 냄새 확인 → ④ 제조사 A/S 요청</div>' },
+                    { category: '인버터 고장', cause: '• IGBT 등 전력 반도체 소자 소손<br>• 냉각팬 고장으로 인한 내부 과열<br>• 제어 보드 불량', action: '• 고장 소자 및 제어 보드 교체<br>• 냉각팬 교체 및 내부 방열판 먼지 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 인버터 Fault 알람 확인 → ② 냉각팬 회전 상태 점검 → ③ 내부 타 타는 냄새 확인 → ④ 제조사 A/S 요청</div>' },
                     { category: 'Bypass 자동 절환', cause: '• 인버터 고장으로 인한 보호 동작<br>• 출력단 순간 과부하 트립<br>• 출력 회로 단락', action: '• 출력측 부하량 확인 및 불필요 부하 차단<br>• 원인 해소 후 인버터 모드로 재기동<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① Bypass 램프 점등 확인 → ② 디스플레이 과부하 이력 확인 → ③ 부하 분산 조치 → ④ Normal 모드 복귀</div>' }
                 ],
                 steps: ['전면 패널 알람 내역 및 에러 코드 발생 여부 확인', '배터리 충전 전압 및 방전 전류 정상 여부 확인', '냉각팬 동작 상태 및 필터 오염도 육안 점검', '입/출력 전압, 주파수 및 부하율(%) 안정성 확인'],

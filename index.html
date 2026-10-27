@@ -13,7 +13,7 @@
     <!-- Firebase App (v8 호환 SDK) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <!-- 추가: Firebase Storage SDK -->
+    <!-- Firebase Storage SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
     <!-- 브라우저 탭 아이콘 -->
@@ -51,9 +51,7 @@
         .view.active { display: block !important; }
         #viewLogin.view.active { display: flex !important; }
 
-        /* =========================================
-           로그인 화면 UI
-        ========================================= */
+        /* 로그인 화면 UI */
         #viewLogin {
             min-height: 100vh;
             background: linear-gradient(135deg, #e0eaf5 0%, #d4e8dd 100%);
@@ -104,9 +102,7 @@
         
         .login-footer { margin-top: 24px; text-align: center; }
 
-        /* =========================================
-           메인 앱 UI
-        ========================================= */
+        /* 메인 앱 UI */
         header {
             background-color: var(--surface-color);
             padding: 12px 16px;
@@ -397,14 +393,12 @@
             <input type="text" id="memoAuthor" style="width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px;" placeholder="작성자 이름 (예: 홍길동)" autocomplete="off">
             <textarea id="memoContent" style="width: 100%; background-color: #121212; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; resize: vertical; min-height: 80px;" placeholder="주간/월간 스케줄 또는 인수인계 내용을 입력하세요."></textarea>
             
-            <!-- 추가된 사진 첨부 영역 -->
+            <!-- 다중 사진 첨부 영역 -->
             <div style="margin-bottom: 12px;">
-                <input type="file" id="memoImageInput" accept="image/*" style="display:none;" onchange="previewImage(event)">
-                <button type="button" onclick="document.getElementById('memoImageInput').click()" style="background:#333; color:white; border:1px solid #555; padding:8px 12px; border-radius:6px; font-size:0.85rem; cursor:pointer;">📷 사진 첨부</button>
-                <div id="imagePreviewContainer" style="display:none; margin-top:8px; position:relative; width:fit-content;">
-                    <img id="memoImagePreview" style="max-width: 100%; max-height: 200px; border-radius: 6px; border:1px solid #444;" alt="첨부 미리보기">
-                    <button type="button" onclick="removeImage()" style="position:absolute; top:4px; right:4px; background:rgba(244,67,54,0.8); color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-weight:bold;">X</button>
-                </div>
+                <input type="file" id="memoImageInput" accept="image/*" multiple style="display:none;" onchange="previewImages(event)">
+                <button type="button" onclick="document.getElementById('memoImageInput').click()" style="background:#333; color:white; border:1px solid #555; padding:8px 12px; border-radius:6px; font-size:0.85rem; cursor:pointer;">📷 사진 다중 첨부</button>
+                <!-- 첨부된 사진 미리보기가 나열될 컨테이너 -->
+                <div id="imagePreviewContainer" style="display:none; flex-wrap:wrap; gap:8px; margin-top:12px;"></div>
             </div>
 
             <div style="margin-bottom: 12px; display: flex; align-items: center;">
@@ -548,7 +542,7 @@
     <!-- 스크립트 시작 영역 -->
     <script>
         // ==========================================
-        // 1. Firebase 및 전역 변수 설정 (안전한 초기화)
+        // 1. Firebase 및 전역 변수 설정
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyCzsU9bB3ZBKsZ8p_hlS24ZHdxGZKuxXtY",
@@ -565,14 +559,15 @@
         let storage = null;
         
         try {
-            // Storage 초기화 중 구형 브라우저 등에서 발생할 수 있는 에러 차단
             storage = firebase.storage();
         } catch (e) {
             console.error("Firebase Storage 초기화 실패:", e);
         }
 
         let currentUser = null; 
-        let selectedFile = null; // 선택된 사진 파일 임시 저장
+        
+        // 다중 파일 관리를 위한 배열
+        let selectedFiles = []; 
 
         // ==========================================
         // 2. 로그인 처리
@@ -607,7 +602,7 @@
                 }
             }).catch(e => {
                 console.error("Firebase Login Error:", e);
-                alert("데이터베이스 연결에 문제가 있습니다.\n(현재 관리자 계정: admin / 1234 는 접속 가능합니다.)");
+                alert("데이터베이스 연결에 문제가 있습니다.");
             });
         }
 
@@ -632,7 +627,6 @@
             const isWorker = currentUser.role === 'worker';
             document.getElementById('commonTaskSection').style.display = isWorker ? 'none' : 'block';
             document.getElementById('emergencyBtn').style.display = isWorker ? 'none' : 'flex';
-            
             document.getElementById('settingsBtn').style.display = (currentUser.role === 'admin') ? 'inline-block' : 'none';
 
             const memoWriteArea = document.getElementById('memoWriteArea');
@@ -665,7 +659,6 @@
         async function loadUsers() {
             const listArea = document.getElementById('userListArea');
             listArea.innerHTML = "불러오는 중...";
-            
             try {
                 const snapshot = await db.collection("users").get();
                 let html = '';
@@ -719,14 +712,12 @@
                     pw: pw, role: role, affiliation: affil, canRead: read, canWrite: write
                 });
                 alert("저장되었습니다.");
-                
                 document.getElementById('editUserId').value = '';
                 document.getElementById('editUserPw').value = '';
                 document.getElementById('editUserAffil').value = '';
                 document.getElementById('editUserRole').value = 'operator';
                 document.getElementById('editUserRead').checked = true;
                 document.getElementById('editUserWrite').checked = true;
-                
                 loadUsers();
             } catch (e) {
                 alert("저장 실패. 데이터베이스 권한을 확인해주세요.");
@@ -746,7 +737,7 @@
         }
 
         // ==========================================
-        // 4. 스케줄/인수인계 (Firebase + Storage)
+        // 4. 스케줄/인수인계 (다중 사진 + 관리자 삭제 권한)
         // ==========================================
         let unsubscribeMemoListener = null;
         let editingMemoId = null;
@@ -772,54 +763,106 @@
             window.scrollTo(0, 0);
         }
 
-        // 사진 미리보기 및 자동 압축 기능 (가로 최대 768px, 품질 80%)
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // 다중 사진 선택 및 자동 압축 기능 (가로 최대 300px, 품질 80%)
+        function previewImages(event) {
+            const files = Array.from(event.target.files);
+            if (!files || files.length === 0) return;
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const MAX_WIDTH = 768; // 가로폭 768px 제한
-                    let width = img.width;
-                    let height = img.height;
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const MAX_WIDTH = 300; // 압축 해상도 변경
+                        let width = img.width;
+                        let height = img.height;
 
-                    // 비율에 맞춰 이미지 크기 조절
-                    if (width > MAX_WIDTH) {
-                        height = Math.round((height * MAX_WIDTH) / width);
-                        width = MAX_WIDTH;
+                        if (width > MAX_WIDTH) {
+                            height = Math.round((height * MAX_WIDTH) / width);
+                            width = MAX_WIDTH;
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        canvas.toBlob((blob) => {
+                            const compressedFile = new File([blob], file.name.split('.')[0] + '.jpg', {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            
+                            selectedFiles.push(compressedFile);
+                            renderPreviewContainer(); // 화면 갱신
+                        }, 'image/jpeg', 0.8);
                     }
-
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // 용량 압축 (0.8 = 80% 화질)
-                    canvas.toBlob((blob) => {
-                        // 압축된 데이터를 새 File 객체로 변환하여 업로드 대기
-                        selectedFile = new File([blob], file.name.split('.')[0] + '.jpg', {
-                            type: 'image/jpeg',
-                            lastModified: Date.now()
-                        });
-                        
-                        document.getElementById('memoImagePreview').src = URL.createObjectURL(blob);
-                        document.getElementById('imagePreviewContainer').style.display = 'block';
-                    }, 'image/jpeg', 0.8);
+                    img.src = e.target.result;
                 }
-                img.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
+            });
+            
+            // 동일한 사진도 다시 선택해 추가할 수 있도록 초기화
+            event.target.value = '';
         }
 
-        // 선택된 사진 초기화
-        function removeImage() {
-            selectedFile = null;
-            document.getElementById('memoImageInput').value = '';
-            document.getElementById('imagePreviewContainer').style.display = 'none';
-            document.getElementById('memoImagePreview').src = '';
+        // 첨부된 썸네일 그리기
+        function renderPreviewContainer() {
+            const container = document.getElementById('imagePreviewContainer');
+            container.innerHTML = '';
+            
+            if (selectedFiles.length > 0) {
+                container.style.display = 'flex';
+            } else {
+                container.style.display = 'none';
+            }
+
+            selectedFiles.forEach((file, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                wrapper.style.width = '80px';
+                wrapper.style.height = '80px';
+                
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '6px';
+                img.style.border = '1px solid #444';
+                
+                const btn = document.createElement('button');
+                btn.innerHTML = 'X';
+                btn.style.position = 'absolute';
+                btn.style.top = '-4px';
+                btn.style.right = '-4px';
+                btn.style.background = 'rgba(244,67,54,0.9)';
+                btn.style.color = 'white';
+                btn.style.border = 'none';
+                btn.style.borderRadius = '50%';
+                btn.style.width = '20px';
+                btn.style.height = '20px';
+                btn.style.cursor = 'pointer';
+                btn.style.fontSize = '12px';
+                btn.style.fontWeight = 'bold';
+                btn.style.padding = '0';
+                
+                // 개별 사진 삭제
+                btn.onclick = () => {
+                    selectedFiles.splice(index, 1);
+                    renderPreviewContainer();
+                };
+                
+                wrapper.appendChild(img);
+                wrapper.appendChild(btn);
+                container.appendChild(wrapper);
+            });
+        }
+
+        function clearImages() {
+            selectedFiles = [];
+            renderPreviewContainer();
         }
 
         async function saveMemo() {
@@ -828,7 +871,7 @@
             const isImportant = document.getElementById('memoImportant').checked;
             const btn = document.getElementById('saveMemoBtn');
 
-            if (!author || (!content && !selectedFile)) { 
+            if (!author || (!content && selectedFiles.length === 0)) { 
                 alert("내용이나 사진을 첨부해주세요."); 
                 return; 
             }
@@ -837,10 +880,10 @@
             btn.innerText = "처리 중...";
 
             try {
-                let imageUrl = null;
+                let uploadedUrls = [];
                 
-                // 사진 파일이 선택된 경우 Firebase Storage에 먼저 업로드
-                if (selectedFile) {
+                // 다중 사진 순차 업로드
+                if (selectedFiles.length > 0) {
                     if (!storage) {
                         alert("사진 업로드 시스템(Storage)에 연결할 수 없습니다. 관리자에게 문의하세요.");
                         btn.disabled = false;
@@ -848,17 +891,22 @@
                         return;
                     }
                     
-                    btn.innerText = "사진 업로드 중...";
-                    const storageRef = storage.ref();
-                    const fileRef = storageRef.child('memos/' + Date.now() + '_' + selectedFile.name);
-                    await fileRef.put(selectedFile);
-                    imageUrl = await fileRef.getDownloadURL();
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        btn.innerText = `사진 업로드 중... (${i + 1}/${selectedFiles.length})`;
+                        const file = selectedFiles[i];
+                        const storageRef = storage.ref();
+                        const fileRef = storageRef.child('memos/' + Date.now() + '_' + i + '_' + file.name);
+                        await fileRef.put(file);
+                        const url = await fileRef.getDownloadURL();
+                        uploadedUrls.push(url);
+                    }
                 }
 
                 if (editingMemoId) {
                     const updateData = { author: author, content: content, important: isImportant };
-                    if (imageUrl) updateData.imageUrl = imageUrl; 
-                    
+                    if (uploadedUrls.length > 0) {
+                        updateData.imageUrls = uploadedUrls; // 새로 첨부한 이미지가 있으면 기존 이미지 배열 덮어쓰기
+                    }
                     await db.collection("memos").doc(editingMemoId).update(updateData);
                     cancelEdit();
                 } else {
@@ -866,7 +914,7 @@
                         author: author,
                         content: content,
                         important: isImportant,
-                        imageUrl: imageUrl, // 업로드된 이미지 URL 저장
+                        imageUrls: uploadedUrls, // 업로드된 다중 URL 배열 저장
                         timestamp: new Date().toISOString(),
                         displayTime: new Date().toLocaleString('ko-KR')
                     };
@@ -894,7 +942,7 @@
         }
 
         function deleteMemo(id) {
-            if (confirm("삭제하시겠습니까? (첨부된 사진은 자동으로 삭제되지 않으므로 주의)")) {
+            if (confirm("정말 삭제하시겠습니까? (이 작업은 관리자만 가능합니다)")) {
                 db.collection("memos").doc(id).delete();
             }
         }
@@ -902,7 +950,7 @@
         function cancelEdit() {
             document.getElementById('memoContent').value = '';
             document.getElementById('memoImportant').checked = false;
-            removeImage(); // 사진 첨부 영역도 초기화
+            clearImages(); // 사진 첨부 영역 초기화
             editingMemoId = null;
             document.getElementById('saveMemoBtn').innerText = "저장하기";
             document.getElementById('saveMemoBtn').disabled = false;
@@ -919,6 +967,10 @@
             });
 
             let html = '';
+            
+            // 삭제 권한: 관리자 여부 확인
+            const isAdmin = currentUser && currentUser.role === 'admin';
+            // 작성 권한: 쓰기 권한이 있으면 수정 가능
             const canWrite = currentUser && currentUser.canWrite;
             
             const filteredMemos = currentMemosArray.filter(data => 
@@ -930,15 +982,32 @@
                 const impBadge = data.important ? '<span style="color:var(--danger-color);font-weight:bold;font-size:0.8rem;border:1px solid var(--danger-color);padding:2px 6px;border-radius:4px;margin-right:8px;">⭐ 중요</span>' : '';
                 
                 let actionBtns = '';
+                // 수정은 쓰기 권한자 가능
                 if(canWrite) {
-                    actionBtns = `<button style="background:none;border:1px solid #555;color:#aaa;border-radius:4px;padding:4px 8px;font-size:0.75rem;" onclick="editMemo('${data.id}')">수정</button>
-                                  <button style="background:none;border:1px solid #555;color:#aaa;border-radius:4px;padding:4px 8px;font-size:0.75rem;" onclick="deleteMemo('${data.id}')">삭제</button>`;
+                    actionBtns += `<button style="background:none;border:1px solid #555;color:#aaa;border-radius:4px;padding:4px 8px;font-size:0.75rem;" onclick="editMemo('${data.id}')">수정</button> `;
+                }
+                // 삭제는 관리자만 노출
+                if(isAdmin) {
+                    actionBtns += `<button style="background:none;border:1px solid #f44336;color:#f44336;border-radius:4px;padding:4px 8px;font-size:0.75rem;margin-left:4px;" onclick="deleteMemo('${data.id}')">삭제</button>`;
                 }
 
-                // 등록된 이미지가 있을 경우 img 태그 생성
-                const attachedImageHtml = data.imageUrl ? `<img src="${data.imageUrl}" style="max-width:100%; border-radius:6px; margin-top:12px; display:block; border:1px solid #333;" alt="첨부 이미지">` : '';
+                // 이미지 다중 렌더링 호환성 처리 (기존 단일 imageUrl / 신규 다중 imageUrls 배열 모두 대응)
+                let urlsToRender = [];
+                if (data.imageUrls && Array.isArray(data.imageUrls)) {
+                    urlsToRender = data.imageUrls;
+                } else if (data.imageUrl) {
+                    urlsToRender = [data.imageUrl];
+                }
 
-                // 중요 공지 배경색
+                let attachedImageHtml = '';
+                if (urlsToRender.length > 0) {
+                    attachedImageHtml = `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">`;
+                    urlsToRender.forEach(url => {
+                        attachedImageHtml += `<img src="${url}" style="width:calc(50% - 4px); max-height:200px; object-fit:cover; border-radius:6px; border:1px solid #333;" alt="첨부 이미지">`;
+                    });
+                    attachedImageHtml += `</div>`;
+                }
+
                 const bgStyle = data.important ? 'background-color:rgba(244,67,54,0.1);' : '';
                 const borderColor = data.important ? 'var(--danger-color)' : 'var(--primary-color)';
 
@@ -1118,7 +1187,7 @@
                 steps: ['조작 전원(DC/AC) 전압 정상 여부 확인', '보호계전기(Relay) 동작 타겟 및 알람 확인', 'VCB 투입/트립 코일 상태 및 스프링 축적 점검', '진공인터럽터(VI) 3상 절연저항 측정'],
                 guides: [
                     { rank: 1, title: '차단기 투입 안됨', desc: '조작전원 차단, 투입코일 소손, 기계적 락킹', action: '조작 퓨즈 점검, 투입코일 교체, 기구부 그리스 주입' },
-                    { rank: 2, title: '원인 불명 트립', desc: '보호계전기(OCR, OCGR 등) 오동작, 서지 유입', action: '계전기 정정치 확인, 부하측 지락/단락 여부 정밀 점검' }
+                    { rank: 2, title: '원인 불명 트립', desc: '보호계전기(OCR, 거 등) 오동작, 서지 유입', action: '계전기 정정치 확인, 부하측 지락/단락 여부 정밀 점검' }
                 ]
             },
             'TR': {
@@ -1155,7 +1224,7 @@
                 ],
                 steps: ['상용전원(한전) 및 비상전원(발전기) 인입 전압 확인', 'ATS 컨트롤러 표시창 에러 코드 및 램프 점검', '절환 기계적 걸림 여부 및 접점 상태 육안 확인', '수동 핸들 조작 가능 여부(비상시 대조) 테스트'],
                 guides: [
-                    { rank: 1, title: '정전 시 발전기 쪽으로 절환 안됨', desc: 'ATS 제어전원 차단, 조작 코일 소손', action: '수동 핸들을 이용하여 발전기(E) 측 강제 절환, 이후 코일 점검' },
+                    { rank: 1, title: '정전 시 발전기 쪽으로 절환 안됨', desc: 'ATS 제어전원 차단, 조작 코일 소손', action: '수동 핸문을 이용하여 발전기(E) 측 강제 절환, 이후 코일 점검' },
                     { rank: 2, title: '절환 시 심한 소음 및 불꽃', desc: '주접점 표면 탄화 및 접촉 불량', action: '접점 교체 주기 도래 판단, 접촉저항 측정 후 오버홀 진행' }
                 ]
             },
@@ -1163,7 +1232,7 @@
                 name: 'UPS (무정전전원장치)',
                 systemFaults: [
                     { category: '배터리 장애', cause: '• 배터리 수명 연한(통상 3~5년) 초과<br>• 내부 셀 단락 및 스웰링(부풀음)<br>• 충전기(Charger) 보드 고장', action: '• 불량 배터리 셀 솎아내기 또는 전체 교체<br>• 부동/균등 충전 전압 재조정<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 배터리 알람 확인 → ② 개별 셀 전압/내부저항 측정 → ③ 외관 부풀음/누액 확인 → ④ 배터리 교체</div>' },
-                    { category: '인버터 고장', cause: '• IGBT 등 전력 반도체 소자 소손<br>• 냉각팬 고장으로 인한 내부 과열<br>• 제어 보드 불량', action: '• 고장 소자 및 제어 보드 교체<br>• 냉각팬 교체 및 내부 방열판 먼지 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 인버터 Fault 알람 확인 → ② 냉각팬 회전 상태 점검 → ③ 내부 타 타는 냄새 확인 → ④ 제조사 A/S 요청</div>' },
+                    { category: '인버터 고장', cause: '• IGBT 등 전력 반도체 소자 소손<br>• 냉각팬 고장으로 인한 내부 과열<br>• 제어 보드 불량', action: '• 고장 소자 및 제어 보드 교체<br>• 냉각팬 교체 및 내부 방열판 먼지 제거<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① 인버터 Fault 알람 확인 → ② 냉각팬 회전 상태 점검 → ③ 내부 타는 냄새 확인 → ④ 제조사 A/S 요청</div>' },
                     { category: 'Bypass 자동 절환', cause: '• 인버터 고장으로 인한 보호 동작<br>• 출력단 순간 과부하 트립<br>• 출력 회로 단락', action: '• 출력측 부하량 확인 및 불필요 부하 차단<br>• 원인 해소 후 인버터 모드로 재기동<br><div class="troubleshooting-steps"><span class="ts-title">[확인 순서]</span><br>① Bypass 램프 점등 확인 → ② 디스플레이 과부하 이력 확인 → ③ 부하 분산 조치 → ④ Normal 모드 복귀</div>' }
                 ],
                 steps: ['전면 패널 알람 내역 및 에러 코드 발생 여부 확인', '배터리 충전 전압 및 방전 전류 정상 여부 확인', '냉각팬 동작 상태 및 필터 오염도 육안 점검', '입/출력 전압, 주파수 및 부하율(%) 안정성 확인'],
@@ -1207,161 +1276,4 @@
         }
 
         function showView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-        }
-
-        function goHome() {
-            showView('viewHome');
-            document.getElementById('headerTitle').innerText = '의왕IDC 설비 점검/업무 수첩';
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'inline-block';
-            window.scrollTo(0, 0);
-        }
-
-        function openView(viewId, title) {
-            document.getElementById('headerTitle').innerText = title;
-            document.getElementById('backBtn').style.display = 'inline-block';
-            document.getElementById('logoutBtn').style.display = 'none';
-            showView(viewId);
-            window.scrollTo(0, 0);
-        }
-
-        window.toggleCheck = function(el) {
-            el.classList.toggle('done');
-        };
-
-        function openTBMView() {
-            openView('viewTBM', 'TBM 안전교육');
-            selectTBMCategory(0); 
-        }
-
-        function selectTBMCategory(catIndex) {
-            currentTbmCategory = catIndex;
-            
-            const btn0 = document.getElementById('tbmCatBtn0');
-            const btn1 = document.getElementById('tbmCatBtn1');
-            
-            if (catIndex === 0) {
-                btn0.classList.add('active');
-                btn1.classList.remove('active');
-            } else {
-                btn0.classList.remove('active');
-                btn1.classList.add('active');
-            }
-
-            const dataArray = catIndex === 0 ? tbmDataAssets : tbmDataGeneral;
-            const tabsArea = document.getElementById('tbmTabs');
-            
-            tabsArea.innerHTML = dataArray.map((tbm, idx) => 
-                `<button class="tbm-tab-btn" id="tbmBtn_${idx}" onclick="selectTBMItem(${idx})">${tbm.task}</button>`
-            ).join('');
-            
-            selectTBMItem(0);
-        }
-
-        function selectTBMItem(index) {
-            document.querySelectorAll('.tbm-tab-btn').forEach(btn => btn.classList.remove('active'));
-            const activeBtn = document.getElementById('tbmBtn_' + index);
-            if(activeBtn) {
-                activeBtn.classList.add('active');
-            }
-
-            const dataArray = currentTbmCategory === 0 ? tbmDataAssets : tbmDataGeneral;
-            const tbm = dataArray[index];
-            const detailArea = document.getElementById('tbmDetailBox');
-            
-            if (currentTbmCategory === 0) {
-                detailArea.innerHTML = `
-                    <div class="tbm-card">
-                        <div class="tbm-header">🛠️ ${tbm.task}</div>
-                        <div class="tbm-grid">
-                            <div class="tbm-row"><span class="tbm-label">① 필수 안전보호구</span><span class="tbm-value" style="color:var(--primary-color);">${tbm.ppe}</span></div>
-                            <div class="tbm-row"><span class="tbm-label">② 재해유형</span><span class="tbm-value" style="color:var(--danger-color);">${tbm.hazard}</span></div>
-                            <div class="tbm-row"><span class="tbm-label">③ 안전교육 (T.B.M)</span><span class="tbm-value">${tbm.tbm}</span></div>
-                            <div class="tbm-row"><span class="tbm-label">④ 작업 안전점검 체크</span><span class="tbm-value">${tbm.check}</span></div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                detailArea.innerHTML = `
-                    <div class="tbm-card">
-                        <div class="tbm-header">🛠️ ${tbm.task}</div>
-                        <div class="tbm-grid">
-                            <div class="tbm-row"><span class="tbm-label">① 작업내용</span><span class="tbm-value">${tbm.detail}</span></div>
-                            <div class="tbm-row"><span class="tbm-label">② 주요 위험요인</span><span class="tbm-value" style="color:var(--danger-color);">${tbm.hazard}</span></div>
-                            <div class="tbm-row"><span class="tbm-label">③ 안전작업 방법</span><span class="tbm-value">${tbm.method}</span></div>
-                            <div class="tbm-row"><span class="tbm-label">④ 필수 안전보호구</span><span class="tbm-value" style="color:var(--primary-color);">${tbm.ppe}</span></div>
-                            <div class="tbm-row"><span class="tbm-label">⑤ 작업구역 통제</span><span class="tbm-value">${tbm.control}</span></div>
-                            <div class="tbm-row"><span class="tbm-label">⑥ 비상상황 대응</span><span class="tbm-value">${tbm.emergency}</span></div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function openDetail(equipKey) {
-            const data = dbData[equipKey];
-            if(!data) return;
-            openView('viewDetail', data.name + ' 점검');
-            
-            const isElec = ['VCB', 'TR', 'ACB', 'ATS', 'UPS', 'PANEL', 'GEN'].includes(equipKey);
-            const contactInfo = isElec ? "두잉씨엔에스 방민기 과장 010-9121-3102" : "삼건이엔씨 이상호부장 010-5264-1640";
-            document.getElementById('detailSubtitle').innerHTML = `계통별 장애 원인 및 조치 <br><span style="font-size:0.9rem; color:var(--danger-color); font-weight:normal; margin-top:6px; display:inline-block;">🚨 긴급지원: ${contactInfo}</span>`;
-            
-            document.getElementById('systemFaultArea').innerHTML = data.systemFaults.map(sys => `
-                <div class="sys-fault-card"><div class="sys-fault-title">⚙️ ${sys.category}</div>
-                <div class="sys-fault-grid"><div class="sys-fault-box"><h4>원인</h4><div>${sys.cause}</div></div>
-                <div class="sys-fault-box"><h4>조치 방법</h4><div>${sys.action}</div></div></div></div>
-            `).join('');
-
-            const pointerStyle = 'cursor:pointer;';
-            
-            document.getElementById('checklistArea').innerHTML = data.steps.map(step => `
-                <li class="check-item" style="${pointerStyle}" onclick="toggleCheck(this)">
-                    <span class="check-box"></span><span style="flex:1; word-break:keep-all;">${step}</span>
-                </li>
-            `).join('');
-
-            document.getElementById('guideArea').innerHTML = data.guides.map(guide => `
-                <div style="background:var(--surface-color); padding:16px; border-radius:8px; margin-bottom:8px;">
-                    <div style="font-weight:bold; margin-bottom:8px;">🥇 ${guide.rank}위. ${guide.title}</div>
-                    <div style="font-size:0.95rem; color:#ccc;">현상: ${guide.desc}<br><span style="color:var(--primary-color);">조치: ${guide.action}</span></div>
-                </div>
-            `).join('');
-        }
-
-        function copyText(id) {
-            const text = document.getElementById(id).innerText;
-            const ta = document.createElement("textarea");
-            ta.value = text; document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); alert("복사되었습니다."); } 
-            catch (e) { alert("복사 실패"); }
-            document.body.removeChild(ta);
-        }
-
-        function renderContacts() {
-            document.getElementById('contactArea').innerHTML = contacts.map(c => `
-                <div class="contact-card">
-                    <div class="contact-info">
-                        <span class="contact-company">${c.company}</span>
-                        <span class="contact-name">${c.name}</span>
-                        <span style="font-size:0.9rem; color:#aaa;">${c.phone}</span>
-                    </div>
-                    <a href="tel:${c.phone.replace(/-/g, '')}" class="call-btn">📞 전화</a>
-                </div>
-            `).join('');
-        }
-        
-        document.querySelectorAll(".process-acc").forEach(item => {
-            item.onclick = function() {
-                this.classList.toggle("active");
-                const content = this.nextElementSibling;
-                content.style.maxHeight = content.classList.contains("open") ? null : content.scrollHeight + "px";
-                content.classList.toggle("open");
-            };
-        });
-
-    </script>
-</body>
-</html>
+            document.querySelectorAll('.view').forEach

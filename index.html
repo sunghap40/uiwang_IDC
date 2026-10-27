@@ -539,6 +539,12 @@
         <div id="guideArea"></div>
     </div>
 
+    <!-- 🌟 사진 원본 확대 보기 모달 팝업 추가 🌟 -->
+    <div id="imageViewerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; flex-direction:column;" onclick="closeImageModal()">
+        <span style="position:absolute; top:20px; right:30px; color:white; font-size:40px; font-weight:bold; cursor:pointer;">&times;</span>
+        <img id="modalExpandedImage" src="" style="max-width:95%; max-height:90%; object-fit:contain; border-radius:8px;">
+    </div>
+
     <!-- 스크립트 시작 영역 -->
     <script>
         // ==========================================
@@ -591,7 +597,7 @@
                 return; 
             }
 
-            // 2) 일반 계정 DB 접속 확인 (여기서 권한이 막히면 에러 발생)
+            // 2) 일반 계정 DB 접속 확인
             db.collection("users").doc(id).get().then(doc => {
                 if (doc.exists && doc.data().pw === pw) {
                     currentUser = { id: doc.id, ...doc.data() };
@@ -604,7 +610,6 @@
                 }
             }).catch(e => {
                 console.error("Firebase Login Error:", e);
-                // 에러 원인이 '권한 부족(permission-denied)'일 경우 친절한 안내창 표시
                 if(e.code === 'permission-denied' || (e.message && e.message.includes('Missing or insufficient permissions'))) {
                     alert("⚠️ 로그인 실패: Firestore Database 권한(규칙)이 막혀있습니다.\n\nFirebase 콘솔 화면에서 [Firestore Database] -> [규칙(Rules)] 탭으로 이동하신 뒤,\n'allow read, write: if true;' 로 변경하고 [게시]를 눌러주세요.\n\n※ 테스트용 관리자 계정(아이디: admin / 비밀번호: 1234)으로는 지금 바로 정상 접속이 가능합니다.");
                 } else {
@@ -744,7 +749,7 @@
         }
 
         // ==========================================
-        // 4. 스케줄/인수인계 (다중 사진 + 관리자 삭제 권한)
+        // 4. 스케줄/인수인계 (사진 768x1024 비율 축소 & 모달 기능)
         // ==========================================
         let unsubscribeMemoListener = null;
         let editingMemoId = null;
@@ -770,7 +775,7 @@
             window.scrollTo(0, 0);
         }
 
-// 다중 사진 선택 및 자동 압축 기능 (고정 768x1024 해상도, 비율 유지 크롭)
+        // 🌟 수정: 잘림(Crop) 현상 제거, 768x1024 한도 내에서 원본 비율 그대로 축소
         function previewImages(event) {
             const files = Array.from(event.target.files);
             if (!files || files.length === 0) return;
@@ -780,34 +785,26 @@
                 reader.onload = function(e) {
                     const img = new Image();
                     img.onload = function() {
-                        const TARGET_WIDTH = 768;  // 고정 가로 해상도
-                        const TARGET_HEIGHT = 1024; // 고정 세로 해상도
-                        
-                        const canvas = document.createElement('canvas');
-                        canvas.width = TARGET_WIDTH;
-                        canvas.height = TARGET_HEIGHT;
-                        const ctx = canvas.getContext('2d');
+                        const MAX_WIDTH = 768; 
+                        const MAX_HEIGHT = 1024;
+                        let width = img.width;
+                        let height = img.height;
 
-                        // 이미지 찌그러짐을 막기 위해 비율에 맞춰 중앙을 자르는(Crop) 계산 로직
-                        const imgRatio = img.width / img.height;
-                        const targetRatio = TARGET_WIDTH / TARGET_HEIGHT;
-                        
-                        let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
-
-                        if (imgRatio > targetRatio) {
-                            // 사진이 목표치보다 가로로 넓은 경우 -> 좌우 가장자리를 자름
-                            sWidth = img.height * targetRatio;
-                            sx = (img.width - sWidth) / 2;
-                        } else {
-                            // 사진이 목표치보다 세로로 긴 경우 -> 위아래 가장자리를 자름
-                            sHeight = img.width / targetRatio;
-                            sy = (img.height - sHeight) / 2;
+                        // 너비나 높이가 최대치를 초과하는 경우, 비율을 유지하며 축소 계산
+                        if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                            const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+                            width = Math.round(width * ratio);
+                            height = Math.round(height * ratio);
                         }
 
-                        // 캔버스에 잘라낸 이미지를 400x533 크기로 정확히 그리기
-                        ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        
+                        // 크롭 없이 처음부터 끝까지 온전한 크기로 그리기
+                        ctx.drawImage(img, 0, 0, width, height);
 
-                        // 용량 압축 (0.8 = 80% 화질)
                         canvas.toBlob((blob) => {
                             const compressedFile = new File([blob], file.name.split('.')[0] + '.jpg', {
                                 type: 'image/jpeg',
@@ -823,8 +820,7 @@
                 reader.readAsDataURL(file);
             });
             
-            // 동일한 사진도 다시 선택해 추가할 수 있도록 초기화
-            event.target.value = '';
+            event.target.value = ''; // 동일 사진 재첨부 방지 초기화
         }
 
         // 첨부된 썸네일 그리기
@@ -925,7 +921,7 @@
                 if (editingMemoId) {
                     const updateData = { author: author, content: content, important: isImportant };
                     if (uploadedUrls.length > 0) {
-                        updateData.imageUrls = uploadedUrls; // 새로 첨부한 이미지가 있으면 기존 이미지 배열 덮어쓰기
+                        updateData.imageUrls = uploadedUrls; // 새로 첨부한 이미지가 있으면 덮어쓰기
                     }
                     await db.collection("memos").doc(editingMemoId).update(updateData);
                     cancelEdit();
@@ -970,11 +966,22 @@
         function cancelEdit() {
             document.getElementById('memoContent').value = '';
             document.getElementById('memoImportant').checked = false;
-            clearImages(); // 사진 첨부 영역 초기화
+            clearImages(); 
             editingMemoId = null;
             document.getElementById('saveMemoBtn').innerText = "저장하기";
             document.getElementById('saveMemoBtn').disabled = false;
             document.getElementById('cancelEditBtn').style.display = "none";
+        }
+
+        // 🌟 수정: 모달(원본 크기 사진) 띄우기 및 닫기 함수 
+        function openImageModal(url) {
+            document.getElementById('modalExpandedImage').src = url;
+            document.getElementById('imageViewerModal').style.display = 'flex';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageViewerModal').style.display = 'none';
+            document.getElementById('modalExpandedImage').src = '';
         }
 
         function renderMemos() {
@@ -987,10 +994,7 @@
             });
 
             let html = '';
-            
-            // 삭제 권한: 관리자 여부 확인
             const isAdmin = currentUser && currentUser.role === 'admin';
-            // 작성 권한: 쓰기 권한이 있으면 수정 가능
             const canWrite = currentUser && currentUser.canWrite;
             
             const filteredMemos = currentMemosArray.filter(data => 
@@ -1002,16 +1006,13 @@
                 const impBadge = data.important ? '<span style="color:var(--danger-color);font-weight:bold;font-size:0.8rem;border:1px solid var(--danger-color);padding:2px 6px;border-radius:4px;margin-right:8px;">⭐ 중요</span>' : '';
                 
                 let actionBtns = '';
-                // 수정은 쓰기 권한자 가능
                 if(canWrite) {
                     actionBtns += `<button style="background:none;border:1px solid #555;color:#aaa;border-radius:4px;padding:4px 8px;font-size:0.75rem;" onclick="editMemo('${data.id}')">수정</button> `;
                 }
-                // 삭제는 관리자만 노출
                 if(isAdmin) {
                     actionBtns += `<button style="background:none;border:1px solid #f44336;color:#f44336;border-radius:4px;padding:4px 8px;font-size:0.75rem;margin-left:4px;" onclick="deleteMemo('${data.id}')">삭제</button>`;
                 }
 
-                // 이미지 다중 렌더링 호환성 처리 (기존 단일 imageUrl / 신규 다중 imageUrls 배열 모두 대응)
                 let urlsToRender = [];
                 if (data.imageUrls && Array.isArray(data.imageUrls)) {
                     urlsToRender = data.imageUrls;
@@ -1021,9 +1022,10 @@
 
                 let attachedImageHtml = '';
                 if (urlsToRender.length > 0) {
-                    attachedImageHtml = `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">`;
+                    attachedImageHtml = `<div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:12px;">`;
                     urlsToRender.forEach(url => {
-                        attachedImageHtml += `<img src="${url}" style="width:calc(50% - 4px); max-height:200px; object-fit:cover; border-radius:6px; border:1px solid #333;" alt="첨부 이미지">`;
+                        // 🌟 수정: 썸네일을 80x80 크기로 작게 나열하고, 터치하면 모달을 열도록 onclick 이벤트 추가
+                        attachedImageHtml += `<img src="${url}" onclick="openImageModal('${url}')" style="width:100px; height:100px; object-fit:cover; border-radius:8px; border:1px solid #444; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.5);" alt="첨부 이미지">`;
                     });
                     attachedImageHtml += `</div>`;
                 }

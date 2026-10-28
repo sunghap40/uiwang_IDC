@@ -263,10 +263,13 @@
             <div class="header-title" id="headerTitle">의왕IDC 설비 점검/업무 수첩</div>
         </div>
         <div class="header-right">
-            <button type="button" class="settings-btn" id="settingsBtn" onclick="openSettings()">⚙️</button>
-            <a href="https://open.kakao.com/o/g1vey8Ni" target="_blank" class="header-kakao-btn">💬 카톡입장</a>
-            <button type="button" class="header-call-btn" id="emergencyBtn" onclick="openView('viewContact', '🚨 비상연락망')">🚨 비상연락망</button>
-        </div>
+    <!-- 새로 추가된 장비 현황 버튼 (기본적으로 숨김) -->
+    <button type="button" class="settings-btn" id="equipmentBtn" onclick="window.open('https://uiwang-equipment.vercel.app', '_blank')" style="display: none; font-size: 0.9rem; font-weight: bold;">📊 장비현황</button>
+    
+    <button type="button" class="settings-btn" id="settingsBtn" onclick="openSettings()">⚙️</button>
+    <a href="https://open.kakao.com/o/g1vey8Ni" target="_blank" class="header-kakao-btn">💬 카톡입장</a>
+    <button type="button" class="header-call-btn" id="emergencyBtn" onclick="openView('viewContact', '🚨 비상연락망')">🚨 비상연락망</button>
+</div>
     </header>
 
     <!-- [1] 홈 화면 -->
@@ -644,16 +647,24 @@
         }
 
         function applyPermissions() {
-            const isWorker = currentUser.role === 'worker';
-            document.getElementById('commonTaskSection').style.display = isWorker ? 'none' : 'block';
-            document.getElementById('emergencyBtn').style.display = isWorker ? 'none' : 'flex';
-            document.getElementById('settingsBtn').style.display = (currentUser.role === 'admin') ? 'inline-block' : 'none';
+    const isWorker = currentUser.role === 'worker';
+    document.getElementById('commonTaskSection').style.display = isWorker ? 'none' : 'block';
+    document.getElementById('emergencyBtn').style.display = isWorker ? 'none' : 'flex';
+    
+    // 기존 톱니바퀴 설정 버튼 권한
+    document.getElementById('settingsBtn').style.display = (currentUser.role === 'admin') ? 'inline-block' : 'none';
+    
+    // ✨ 추가된 장비현황 버튼 권한 (관리자만 노출)
+    const equipmentBtn = document.getElementById('equipmentBtn');
+    if (equipmentBtn) {
+        equipmentBtn.style.display = (currentUser.role === 'admin') ? 'inline-block' : 'none';
+    }
 
-            const memoWriteArea = document.getElementById('memoWriteArea');
-            if(memoWriteArea) {
-                memoWriteArea.style.display = currentUser.canWrite ? 'block' : 'none';
-            }
-        }
+    const memoWriteArea = document.getElementById('memoWriteArea');
+    if(memoWriteArea) {
+        memoWriteArea.style.display = currentUser.canWrite ? 'block' : 'none';
+    }
+}
 
         function toggleLoginInstallGuide() {
             const guide = document.getElementById('loginInstallGuide');

@@ -213,6 +213,33 @@
         .tbm-row { background-color: var(--surface-color); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
         .tbm-label { font-size: 0.85rem; color: var(--info-color); font-weight: bold; }
         .tbm-value { font-size: 0.95rem; line-height: 1.4; color: white; }
+
+        /* 냉동사이클 기초 전용 학습 화면 */
+        .rc-intro, .rc-panel { background:var(--surface-color); border:1px solid var(--border-color); border-radius:12px; padding:18px; margin-bottom:16px; line-height:1.7; }
+        .rc-intro strong { color:var(--primary-color); }
+        .rc-panel h3 { color:var(--primary-color); margin:0 0 12px; font-size:1.06rem; }
+        .rc-panel p { margin:8px 0; }
+        .rc-flow { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .rc-stage { border:1px solid #555; border-radius:10px; padding:12px; background:#262626; min-width:0; }
+        .rc-stage.hot { border-color:#b46b39; }
+        .rc-stage.cool { border-color:#397aaf; }
+        .rc-stage .rc-number { font-size:.8rem; color:#bbb; }
+        .rc-stage b { color:#fff; display:block; margin:3px 0; }
+        .rc-stage small { color:#ccc; font-size:.8rem; line-height:1.5; display:block; }
+        .rc-svg { width:100%; height:auto; display:block; background:#171b20; border-radius:10px; margin:12px 0; }
+        .rc-table { width:100%; border-collapse:collapse; font-size:.85rem; line-height:1.5; }
+        .rc-table th,.rc-table td { padding:10px 7px; border:1px solid #444; text-align:left; }
+        .rc-table th { background:#303030; color:var(--primary-color); }
+        .rc-tip { background:#283328; padding:12px; border-left:3px solid var(--success-color); border-radius:6px; }
+        .rc-panel details { background:#292929; border:1px solid #444; border-radius:8px; padding:12px; margin:9px 0; }
+        .rc-panel summary { cursor:pointer; font-weight:700; color:#fff; }
+        .rc-panel details p { color:#ddd; margin-bottom:0; }
+        .rc-quiz fieldset { border:1px solid #484848; padding:12px; border-radius:8px; margin:12px 0; }
+        .rc-quiz legend { font-weight:700; color:#fff; padding:0 4px; }
+        .rc-quiz label { display:block; padding:7px 0; cursor:pointer; }
+        .rc-quiz input { accent-color:var(--primary-color); margin-right:8px; }
+        .rc-quiz button { width:100%; background:var(--primary-color); border:0; border-radius:8px; padding:12px; font-size:1rem; font-weight:700; cursor:pointer; }
+        #rcQuizResult { margin-top:12px; line-height:1.6; }
     </style>
 </head>
 <body>
@@ -316,6 +343,7 @@
             <button type="button" class="menu-card" onclick="openDetail('HEAT')"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M4 6h12a2 2 0 012 2v8a2 2 0 01-2 2H4"/><path d="M20 18H8a2 2 0 01-2-2V8a2 2 0 012-2h12"/></svg></span><span>열교환기/응축기</span></button>
             <button type="button" class="menu-card" onclick="openDetail('TANK')"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10s3-2 8 0 8 0 8 0"/><path d="M4 14s3-2 8 0 8 0 8 0"/></svg></span><span>보충수 탱크</span></button>
             <button type="button" class="menu-card" onclick="openDetail('SPRAY')"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M12 3v6"/><path d="M9 12a3 3 0 106 0"/><path d="M12 15v6"/><path d="M6 6l2 2"/><path d="M18 6l-2 2"/></svg></span><span>살수펌프</span></button>
+             <button type="button" class="menu-card" onclick="openView('viewRefrigerationCycle', '❄️ 냉동사이클기초')"><span class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M4 7l16 10M4 17L20 7"/><path d="m9 5 3 3 3-3M9 19l3-3 3 3"/></svg></span><span>냉동사이클기초</span></button>
         </div>
 
         <div class="category-header">⚡ 의왕IDC 전기설비</div>
@@ -530,6 +558,76 @@
                 HEC현장: 최초 보고(본사), 대체 인력 투입 확인
             </div>
         </div>
+    </div>
+
+
+    <!-- 냉동사이클 기초 교육 (공조설비 메뉴에서 열기) -->
+    <div id="viewRefrigerationCycle" class="container view">
+        <div class="rc-intro">
+            <h2 style="margin-top:0;">❄️ 냉동사이클이란?</h2>
+            <p>냉장고와 에어컨은 차가움을 무한히 만들어 내는 기계가 아니에요. <strong>실내의 열을 빼앗아 실외로 옮기는 장치</strong>예요.</p>
+            <p>에어컨을 켰을 때 실내는 시원하고 실외기에서는 뜨거운 바람이 나오죠. 이것이 바로 냉동사이클의 기본 원리예요.</p>
+            <p><strong>한 줄 암기: 압축 → 응축 → 팽창 → 증발 → 다시 압축</strong></p>
+        </div>
+        <div class="rc-panel">
+            <h3>1. 냉매는 어떤 순서로 움직일까요?</h3>
+            <p>냉매는 열을 운반하는 물질이에요. 아래 화살표를 따라 네 장치를 계속 순환해요.</p>
+            <svg class="rc-svg" viewBox="0 0 360 298" role="img" aria-label="압축기에서 응축기, 팽창밸브, 증발기를 거쳐 압축기로 돌아가는 냉매 순환도">
+                <defs><marker id="rcArrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#e4e4e4"/></marker></defs>
+                <rect x="12" y="15" width="145" height="70" rx="10" fill="#653c2a" stroke="#e69663"/>
+                <rect x="203" y="15" width="145" height="70" rx="10" fill="#653c2a" stroke="#e69663"/>
+                <rect x="203" y="213" width="145" height="70" rx="10" fill="#243e5b" stroke="#70b3ef"/>
+                <rect x="12" y="213" width="145" height="70" rx="10" fill="#243e5b" stroke="#70b3ef"/>
+                <g font-size="16" font-weight="bold" fill="white" text-anchor="middle"><text x="84" y="43">① 압축기</text><text x="276" y="43">② 응축기</text><text x="276" y="241">③ 팽창밸브</text><text x="84" y="241">④ 증발기</text></g>
+                <g font-size="11" fill="#f1f1f1" text-anchor="middle"><text x="84" y="64">압력·온도 올리기</text><text x="276" y="64">외부로 열 방출</text><text x="276" y="262">압력·온도 낮추기</text><text x="84" y="262">실내 열 흡수</text></g>
+                <g fill="none" stroke="#e4e4e4" stroke-width="2.5" marker-end="url(#rcArrow)"><path d="M160 50H199"/><path d="M276 89V207"/><path d="M199 248H161"/><path d="M84 209V90"/></g>
+                <rect x="105" y="130" width="150" height="46" rx="8" fill="#333c46"/><text x="180" y="149" fill="white" text-anchor="middle" font-size="12">냉매가 순환하며</text><text x="180" y="165" fill="white" text-anchor="middle" font-size="12">열을 옮겨요</text>
+                <text x="180" y="36" fill="#ffcaab" text-anchor="middle" font-size="10">고온·고압</text><text x="180" y="268" fill="#afd7ff" text-anchor="middle" font-size="10">저온·저압</text>
+            </svg>
+            <div class="rc-flow">
+                <div class="rc-stage hot"><span class="rc-number">STEP 01</span><b>🔥 압축기</b><small>기체 냉매를 압축해 압력과 온도를 높여요.</small></div>
+                <div class="rc-stage hot"><span class="rc-number">STEP 02</span><b>♨️ 응축기</b><small>냉매가 밖으로 열을 내보내면서 액체로 바뀌어요.</small></div>
+                <div class="rc-stage cool"><span class="rc-number">STEP 03</span><b>⬇️ 팽창밸브</b><small>압력이 크게 떨어지면서 냉매 온도도 낮아져요.</small></div>
+                <div class="rc-stage cool"><span class="rc-number">STEP 04</span><b>🧊 증발기</b><small>냉매가 주변 열을 흡수하면서 기체로 변해요.</small></div>
+            </div>
+        </div>
+        <div class="rc-panel">
+            <h3>2. 장치별로 쉽게 이해하기</h3>
+            <details open><summary>① 압축기 — 냉매를 꽉 눌러요</summary><p>자전거 공기펌프를 빠르게 사용하면 따뜻해지는 것처럼 냉매 기체를 압축하면 압력과 온도가 올라가요.<br><b>저온·저압 기체 → 고온·고압 기체</b></p></details>
+            <details><summary>② 응축기 — 열을 밖으로 버려요</summary><p>뜨거운 냉매가 외부로 열을 방출하고 액체로 변해요. 일반적인 냉방 운전에서 에어컨 실외기가 뜨거운 이유예요.<br><b>고온·고압 기체 → 고압 액체</b></p></details>
+            <details><summary>③ 팽창밸브 — 압력을 뚝 떨어뜨려요</summary><p>냉매가 좁은 통로를 지나며 압력이 떨어지고 일부가 순간적으로 증발해 온도가 낮아져요.<br><b>고압 액체 → 저온·저압 액체·기체 혼합물</b></p></details>
+            <details><summary>④ 증발기 — 열을 빼앗아 시원하게 해요</summary><p>차가운 냉매가 실내 열을 흡수하면서 증발해요. 이렇게 기체가 된 냉매는 다시 압축기로 돌아가요.<br><b>저온·저압 혼합물 → 저압 기체</b></p></details>
+        </div>
+        <div class="rc-panel">
+            <h3>3. 냉매의 상태 변화 정리</h3>
+            <div style="overflow-x:auto;"><table class="rc-table"><thead><tr><th>장치</th><th>냉매 상태</th><th>하는 일</th></tr></thead><tbody>
+              <tr><td>압축기</td><td>기체 → 기체</td><td>압력·온도 상승</td></tr>
+              <tr><td>응축기</td><td>기체 → 액체</td><td>열 방출</td></tr>
+              <tr><td>팽창밸브</td><td>액체 → 액체·기체 혼합</td><td>압력·온도 하강</td></tr>
+              <tr><td>증발기</td><td>혼합물 → 기체</td><td>열 흡수</td></tr>
+            </tbody></table></div>
+            <p class="rc-tip"><b>💡 핵심:</b> 냉매가 액체에서 기체로 변할 때 주변의 열을 흡수하고, 기체에서 액체로 변할 때 열을 방출해요.</p>
+        </div>
+        <div class="rc-panel">
+            <h3>4. IDC 현장 설비와 연결해 보기</h3>
+            <p>항온항습기나 냉방장치가 실내 열을 제거할 때 이 원리가 사용돼요. 냉방 운전 시 증발기는 실내의 열을 흡수하고, 응축기는 그 열을 다른 곳으로 내보내죠.</p>
+            <p>다만 장비에 따라 공랭식·수랭식 구성이나 냉각수 계통이 다를 수 있어요. 실제 점검에서는 해당 장비의 배관도와 제조사 매뉴얼을 우선 확인해야 해요.</p>
+        </div>
+        <div class="rc-panel rc-quiz">
+            <h3>5. 배운 내용 확인하기 (3문제)</h3>
+            <fieldset><legend>Q1. 에어컨이 실내를 시원하게 하는 원리는?</legend>
+              <label><input type="radio" name="rcq1" value="0">차가운 공기를 새로 만들어서</label><label><input type="radio" name="rcq1" value="1">실내의 열을 냉매가 흡수해서</label><label><input type="radio" name="rcq1" value="2">압축기가 공기를 얼려서</label>
+            </fieldset>
+            <fieldset><legend>Q2. 냉매 기체의 압력을 높이는 장치는?</legend>
+              <label><input type="radio" name="rcq2" value="0">압축기</label><label><input type="radio" name="rcq2" value="1">응축기</label><label><input type="radio" name="rcq2" value="2">팽창밸브</label>
+            </fieldset>
+            <fieldset><legend>Q3. 냉매가 열을 방출하며 액체가 되는 장치는?</legend>
+              <label><input type="radio" name="rcq3" value="0">증발기</label><label><input type="radio" name="rcq3" value="1">팽창밸브</label><label><input type="radio" name="rcq3" value="2">응축기</label>
+            </fieldset>
+            <button type="button" onclick="checkRefrigerationQuiz()">정답 확인하기</button>
+            <div id="rcQuizResult" role="status" aria-live="polite"></div>
+        </div>
+        <div class="rc-panel"><h3>✅ 마지막 암기 정리</h3><p><b>압축:</b> 압력과 온도를 올려요.<br><b>응축:</b> 열을 밖으로 버려요.<br><b>팽창:</b> 압력과 온도를 낮춰요.<br><b>증발:</b> 주변의 열을 빼앗아요.</p><p style="color:var(--primary-color); font-weight:bold;">압축 → 응축 → 팽창 → 증발</p></div>
     </div>
 
     <!-- 설비 상세 화면 -->
@@ -1314,6 +1412,30 @@
         // ==========================================
         window.onload = function() {
             renderContacts();
+        }
+
+
+        function checkRefrigerationQuiz() {
+            const correct = ['1', '0', '2'];
+            const explanations = [
+                'Q1: 증발기에서 냉매가 실내 열을 흡수해요.',
+                'Q2: 압축기가 기체 냉매를 압축해요.',
+                'Q3: 응축기에서 냉매가 열을 방출하며 액체로 변해요.'
+            ];
+            let score = 0;
+            const feedback = [];
+            for (let i = 0; i < correct.length; i++) {
+                const picked = document.querySelector('input[name="rcq' + (i + 1) + '"]:checked');
+                if (!picked) {
+                    document.getElementById('rcQuizResult').textContent = '모든 문제에 답을 선택한 뒤 정답을 확인해주세요.';
+                    return;
+                }
+                if (picked.value === correct[i]) score++;
+                else feedback.push(explanations[i]);
+            }
+            const result = document.getElementById('rcQuizResult');
+            result.textContent = '정답 ' + score + ' / 3개! ' + (score === 3 ? '모두 맞혔어요! 냉동사이클의 핵심을 이해했네요.' : feedback.join(' '));
+            result.style.color = score === 3 ? 'var(--success-color)' : 'var(--primary-color)';
         }
 
         function showView(viewId) {

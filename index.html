@@ -240,6 +240,41 @@
         .rc-quiz input { accent-color:var(--primary-color); margin-right:8px; }
         .rc-quiz button { width:100%; background:var(--primary-color); border:0; border-radius:8px; padding:12px; font-size:1rem; font-weight:700; cursor:pointer; }
         #rcQuizResult { margin-top:12px; line-height:1.6; }
+
+        /* 데이터센터 이해 — 신입 교육 전용 */
+        .dc-hero,.dc-section {background:var(--surface-color);border:1px solid var(--border-color);border-radius:12px;padding:18px;margin-bottom:16px;line-height:1.75;}
+        .dc-hero {background:linear-gradient(130deg,#18314b,#202720);}
+        .dc-hero h2 {margin:0 0 8px;color:#ffcd59;border:0;font-size:1.3rem;}
+        .dc-hero p,.dc-section p {margin:8px 0 12px;}
+        .dc-section h3 {color:var(--primary-color);font-size:1.08rem;margin:0 0 12px;}
+        .dc-section h4 {color:#8dc9ff;margin:14px 0 6px;font-size:.97rem;}
+        .dc-nav {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0 20px;}
+        .dc-nav a {background:#282828;color:#fff;border:1px solid #474747;border-radius:8px;padding:11px 8px;text-decoration:none;font-size:.83rem;line-height:1.45;}
+        .dc-bubble {border-left:3px solid #ffb300;background:#302a20;border-radius:6px;padding:12px;margin:12px 0;}
+        .dc-safe {border-left:3px solid #57b88c;background:#203129;border-radius:6px;padding:12px;margin:12px 0;}
+        .dc-danger {border-left:3px solid #f56b62;background:#362423;border-radius:6px;padding:12px;margin:12px 0;}
+        .dc-diagram {display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px 0;}
+        .dc-node {border:1px solid #4f6982;background:#202f3c;border-radius:8px;padding:12px 9px;text-align:center;flex:1;min-width:78px;font-size:.86rem;font-weight:bold;}
+        .dc-arrow {color:#ffb300;font-size:1.3rem;font-weight:bold;}
+        .dc-cols {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0;}
+        .dc-col {background:#262626;border:1px solid #424242;border-radius:9px;padding:12px;font-size:.9rem;}
+        .dc-col strong {display:block;color:#9fd4ff;margin-bottom:5px;}
+        .dc-section ul,.dc-section ol {padding-left:22px;margin:8px 0 12px;}
+        .dc-section li {margin:6px 0;}
+        .dc-table {width:100%;border-collapse:collapse;font-size:.86rem;margin:10px 0;}
+        .dc-table th,.dc-table td {padding:10px 7px;border:1px solid #444;text-align:left;vertical-align:top;}
+        .dc-table th {background:#343434;color:#ffcd59;}
+        .dc-section details {border:1px solid #434343;background:#282828;border-radius:8px;padding:10px 12px;margin:9px 0;}
+        .dc-section summary {cursor:pointer;font-weight:bold;}
+        .dc-section details p {color:#ddd;}
+        .dc-quiz fieldset {border:1px solid #484848;border-radius:9px;padding:12px;margin:12px 0;}
+        .dc-quiz legend {font-weight:700;padding:0 5px;}
+        .dc-quiz label {display:block;cursor:pointer;padding:7px 0;}
+        .dc-quiz input {accent-color:var(--primary-color);margin-right:8px;}
+        .dc-quiz button {width:100%;background:var(--primary-color);color:#171717;border:0;border-radius:8px;font-weight:700;padding:13px;cursor:pointer;}
+        .dc-quiz-result {margin-top:12px;line-height:1.7;}
+        .dc-small {color:#bbb;font-size:.84rem;}
+        @media(max-width:370px){.dc-cols,.dc-nav{grid-template-columns:1fr;}.dc-arrow{font-size:1rem;}}
     </style>
 </head>
 <body>
@@ -332,6 +367,10 @@
                     </span>
                     <span>시설실무 간편 계산기</span>
                 </button>
+                <button type="button" class="menu-card" onclick="openView('viewDataCenterBasics', '📘 데이터센터 이해')">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="6" width="10" height="3"/><rect x="7" y="12" width="10" height="3"/><path d="M8 19h8"/></svg></span>
+                    <span>데이터센터 이해</span>
+                </button>
             </div>
         </div>
 
@@ -363,6 +402,77 @@
                 <span>순간정전 보고양식</span>
             </button>
         </div>
+    </div>
+
+
+    <!-- 공통 업무: 신규입사자 데이터센터 이해 교육 -->
+    <div id="viewDataCenterBasics" class="container view">
+      <div class="dc-hero"><h2>📘 데이터센터 이해</h2><p>전기·공조를 처음 접하는 신규입사자를 위한 8가지 기초교육</p><div class="dc-small">시설 조건: 수랭식+액체냉각 혼합 · 24시간 교대운영</div><p><b>오늘의 목표:</b> 설비의 존재 이유를 이해하고, 이상을 발견했을 때 안전하게 보고할 수 있습니다.</p></div>
+      <nav class="dc-nav" aria-label="데이터센터 교육 목차"><a href="#dc-one" onclick="return dcJump('dc-one')">1. 데이터센터란?</a><a href="#dc-two" onclick="return dcJump('dc-two')">2. 서버 발열</a><a href="#dc-three" onclick="return dcJump('dc-three')">3. 정전 위험</a><a href="#dc-four" onclick="return dcJump('dc-four')">4. 냉각 중단</a><a href="#dc-five" onclick="return dcJump('dc-five')">5. 이중화</a><a href="#dc-six" onclick="return dcJump('dc-six')">6. 설비실 역할</a><a href="#dc-seven" onclick="return dcJump('dc-seven')">7. 업무 구분</a><a href="#dc-eight" onclick="return dcJump('dc-eight')">8. 안전·보고</a></nav>
+      <section class="dc-section" id="dc-one"><h3>1. 데이터센터란 무엇인가?</h3>
+<p><b>한 줄 설명:</b> 데이터센터는 서버와 네트워크 장비가 쉬지 않고 일할 수 있도록 <b>전기·냉각·통신·보안</b>을 제공하는 시설입니다.</p>
+<p>휴대전화로 동영상을 보거나 인터넷 쇼핑·은행 업무를 할 때, 뒤에서 데이터를 처리하는 컴퓨터를 <b>서버</b>라고 합니다. 수많은 서버가 한곳에 모여 있는 건물이 데이터센터입니다.</p>
+<div class="dc-diagram"><div class="dc-node">📱 이용자</div><span class="dc-arrow">→</span><div class="dc-node">🌐 인터넷</div><span class="dc-arrow">→</span><div class="dc-node">🖥️ 데이터센터의 서버</div></div>
+<div class="dc-bubble"><b>쉬운 비유:</b> 데이터센터는 컴퓨터가 일하는 대형 공장입니다. 전기는 공장에 공급하는 에너지, 냉각은 기계가 과열되지 않도록 하는 장치입니다.</div>
+<h4>오퍼레이터가 기억할 것</h4><ul><li>서버가 안정적으로 작동하려면 전기와 냉각이 모두 필요합니다.</li><li>오퍼레이터는 IT 서비스를 직접 개발하는 사람이 아니라, 기반 설비의 상태를 감시합니다.</li><li>24시간 교대 운영하므로 이전 근무자의 미해결 사항을 인수인계받아야 합니다.</li></ul>
+</section>
+<section class="dc-section" id="dc-two"><h3>2. 서버가 열을 발생시키는 이유</h3>
+<p>휴대전화로 게임을 오래 하면 뜨거워지는 것처럼 서버도 전기를 사용해 계산하고 데이터를 처리하는 동안 열을 발생시킵니다. CPU·GPU·메모리·전원장치 등에서 소비한 전력의 대부분은 결국 열이 됩니다.</p>
+<div class="dc-diagram"><div class="dc-node">⚡ 전기 소비</div><span class="dc-arrow">→</span><div class="dc-node">🧠 CPU·GPU 연산</div><span class="dc-arrow">→</span><div class="dc-node">🌡️ 열 발생</div></div>
+<div class="dc-bubble"><b>숫자로 이해:</b> 서버 1대가 1kW씩 전력을 소비하고 100대가 있다면 총 100kW를 소비합니다. 소비된 전력 대부분이 열로 전환되므로 냉각설비는 지속적으로 그 열을 제거해야 합니다. (교육용 가정)</div>
+<h4>우리 시설의 두 가지 냉각</h4><div class="dc-cols"><div class="dc-col"><strong>❄️ 수랭식 공조</strong>냉수와 공조기 등을 이용해 서버 주변 공기의 열을 제거합니다.</div><div class="dc-col"><strong>💧 액체냉각</strong>CDU와 냉각액을 통해 CPU·GPU 등에 가까이 있는 콜드플레이트로 열을 제거합니다.</div></div>
+<div class="dc-safe"><b>핵심:</b> 서버에 전기가 공급되면 열이 발생합니다. 전기 공급만큼 냉각 상태도 중요합니다.</div>
+</section>
+<section class="dc-section" id="dc-three"><h3>3. 전원이 1초라도 중단되면 안 되는 이유</h3>
+<p>일반 PC의 전원 플러그를 갑자기 뽑으면 컴퓨터가 꺼지고 저장하지 못한 작업이 사라질 수 있습니다. 서버도 갑작스러운 전원 손실로 서비스 중단, 통신 장애 또는 데이터 처리 문제가 발생할 수 있습니다.</p>
+<p>모든 서비스가 반드시 1초 정전으로 장애가 되는 것은 아닙니다. 하지만 데이터센터는 <b>중요 IT 부하에 전원 중단이 전달되지 않도록</b> 운영하는 것을 목표로 합니다.</p>
+<div class="dc-diagram"><div class="dc-node">🏭 상용전원</div><span class="dc-arrow">→</span><div class="dc-node">🔋 UPS</div><span class="dc-arrow">→</span><div class="dc-node">🖥️ 서버</div></div>
+<div class="dc-bubble"><b>UPS란?</b> 무정전전원장치입니다. 전원 이상 시 배터리 등 저장 에너지를 이용해 중요 부하의 전원 연속성을 유지합니다. 장시간 정전에는 발전기 등 대체전원이 설계에 따라 공급될 수 있습니다.</div>
+<h4>신입의 관찰 포인트</h4><ul><li>UPS 운전모드·부하율·고장 경보 확인</li><li>상용전원 이상, 발전기 기동·전환 경보의 발생시각 확인</li><li>이상 발생 시 관련 계통을 식별하고 즉시 보고</li></ul>
+<div class="dc-danger"><b>금지:</b> 임의로 차단기를 조작하거나 UPS 바이패스 전환, 발전기 수동 기동을 하지 않습니다.</div>
+</section>
+<section class="dc-section" id="dc-four"><h3>4. 냉각이 중단되면 발생할 수 있는 문제</h3>
+<p>한여름 밀폐된 방에 히터를 여러 대 켜면 금방 더워집니다. 서버실도 냉각능력이 부족하면 서버가 계속 만들어내는 열이 쌓여 온도가 상승합니다.</p>
+<div class="dc-diagram"><div class="dc-node">❄️ 냉각 이상</div><span class="dc-arrow">→</span><div class="dc-node">🌡️ 온도 상승</div><span class="dc-arrow">→</span><div class="dc-node">🚨 성능 저하·보호정지 가능</div></div>
+<p>서버는 스스로 성능을 낮춰 발열을 줄이거나 과열 시 보호정지할 수 있습니다. 실제 영향과 진행 속도는 IT 부하, 장비 종류, 냉각 이중화에 따라 달라집니다.</p>
+<h4>수랭식 + 액체냉각 혼합 시설에서 확인할 것</h4><table class="dc-table"><tr><th>설비</th><th>조회할 상태</th></tr><tr><td>냉동기·냉수펌프</td><td>운전상태, 경보, 공급·환수 온도</td></tr><tr><td>CRAH 등 공조기</td><td>운전상태, 팬 경보, 공급공기·랙 흡입온도</td></tr><tr><td>CDU</td><td>서버 측 냉각액의 공급온도·유량·차압·펌프 경보</td></tr><tr><td>누수감지</td><td>발생 구역, 알람 상태, 시간</td></tr></table>
+<div class="dc-safe"><b>해야 할 일:</b> 해당 구역과 설비 태그, 현재값 및 변화 추세를 확인한 뒤 즉시 보고하고 승인된 범위에서 감시합니다.</div>
+<div class="dc-danger"><b>금지:</b> 냉동기·펌프·CDU 임의 재기동, 밸브 조작, 호스 분리, 경보 무단 리셋.</div>
+</section>
+<section class="dc-section" id="dc-five"><h3>5. A/B 전원과 N+1·2N 이중화</h3>
+<p><b>이중화</b>는 장비나 계통 하나가 고장 나도 서비스를 계속 유지할 수 있도록 예비 설비와 경로를 마련하는 것입니다. 자동차의 예비 타이어와 비슷합니다.</p>
+<div class="dc-col"><strong>① N: 필요한 만큼만</strong>필요한 펌프가 2대라면 2대만 설치한 상태입니다. 예비 여유가 없을 수 있습니다.</div>
+<div class="dc-col"><strong>② N+1: 필요한 만큼 + 예비 1단위</strong>2대가 필요하다면 같은 용량의 펌프 3대를 갖춘 예시입니다. 한 대가 정지해도 나머지로 필요한 용량을 유지하도록 설계합니다.</div>
+<div class="dc-col"><strong>③ 2N: 전체 필요 용량을 감당하는 두 계통</strong>A 계통이 전체 100%, B 계통도 전체 100%를 감당할 수 있도록 구성하는 개념입니다.</div>
+<h4>A/B 전원은 어떻게 다른가요?</h4><div class="dc-cols"><div class="dc-col"><strong>⚡ A 전원</strong>서버로 공급되는 첫 번째 전원 경로</div><div class="dc-col"><strong>⚡ B 전원</strong>서버로 공급되는 두 번째 전원 경로</div></div>
+<p>서버에 이중 전원장치가 있다면 두 입력을 서로 다른 계통에 연결할 수 있습니다. 다만 <b>A/B 두 경로가 있다는 사실만으로 2N이라고 단정할 수 없습니다.</b> 각 계통의 용량·독립성과 공통 고장 가능성을 확인해야 합니다.</p>
+<div class="dc-bubble"><b>쉬운 암기:</b> N은 필요한 만큼, N+1은 예비 하나 더, 2N은 전체를 두 벌. A/B는 두 전원 경로입니다.</div>
+<div class="dc-danger"><b>주의:</b> A 계통 고장 후 B가 정상이어도 위험 여유가 줄어든 상태일 수 있습니다. 신입은 임의 절체하지 말고 즉시 보고합니다.</div>
+</section>
+<section class="dc-section" id="dc-six"><h3>6. 전기실·기계실·서버실의 역할</h3>
+<div class="dc-cols"><div class="dc-col"><strong>⚡ 전기실</strong>수배전반·변압기·UPS 등으로 전기를 받아 변환·배분하는 곳입니다. <br><b>볼 것:</b> 허용된 화면의 전력상태·경보.</div><div class="dc-col"><strong>❄️ 기계실</strong>냉동기·펌프·열교환기 등으로 서버 냉각에 필요한 냉수를 공급하는 곳입니다. <br><b>볼 것:</b> 운전상태·온도·압력·누수.</div></div>
+<div class="dc-col"><strong>🖥️ 서버실</strong>서버와 네트워크 장비가 실제로 데이터를 처리하는 곳입니다. 고밀도 서버에는 액체냉각 배관·CDU가 연결될 수 있습니다. <br><b>볼 것:</b> 랙 온도, 공조 경보, 누수감지.</div>
+<div class="dc-diagram"><div class="dc-node">⚡ 전기실<br><small>전력 공급</small></div><span class="dc-arrow">↘</span><div class="dc-node">🖥️ 서버실<br><small>IT 장비 운전</small></div><span class="dc-arrow">↗</span><div class="dc-node">❄️ 기계실<br><small>냉각 제공</small></div></div>
+<p>한눈에 기억하면 <b>전기실은 전기, 기계실은 냉각, 서버실은 일을 하는 컴퓨터</b>입니다. 시설마다 설치장소와 계통은 다를 수 있습니다.</p>
+<div class="dc-safe"><b>실습:</b> 선임자와 함께 승인된 구역에서 실제 설비 위치와 설비 태그를 확인합니다. 허가되지 않은 구역에는 들어가지 않습니다.</div>
+</section>
+<section class="dc-section" id="dc-seven"><h3>7. 오퍼레이터와 전문 엔지니어의 업무 차이</h3>
+<p><b>오퍼레이터</b>는 이상 징후를 관찰하고 정확히 기록·보고하는 역할부터 배웁니다. <b>전문 엔지니어</b>는 자격·권한과 승인 절차에 따라 원인을 분석하고 기술적 조치를 수행합니다.</p>
+<table class="dc-table"><tr><th>상황</th><th>신입 오퍼레이터</th><th>전문 엔지니어</th></tr><tr><td>UPS 경보</td><td>태그·시간·상태 확인 및 보고</td><td>원인 진단·승인된 복구</td></tr><tr><td>냉동기 정지</td><td>운전상태 확인 및 보고</td><td>고장 분석·운전 복구 판단</td></tr><tr><td>CDU 유량 저하</td><td>표시 유량·경보·구역 보고</td><td>냉각계통 분석·조치</td></tr><tr><td>누수 발견</td><td>안전 확보·접근 제한 요청·보고</td><td>격리 및 복구 계획 수행</td></tr><tr><td>교대근무</td><td>미해결 사항 기록·인계</td><td>기술적 진행상황 공유</td></tr></table>
+<div class="dc-bubble"><b>꼭 전달할 말:</b> 모르면 질문하세요. 이상을 발견했다고 혼자 고치려 하지 마세요. 빠르고 정확한 보고는 중요한 전문 업무입니다.</div>
+<p class="dc-small">엔지니어도 모든 설비를 임의로 조작할 수 있는 것은 아닙니다. 법정 자격, 작업허가 및 현장 승인절차를 따라야 합니다.</p>
+</section>
+<section class="dc-section" id="dc-eight"><h3>8. 기본 안전수칙·출입통제·보고체계</h3>
+<h4>① 반드시 지켜야 할 안전수칙</h4><ol><li>본인과 주변 인원의 안전을 가장 먼저 확보합니다.</li><li>승인 없는 차단기·밸브·펌프·CDU·UPS 조작을 하지 않습니다.</li><li>전기 패널·설비 커버를 임의로 열지 않습니다.</li><li>연기, 타는 냄새, 누수 등 위험 상황에서 가까이 접근하지 않습니다.</li><li>현장에 지정된 보호구와 안전한 순찰 동선을 따릅니다.</li><li>알람 내용을 숨기거나 원인 확인 없이 리셋하지 않습니다.</li></ol>
+<h4>② 출입통제</h4><p>관제실, 전기실, 기계실, 서버실, 배터리실 등은 접근 권한이 다를 수 있습니다. 출입증을 공유하거나 다른 사람을 허가 없이 동반 입장시키지 않습니다. 위치를 아는 것과 출입권한이 있는 것은 다릅니다.</p>
+<h4>③ 경보 보고 절차</h4><div class="dc-diagram"><div class="dc-node">🚨 이상 발견<br><small>안전 확보</small></div><span class="dc-arrow">→</span><div class="dc-node">📞 교대조장·관제책임자<br><small>즉시 보고</small></div><span class="dc-arrow">→</span><div class="dc-node">🛠️ 담당 엔지니어<br><small>승인된 기술 대응</small></div></div>
+<p>화재·인명위험 등 긴급상황은 현장 비상계획에 따라 신고·대피·전파를 즉시 시행합니다. 교대조장에게 연락한 뒤 기다리는 방식으로 지체하지 않습니다.</p>
+<div class="dc-safe"><b>보고할 6가지:</b> 언제 / 어디서 / 어떤 설비 / 무슨 이상 / 현재 상태 / 누구에게 보고했는가</div>
+<div class="dc-bubble"><b>보고 예시:</b> “02시 10분, 2층 CDU-03에서 유량 저하 경보가 발생했습니다. 화면상 유량 감소 추세가 확인되어 즉시 보고드립니다. 현재 설비는 조작하지 않고 감시 중입니다.” (가상 상황)</div>
+<h4>④ 교대 인수인계</h4><p>24시간 운영에서는 이전 교대의 <b>미해결 경보, 정상과 다른 운전상태, 진행 중 작업, 임시 조치, 다음 근무자가 확인할 사항</b>을 빠짐없이 전달합니다.</p>
+</section>
+<section class="dc-section dc-quiz" id="dc-test"><h3>📝 교육 이해도 확인 (8문항)</h3><p>학습을 마친 후 정답을 선택하고 채점해 보세요. 교육용 권장 기준은 8문항 중 7문항 이상입니다.</p><form id="dcQuizForm" onsubmit="return checkDataCenterQuiz(event)"><fieldset><legend>1. 데이터센터에서 전기·냉각설비를 유지하는 이유는?</legend><label><input type="radio" name="dcq0" value="0"> 서버의 안정적인 운영을 위해</label><label><input type="radio" name="dcq0" value="1"> 건물 외관을 위해</label><label><input type="radio" name="dcq0" value="2"> 전기 사용을 늘리기 위해</label></fieldset><fieldset><legend>2. 서버가 열을 발생시키는 이유는?</legend><label><input type="radio" name="dcq1" value="0"> 밖이 더워서만</label><label><input type="radio" name="dcq1" value="1"> 전기를 소비하며 연산하기 때문에</label><label><input type="radio" name="dcq1" value="2"> 서버실 조명 때문에만</label></fieldset><fieldset><legend>3. 상용전원 이상 시 중요 부하의 전원 연속성을 돕는 장치는?</legend><label><input type="radio" name="dcq2" value="0"> UPS</label><label><input type="radio" name="dcq2" value="1"> 냉각탑</label><label><input type="radio" name="dcq2" value="2"> 냉수펌프</label></fieldset><fieldset><legend>4. 냉각이 부족하면 무엇이 생길 수 있나요?</legend><label><input type="radio" name="dcq3" value="0"> 서버 열이 사라짐</label><label><input type="radio" name="dcq3" value="1"> 서버실 온도 상승과 보호정지 위험</label><label><input type="radio" name="dcq3" value="2"> 전원 자동 증가</label></fieldset><fieldset><legend>5. N+1의 뜻은?</legend><label><input type="radio" name="dcq4" value="0"> 필요한 용량에 예비 한 단위 추가</label><label><input type="radio" name="dcq4" value="1"> 서로 다른 두 경로가 무조건 2N</label><label><input type="radio" name="dcq4" value="2"> 예비설비 없음</label></fieldset><fieldset><legend>6. 기계실의 대표적인 역할은?</legend><label><input type="radio" name="dcq5" value="0"> 서버 데이터 분석</label><label><input type="radio" name="dcq5" value="1"> 냉동기·펌프를 통한 냉각 제공</label><label><input type="radio" name="dcq5" value="2"> 고객 계정 관리</label></fieldset><fieldset><legend>7. CDU Low Flow 경보 시 신입의 첫 행동은?</legend><label><input type="radio" name="dcq6" value="0"> 펌프 강제 기동</label><label><input type="radio" name="dcq6" value="1"> 경보 무단 리셋</label><label><input type="radio" name="dcq6" value="2"> 태그·시각·상태 확인 후 즉시 보고</label></fieldset><fieldset><legend>8. 허가되지 않은 전기실에 들어가도 되나요?</legend><label><input type="radio" name="dcq7" value="0"> 출입문이 열려 있으면 가능</label><label><input type="radio" name="dcq7" value="1"> 안 됩니다</label><label><input type="radio" name="dcq7" value="2"> 야간에만 가능</label></fieldset><button type="submit">정답 확인 및 채점</button></form><div id="dcQuizResult" class="dc-quiz-result" role="status" aria-live="polite"></div></section>
+      <section class="dc-section"><h3>✅ 마지막 암기 5문장</h3><ol><li>데이터센터는 서버가 계속 일할 수 있는 시설입니다.</li><li>서버는 전기를 사용하며 열을 발생시킵니다.</li><li>안정적인 전원 공급과 냉각은 모두 중요합니다.</li><li>오퍼레이터는 감시·기록·보고를 우선합니다.</li><li>위험하면 접근하지 않고 즉시 보고합니다.</li></ol><p class="dc-small">※ 입문 교육자료입니다. 실제 운전기준·경보등급·출입·조작 권한은 해당 현장의 승인된 SOP·EOP 및 법정 안전관리 기준을 우선합니다.</p></section>
     </div>
 
     <!-- IDC용 계산기 화면 -->
@@ -1436,6 +1546,37 @@
             const result = document.getElementById('rcQuizResult');
             result.textContent = '정답 ' + score + ' / 3개! ' + (score === 3 ? '모두 맞혔어요! 냉동사이클의 핵심을 이해했네요.' : feedback.join(' '));
             result.style.color = score === 3 ? 'var(--success-color)' : 'var(--primary-color)';
+        }
+
+
+        // 데이터센터 이해 교육: 같은 뷰 안의 목차 이동 및 채점
+        function dcJump(id) {
+            const target = document.getElementById(id);
+            if (target) {
+                const top = target.getBoundingClientRect().top + window.pageYOffset - 76;
+                window.scrollTo({top: Math.max(0, top), behavior: 'smooth'});
+            }
+            return false;
+        }
+        function checkDataCenterQuiz(event) {
+            if (event) event.preventDefault();
+            const questions = [("데이터센터에서 전기·냉각설비를 유지하는 이유는?", 0, "데이터센터는 서버가 지속적으로 서비스하도록 기반 설비를 운영합니다."), ("서버가 열을 발생시키는 이유는?", 1, "CPU·GPU 등 장치가 전력을 사용하면 대부분이 열로 바뀝니다."), ("상용전원 이상 시 중요 부하의 전원 연속성을 돕는 장치는?", 0, "UPS는 전원 이상 시 중요 부하의 전원 연속성을 지원합니다."), ("냉각이 부족하면 무엇이 생길 수 있나요?", 1, "열을 충분히 제거하지 못하면 과열 관련 장애가 발생할 수 있습니다."), ("N+1의 뜻은?", 0, "N+1은 필요한 N에 예비 1단위를 더한 구조입니다."), ("기계실의 대표적인 역할은?", 1, "기계실에는 냉동기, 펌프 등 냉각설비가 있습니다."), ("CDU Low Flow 경보 시 신입의 첫 행동은?", 2, "독자적으로 설비를 조작하지 않고 긴급 보고합니다."), ("허가되지 않은 전기실에 들어가도 되나요?", 1, "출입 허가와 동선 규칙을 지켜야 합니다.")];
+            let score = 0;
+            let missed = [];
+            for (let i=0; i<questions.length; i++) {
+                const chosen = document.querySelector('input[name="dcq'+i+'"]:checked');
+                if (!chosen) {
+                    document.getElementById('dcQuizResult').textContent = '모든 문항을 선택해 주세요. ('+(i+1)+'번 미응답)';
+                    dcJump('dc-test');
+                    return false;
+                }
+                if (Number(chosen.value) === questions[i][1]) score++;
+                else missed.push((i+1)+'번: '+questions[i][2]);
+            }
+            const result = document.getElementById('dcQuizResult');
+            result.textContent = '정답 '+score+' / 8문항 · '+(score>=7?'권장 기준 충족':'복습 필요')+(missed.length?' | 복습: '+missed.join(' / '):' | 모두 맞혔습니다!');
+            result.style.color = score>=7 ? 'var(--success-color)' : 'var(--primary-color)';
+            return false;
         }
 
         function showView(viewId) {

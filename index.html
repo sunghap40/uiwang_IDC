@@ -275,6 +275,26 @@
         .dc-quiz-result {margin-top:12px;line-height:1.7;}
         .dc-small {color:#bbb;font-size:.84rem;}
         @media(max-width:370px){.dc-cols,.dc-nav{grid-template-columns:1fr;}.dc-arrow{font-size:1rem;}}
+
+        /* 모바일에서 헤더 버튼이 밀려도 사용 가능한 독립 홈 이동 버튼 */
+        #floatingHomeBtn {
+            display: none; position: fixed; right: 16px;
+            bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+            z-index: 1100; padding: 13px 17px; border-radius: 999px;
+            background: #ffb300; color: #151515; border: 2px solid #ffda71;
+            box-shadow: 0 5px 18px rgba(0,0,0,.48);
+            font-weight: 800; font-size: 15px; cursor: pointer;
+        }
+        #floatingHomeBtn.visible { display: block; }
+        .dc-home-nav { width: 100%; display: flex; justify-content: flex-start; margin: 0 0 12px; }
+        .dc-home-nav button { background: #ffb300; color: #151515; border: 0; border-radius: 9px;
+            padding: 12px 17px; font-weight: 800; font-size: 15px; cursor: pointer; }
+        .view.container { padding-bottom: 95px; }
+        @media (max-width: 560px) {
+            .header-left { min-width: 0; }
+            .header-title { font-size: 1rem; }
+            #floatingHomeBtn { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+        }
     </style>
 </head>
 <body>
@@ -333,6 +353,9 @@
     <button type="button" class="header-call-btn" id="emergencyBtn" onclick="openView('viewContact', '🚨 비상연락망')">🚨 비상연락망</button>
 </div>
     </header>
+
+    <!-- 상단 바와 분리되어 모바일에서도 항상 보이는 홈 버튼 -->
+    <button type="button" id="floatingHomeBtn" onclick="goHome()" aria-label="홈으로 돌아가기">← 홈으로</button>
 
     <!-- [1] 홈 화면 -->
     <div id="viewHome" class="container view">
@@ -407,6 +430,7 @@
 
     <!-- 공통 업무: 신규입사자 데이터센터 이해 교육 -->
     <div id="viewDataCenterBasics" class="container view">
+      <div class="dc-home-nav"><button type="button" onclick="goHome()">← 공통 업무로 돌아가기</button></div>
       <div class="dc-hero"><h2>📘 데이터센터 이해</h2><p>전기·공조를 처음 접하는 신규입사자를 위한 8가지 기초교육 + 필수 용어집</p><div class="dc-small">교육 범위: 데이터센터 전기·수랭식 공조 기초 · 24시간 교대운영</div><p><b>오늘의 목표:</b> 설비의 존재 이유를 이해하고, 이상을 발견했을 때 안전하게 보고할 수 있습니다.</p></div>
       <nav class="dc-nav" aria-label="데이터센터 교육 목차"><a href="#dc-one" onclick="return dcJump('dc-one')">1. 데이터센터란?</a><a href="#dc-two" onclick="return dcJump('dc-two')">2. 서버 발열</a><a href="#dc-three" onclick="return dcJump('dc-three')">3. 정전 위험</a><a href="#dc-four" onclick="return dcJump('dc-four')">4. 냉각 중단</a><a href="#dc-five" onclick="return dcJump('dc-five')">5. 이중화</a><a href="#dc-six" onclick="return dcJump('dc-six')">6. 설비실 역할</a><a href="#dc-seven" onclick="return dcJump('dc-seven')">7. 업무 구분</a><a href="#dc-eight" onclick="return dcJump('dc-eight')">8. 안전·보고</a><a href="#dc-nine" onclick="return dcJump('dc-nine')">9. 필수 용어집</a></nav>
       <section class="dc-section" id="dc-one"><h3>1. 데이터센터란 무엇인가?</h3>
@@ -1583,6 +1607,10 @@
         function showView(viewId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
+            const floatingHome = document.getElementById('floatingHomeBtn');
+            if (floatingHome) {
+                floatingHome.classList.toggle('visible', viewId !== 'viewHome' && viewId !== 'viewLogin');
+            }
         }
 
         function goHome() {
